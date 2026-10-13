@@ -282,78 +282,392 @@ function refreshContinueButton() {
 }
 
 /* ============ CIPTA WATAK ============ */
+/* ============================================================
+   MODUL v6.1 — CIPTA WATAK BEBAS
+   Ganti: initCreateChar(), updateCareerOptions(), startNewLife()
+   ============================================================ */
+
+/* ============ STATE SEMENTARA CIPTA WATAK ============ */
+let createCharState = {
+  photoData: null,       // base64 gambar
+  tanggungan: []         // array tanggungan { id, jenis, nama, amaun }
+};
+
+/* ============ INIT CIPTA WATAK (BAHARU) ============ */
 function initCreateChar() {
-  // Populate states
+  // Reset state
+  createCharState = { photoData: null, tanggungan: [] };
+
+  // Populate negeri
   const stateSel = $('#inputState');
   stateSel.innerHTML = STATES.map(s => `<option value="${s}">${s}</option>`).join('');
 
-  // Populate careers (hanya yang layak dengan SPM)
-  const careerSel = $('#inputCareer');
-  const basicCareers = ['Tiada Kerja', 'Pekerja Separuh Masa', 'Pekerja Mahir'];
-  careerSel.innerHTML = basicCareers.map(c => `<option value="${c}">${c} (${formatRM(CAREERS[c].gaji)}/bulan)</option>`).join('');
+  // === UPLOAD GAMBAR ===
+  const photoInput = $('#inputPhoto');
+  const photoPreview = $('#photoPreview');
+  const btnRemovePhoto = $('#btnRemovePhoto');
 
-  // Update careers bila education berubah
-  $('#inputEducation').addEventListener('change', updateCareerOptions);
-  updateCareerOptions();
+  photoInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  // Range politics interest
+    // Semak saiz (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      showToast('Gambar terlalu besar (max 2MB)', 'error');
+      photoInput.value = '';
+      return;
+    }
+
+    // Semak jenis
+    if (!file.type.startsWith('image/')) {
+      showToast('Fail bukan gambar', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        // Kecilkan gambar guna canvas (max 300x300)
+        const canvas = document.createElement('canvas');
+        const maxSize = 300;
+        let w = img.width, h = img.height;
+        if (w > h) { if (w > maxSize) { h = h * maxSize / w; w = maxSize; } }
+        else { if (h > maxSize) { w = w * maxSize / h; h = maxSize; } }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        createCharState.photoData = dataUrl;
+        photoPreview.innerHTML = `<img src="${dataUrl}" alt="Profil">`;
+        btnRemovePhoto.classList.remove('hidden');
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  btnRemovePhoto.addEventListener('click', (e) => {
+    e.preventDefault();
+    createCharState.photoData = null;
+    photoInput.value = '';
+    photoPreview.innerHTML = '<span class="photo-placeholder">📷</span>';
+    btnRemovePhoto.classList.add('hidden');
+  });
+
+  // === TANGGUNGAN ===
+  $('#btnAddTanggungan').addEventListener('click', () => {
+    addTanggunganRow();
+    updateSummary();
+  });
+
+  // === RANGE MATLAMAT ===
   $('#inputPoliticsInterest').addEventListener('input', (e) => {
     $('#interestLabel').textContent = e.target.value + ' / 10';
   });
 
-  // Start life
+  // === AUTO UPDATE RINGKASAN bila mana-mana input berubah ===
+  const inputs = [
+    'inputName', 'inputAge', 'inputGender', 'inputState',
+    'inputEducation', 'inputBackground', 'inputCash',
+    'inputJobName', 'inputSalary', 'inputJobType', 'inputTax',
+    'inputHousingType', 'inputRent', 'inputMonthlyDebt',
+    'inputTotalDebt', 'inputLivingCost', 'inputGoal',
+    'inputPoliticsInterest'
+  ];
+  inputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateSummary);
+    if (el) el.addEventListener('change', updateSummary);
+  });
+
+  // Handle pertukaran housing type — auto set sewa
+  $('#inputHousingType').addEventListener('change', (e) => {
+    const rentInput = $('#inputRent');
+    if (e.target.value === 'IbuBapa') {
+      rentInput.value = 0;
+      rentInput.disabled = true;
+    } else {
+      rentInput.disabled = false;
+      if (!rentInput.value || rentInput.value === '0') {
+        rentInput.value = e.target.value === 'Milik' ? 800 : 450;
+      }
+    }
+    updateSummary();
+  });
+
+  // === MULA KEHIDUPAN ===
   $('#btnStartLife').addEventListener('click', startNewLife);
+
+  // Initial state
+  updateSummary();
+  renderTanggunganList();
 }
 
-function updateCareerOptions() {
-  const edu = $('#inputEducation').value;
-  const eduRank = { 'SPM': 1, 'Diploma': 2, 'Ijazah Sarjana Muda': 3, 'Sarjana': 4, 'PhD': 5 };
-  const careerSel = $('#inputCareer');
-  const available = Object.keys(CAREERS).filter(k => eduRank[CAREERS[k].kelayakan] <= eduRank[edu]);
-  careerSel.innerHTML = available.map(c =>
-    `<option value="${c}">${c} (${formatRM(CAREERS[c].gaji)}/bulan)</option>`
-  ).join('');
+/* ============ TANGGUNGAN ============ */
+function addTanggunganRow() {
+  const tg = {
+    id: uid(),
+    jenis: 'anak',
+    nama: '',
+    amaun: 500
+  };
+  createCharState.tanggungan.push(tg);
+  renderTanggunganList();
 }
 
+function renderTanggunganList() {
+  const listEl = $('#tanggunganList');
+  const items = createCharState.tanggungan;
+
+  if (items.length === 0) {
+    listEl.innerHTML = `<div class="tanggungan-empty">Belum ada tanggungan. Klik butang di bawah untuk tambah.</div>`;
+    return;
+  }
+
+  listEl.innerHTML = items.map(tg => `
+    <div class="tanggungan-item" data-tgid="${tg.id}">
+      <span class="tg-emoji">${getTanggunganEmoji(tg.jenis)}</span>
+      <div class="tg-fields">
+        <select data-field="jenis">
+          <option value="anak" ${tg.jenis === 'anak' ? 'selected' : ''}>Anak</option>
+          <option value="isteri" ${tg.jenis === 'isteri' ? 'selected' : ''}>Isteri</option>
+          <option value="suami" ${tg.jenis === 'suami' ? 'selected' : ''}>Suami</option>
+          <option value="ibu" ${tg.jenis === 'ibu' ? 'selected' : ''}>Ibu</option>
+          <option value="bapa" ${tg.jenis === 'bapa' ? 'selected' : ''}>Bapa</option>
+          <option value="lain" ${tg.jenis === 'lain' ? 'selected' : ''}>Lain-lain</option>
+        </select>
+        <input type="text" data-field="nama" placeholder="Nama (pilihan)" value="${escapeHtml(tg.nama)}" maxlength="30">
+        <input type="number" data-field="amaun" min="0" value="${tg.amaun}" placeholder="RM/bulan">
+      </div>
+      <button class="tg-remove" data-remove="${tg.id}" title="Buang">✕</button>
+    </div>
+  `).join('');
+
+  // Bind events
+  listEl.querySelectorAll('[data-tgid]').forEach(row => {
+    const tgId = row.dataset.tgid;
+    const tg = createCharState.tanggungan.find(x => x.id === tgId);
+    if (!tg) return;
+
+    row.querySelectorAll('[data-field]').forEach(field => {
+      field.addEventListener('input', () => {
+        const f = field.dataset.field;
+        tg[f] = f === 'amaun' ? (parseFloat(field.value) || 0) : field.value;
+        if (f === 'jenis') {
+          row.querySelector('.tg-emoji').textContent = getTanggunganEmoji(tg.jenis);
+        }
+        updateSummary();
+      });
+      field.addEventListener('change', () => {
+        field.dispatchEvent(new Event('input'));
+      });
+    });
+
+    row.querySelector('[data-remove]').addEventListener('click', () => {
+      createCharState.tanggungan = createCharState.tanggungan.filter(x => x.id !== tgId);
+      renderTanggunganList();
+      updateSummary();
+    });
+  });
+}
+
+function getTanggunganEmoji(jenis) {
+  return {
+    anak: '👶',
+    isteri: '👩',
+    suami: '👨',
+    ibu: '👵',
+    bapa: '👴',
+    lain: '👤'
+  }[jenis] || '👤';
+}
+
+function escapeHtml(str) {
+  return String(str || '').replace(/[&<>"']/g, s => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[s]);
+}
+
+/* ============ KIRAAN RINGKASAN AUTO ============ */
+function getFormValues() {
+  return {
+    nama: ($('#inputName').value || '').trim() || 'Pemain',
+    umur: parseInt($('#inputAge').value) || 18,
+    jantina: $('#inputGender').value,
+    negeri: $('#inputState').value,
+    pendidikan: $('#inputEducation').value,
+    latar: $('#inputBackground').value,
+    cash: parseFloat($('#inputCash').value) || 0,
+    jobName: ($('#inputJobName').value || '').trim() || 'Tiada Kerja',
+    salary: parseFloat($('#inputSalary').value) || 0,
+    jobType: $('#inputJobType').value,
+    tax: parseFloat($('#inputTax').value) || 0,
+    housingType: $('#inputHousingType').value,
+    rent: parseFloat($('#inputRent').value) || 0,
+    monthlyDebt: parseFloat($('#inputMonthlyDebt').value) || 0,
+    totalDebt: parseFloat($('#inputTotalDebt').value) || 0,
+    livingCost: parseFloat($('#inputLivingCost').value) || 0,
+    goal: $('#inputGoal').value,
+    politicsInterest: parseInt($('#inputPoliticsInterest').value) || 0
+  };
+}
+
+function calculateSummaryFromForm() {
+  const v = getFormValues();
+  const tanggunganTotal = createCharState.tanggungan.reduce(
+    (sum, tg) => sum + (parseFloat(tg.amaun) || 0), 0
+  );
+
+  const gajiBersih = Math.max(0, v.salary - v.tax);
+  const jumlahPerbelanjaan = v.rent + v.monthlyDebt + v.livingCost + tanggunganTotal;
+  const aliranTunai = gajiBersih - jumlahPerbelanjaan;
+  const nilaiBersih = v.cash - v.totalDebt;
+
+  return {
+    ...v,
+    tanggunganTotal,
+    gajiBersih,
+    jumlahPerbelanjaan,
+    aliranTunai,
+    nilaiBersih,
+    bilanganTanggungan: createCharState.tanggungan.length
+  };
+}
+
+function updateSummary() {
+  const s = calculateSummaryFromForm();
+  const grid = $('#summaryGrid');
+  if (!grid) return;
+
+  const flowClass = s.aliranTunai >= 0 ? 'positive' : 'negative';
+  const worthClass = s.nilaiBersih >= 0 ? 'positive' : 'negative';
+
+  grid.innerHTML = `
+    <div class="summary-item">
+      <label>Gaji Kasar</label>
+      <strong>${formatRM(s.salary)}</strong>
+    </div>
+    <div class="summary-item">
+      <label>Gaji Bersih</label>
+      <strong>${formatRM(s.gajiBersih)}</strong>
+    </div>
+    <div class="summary-item negative">
+      <label>Jumlah Perbelanjaan</label>
+      <strong>${formatRM(s.jumlahPerbelanjaan)}</strong>
+    </div>
+    <div class="summary-item ${flowClass}">
+      <label>Aliran Tunai / Bulan</label>
+      <strong>${s.aliranTunai >= 0 ? '+' : ''}${formatRM(s.aliranTunai)}</strong>
+    </div>
+    <div class="summary-item">
+      <label>Wang Tunai</label>
+      <strong>${formatRM(s.cash)}</strong>
+    </div>
+    <div class="summary-item ${worthClass}">
+      <label>Nilai Bersih</label>
+      <strong>${s.nilaiBersih >= 0 ? '' : '-'}${formatRM(Math.abs(s.nilaiBersih))}</strong>
+    </div>
+    <div class="summary-item highlight">
+      <label>Anggaran Hujung Bulan</label>
+      <strong>${formatRM(s.cash + s.aliranTunai)}</strong>
+    </div>
+    <div class="summary-note">
+      ${s.bilanganTanggungan > 0 ? `${s.bilanganTanggungan} tanggungan (${formatRM(s.tanggunganTotal)}/bulan)` : 'Tiada tanggungan'}
+      • Sistem akan kira secara automatik setiap bulan
+    </div>
+  `;
+}
+
+/* ============ MULA KEHIDUPAN (BAHARU) ============ */
 function startNewLife() {
-  const nama = $('#inputName').value.trim() || 'Pemain';
-  const umur = parseInt($('#inputAge').value) || 18;
-  const jantina = $('#inputGender').value;
-  const negeri = $('#inputState').value;
-  const pendidikan = $('#inputEducation').value;
-  const latar = $('#inputBackground').value;
-  const kerjaya = $('#inputCareer').value;
-  const housing = $('#inputHousing').value;
-  const matlamat = $('#inputGoal').value;
-  const minatPolitik = parseInt($('#inputPoliticsInterest').value);
+  const s = calculateSummaryFromForm();
 
-  const careerData = CAREERS[kerjaya] || CAREERS['Tiada Kerja'];
-  const bgMoney = { 'B40': 500, 'M40': 2000, 'T20': 10000 };
-  const housingCost = { 'IbuBapa': 0, 'SewaBilik': 450, 'SewaRumah': 1200 };
+  // Validasi
+  if (!s.nama || s.nama.length < 2) {
+    showToast('Sila masukkan nama yang sah', 'error');
+    return;
+  }
+  if (s.salary < 0 || s.rent < 0 || s.monthlyDebt < 0) {
+    showToast('Nilai tidak boleh negatif', 'error');
+    return;
+  }
 
+  // Kira jenis kerja (jam, tekanan)
+  const jobTypeMap = {
+    penuh: { jam: 45, stressBase: 30 },
+    separuh: { jam: 20, stressBase: 15 },
+    bebas: { jam: 30, stressBase: 25 },
+    perniagaan: { jam: 50, stressBase: 40 },
+    tiada: { jam: 0, stressBase: 10 }
+  };
+  const jt = jobTypeMap[s.jobType] || jobTypeMap.tiada;
+
+  // Tanggungan → struktur
+  const tanggunganList = createCharState.tanggungan.map(tg => ({
+    id: tg.id,
+    jenis: tg.jenis,
+    nama: tg.nama || getTanggunganEmoji(tg.jenis) + ' ' + tg.jenis,
+    amaun: parseFloat(tg.amaun) || 0
+  }));
+
+  // Kira pasangan & anak dari senarai tanggungan
+  const pasangan = tanggunganList.find(t => t.jenis === 'isteri' || t.jenis === 'suami');
+  const anakCount = tanggunganList.filter(t => t.jenis === 'anak').length;
+
+  // Tekanan permulaan
+  let initialStress = jt.stressBase;
+  if (s.aliranTunai < 0) initialStress += 15;
+  if (s.nilaiBersih < 0) initialStress += 10;
+
+  // ============================================
+  // BINA STATE PERMAINAN
+  // ============================================
   state = {
     version: VERSION,
     createdAt: Date.now(),
+    customProfile: true,
     player: {
-      nama, umur, jantina, negeri, pendidikan, latar, matlamat,
-      minatPolitik,
-      avatar: nama.charAt(0).toUpperCase(),
+      // Profil
+      nama: s.nama,
+      umur: s.umur,
+      jantina: s.jantina,
+      negeri: s.negeri,
+      pendidikan: s.pendidikan,
+      latar: s.latar,
+      matlamat: s.goal,
+      minatPolitik: s.politicsInterest,
+      avatar: s.nama.charAt(0).toUpperCase(),
+      photo: createCharState.photoData,  // base64 gambar
+
+      // Kerjaya (bebas — simpan semua)
+      career: s.jobName,
+      careerType: s.jobType,
+      careerHours: jt.jam,
+      gaji: s.salary,           // gaji kasar
+      gajiBersih: s.gajiBersih,
+      potongan: s.tax,
+      experience: 0,
+
+      // Kewangan
+      wang: s.cash,
+      tabungan: 0,
+      hutang: s.totalDebt,
+      hutangBulanan: s.monthlyDebt,
+      aset: 0,
+
+      // Keadaan
       level: 0,
       xp: 0,
-      wang: bgMoney[latar],
-      tabungan: 0,
-      hutang: 0,
-      aset: 0,
-      career: kerjaya,
-      gaji: careerData.gaji,
-      stress: 0,
+      stress: clamp(initialStress, 0, 100),
       health: 100,
-      // Stats politik
+
+      // Statistik politik
       popularity: 0,
       integrity: 50,
       charisma: 50,
       leadership: 30,
-      experience: 0,
       partyInfluence: 0,
       grassrootsSupport: 0,
       mediaRelations: 0,
@@ -367,25 +681,44 @@ function startNewLife() {
       constituencySupport: 0,
       electionChance: 0,
       allyLoyalty: 50,
+
       // Politik
       party: null,
       position: null,
       positions: [],
-      // Keluarga
-      housing: housing,
-      pasangan: null,
-      anak: 0,
-      tanggungan: 0
+
+      // Tempat tinggal
+      housing: s.housingType === 'IbuBapa' ? 'IbuBapa' :
+               s.housingType === 'Sewa' ? 'Sewa' : 'Milik',
+      housingCost: s.rent,
+
+      // Keluarga & tanggungan
+      pasangan: pasangan ? { nama: pasangan.nama, amaun: pasangan.amaun } : null,
+      anak: anakCount,
+      tanggungan: tanggunganList,
+      tanggunganTotal: s.tanggunganTotal,
+
+      // Kos hidup
+      livingCost: s.livingCost
     },
-    date: { year: 2025, month: 0, turn: 1, label: 'Jan 2025' },
+
+    date: {
+      year: 2025,
+      month: 0,
+      turn: 1,
+      label: 'Jan 2025'
+    },
+
     finances: {
-      pendapatanBulanan: careerData.gaji,
-      perbelanjaanBulanan: housingCost[housing] + 800,
-      cashFlow: 0,
-      netWorth: 0,
+      pendapatanBulanan: s.salary,
+      pendapatanBersih: s.gajiBersih,
+      perbelanjaanBulanan: s.jumlahPerbelanjaan,
+      cashFlow: s.aliranTunai,
+      netWorth: s.nilaiBersih,
       bil: [],
       transactions: []
     },
+
     relationships: {},
     eventHistory: [],
     activeEvents: [],
@@ -397,7 +730,7 @@ function startNewLife() {
     activityHistory: []
   };
 
-  // Init relationships
+  // Init hubungan watak
   CHARACTERS.forEach(c => {
     state.relationships[c.id] = {
       score: randomInt(0, 20),
@@ -406,19 +739,149 @@ function startNewLife() {
     };
   });
 
-  // Initial news
+  // Berita permulaan
   state.news.unshift({
-    id: uid(), tarikh: state.date.label,
+    id: uid(),
+    tarikh: state.date.label,
     tajuk: 'Selamat Datang ke Simulasi',
     kategori: 'UMUM',
-    ringkasan: `${nama} memulakan kehidupan pada umur ${umur} di ${negeri}.`,
+    ringkasan: `${s.nama} memulakan kehidupan pada umur ${s.umur} di ${s.negeri}. Pekerjaan: ${s.jobName} (${formatRM(s.salary)}/bulan).`,
     status: 'Disahkan dalam dunia simulasi'
   });
 
+  // Rekod transaksi awal
+  addTransaction('Wang tunai permulaan', s.cash);
+  if (s.totalDebt > 0) {
+    addTransaction('Hutang awal', -s.totalDebt);
+  }
+
+  // Simpan & masuk permainan
   recalcFinances();
   saveGame(true);
   enterGame();
+
+  showToast(`Selamat datang, ${s.nama.split(' ')[0]}!`, 'success');
 }
+
+/* ============ RECALC FINANCES (BAHARU) ============ */
+function recalcFinances() {
+  if (!state) return;
+  const p = state.player;
+  const f = state.finances;
+
+  // Pendapatan
+  const pendapatanKasar = p.gaji || 0;
+  const potongan = p.potongan || 0;
+  const pendapatanBersih = Math.max(0, pendapatanKasar - potongan);
+
+  // Perbelanjaan
+  const housingCost = p.housingCost || 0;
+  const livingCost = p.livingCost || 800;
+  const debtMonthly = p.hutangBulanan || 0;
+  const tanggunganCost = (p.tanggungan || []).reduce(
+    (sum, tg) => sum + (parseFloat(tg.amaun) || 0), 0
+  );
+
+  const totalExpense = housingCost + livingCost + debtMonthly + tanggunganCost;
+
+  f.pendapatanBulanan = pendapatanKasar;
+  f.pendapatanBersih = pendapatanBersih;
+  f.perbelanjaanBulanan = totalExpense;
+  f.cashFlow = pendapatanBersih - totalExpense;
+  f.netWorth = (p.wang || 0) + (p.tabungan || 0) + (p.aset || 0) - (p.hutang || 0);
+
+  // Simpan pecahan untuk paparan
+  f.breakdown = {
+    housing: housingCost,
+    living: livingCost,
+    debt: debtMonthly,
+    tanggungan: tanggunganCost,
+    potongan: potongan
+  };
+}
+
+/* ============ PROCESS MONTH (PATCH UNTUK KIRA BAHARU) ============ */
+function processMonth() {
+  const p = state.player;
+  const f = state.finances;
+
+  // Guna nilai yang dikira semula
+  recalcFinances();
+
+  // Pendapatan bersih masuk
+  const income = f.pendapatanBersih || 0;
+  p.wang += income;
+  addTransaction(`Gaji bersih — ${p.career}`, income);
+
+  // Perbelanjaan
+  const expense = f.perbelanjaanBulanan;
+  p.wang -= expense;
+  addTransaction('Perbelanjaan bulanan', -expense);
+
+  // Bayaran hutang — kurangkan baki hutang
+  if (p.hutang > 0 && p.hutangBulanan > 0) {
+    const bayar = Math.min(p.hutangBulanan, p.hutang);
+    if (bayar > 0) {
+      p.hutang -= bayar;
+      addTransaction('Bayaran pokok hutang', -bayar);
+      // Nota: bayaran hutang sudah termasuk dalam perbelanjaan bulanan,
+      // jadi di sini hanya rekod pengurangan baki hutang
+    }
+  }
+
+  // Stress
+  if (p.wang > 2000) {
+    p.stress = clamp(p.stress - 2, 0, 100);
+  } else if (p.wang < 0) {
+    p.stress = clamp(p.stress + 5, 0, 100);
+    p.health = clamp(p.health - 2, 0, 100);
+  } else if (f.cashFlow < 0) {
+    p.stress = clamp(p.stress + 2, 0, 100);
+  }
+
+  // Simpan sejarah
+  state.activityHistory.unshift({
+    tarikh: state.date.label,
+    desk: `Giliran — pendapatan ${formatRM(income)}, perbelanjaan ${formatRM(expense)}`
+  });
+  if (state.activityHistory.length > 200) {
+    state.activityHistory = state.activityHistory.slice(0, 200);
+  }
+}
+
+/* ============ PAPAR GAMBAR PROFIL ============ */
+function renderPlayerAvatar(container) {
+  if (!container || !state || !state.player) return;
+  const p = state.player;
+  if (p.photo) {
+    container.innerHTML = `<img src="${p.photo}" alt="${p.nama}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  } else {
+    container.textContent = p.avatar || '?';
+  }
+}
+
+/* Patch updateTopbar untuk papar gambar */
+const _v61_updateTopbar = updateTopbar;
+updateTopbar = function() {
+  _v61_updateTopbar();
+  if (!state || !state.player) return;
+  const avatarEl = $('#playerAvatar');
+  if (avatarEl && state.player.photo) {
+    renderPlayerAvatar(avatarEl);
+  }
+};
+
+/* Patch openSidePanel untuk papar gambar */
+const _v61_openSidePanel = openSidePanel;
+openSidePanel = function() {
+  _v61_openSidePanel();
+  if (!state || !state.player) return;
+  const bigAvatar = document.querySelector('.side-profile .big-avatar');
+  if (bigAvatar && state.player.photo) {
+    renderPlayerAvatar(bigAvatar);
+  }
+};
+
 
 /* ============ MASUK PERMAINAN ============ */
 function enterGame() {
