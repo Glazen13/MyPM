@@ -472,7 +472,7 @@ function renderDashboard(el) {
     <div class="dash-section">
       <h4>📅 Giliran Semasa — ${state.date.label}</h4>
       <p style="font-size:13px;color:var(--kelabu);">
-        Satu giliran = 4 bulan. Tekan butang di bawah untuk teruskan masa.
+         Satu giliran = 1 bulan. Tekan butang di bawah untuk teruskan masa.
       </p>
       <div class="action-list mt-16">
         <button class="action-btn primary" data-action="nextTurn">
