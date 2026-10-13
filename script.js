@@ -6,7 +6,7 @@
 'use strict';
 
 /* ============ TETAPAN GLOBAL ============ */
-const VERSION = '1.0.0';
+const VERSION = '2.0.0';
 const SAVE_KEY_PREFIX = 'sppm_save_';
 const SAVE_AUTO_KEY = 'sppm_autosave';
 const SETTINGS_KEY = 'sppm_settings';
