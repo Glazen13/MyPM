@@ -4321,5 +4321,1145 @@ init = function() {
   console.log('📦 Modul: v1.0 + v2.0 + v3.0 + v4.0');
 };
 
+/* ============================================================
+   SIMULATOR PARTI POLITIK MALAYSIA — SCRIPT.JS v5.0
+   Modul Akhir: I18N, Slot, Leaderboard, Story, Analitik, Notif, PDF
+   ============================================================ */
+
+/* ============ I18N — SISTEM BAHASA ============ */
+const LANG_KEY = 'sppm_lang';
+let currentLang = 'ms';
+
+const I18N = {
+  ms: {
+    // Menu
+    newGame: 'Permainan Baharu', newGameSub: 'Mula dari umur 18 tahun',
+    continue: 'Sambung Permainan', continueSub: 'Teruskan dari simpanan terakhir',
+    loadGame: 'Muatkan Permainan', loadSub: 'Pilih dari senarai simpanan',
+    guide: 'Panduan', guideSub: 'Cara bermain',
+    settings: 'Tetapan', settingsSub: 'Bunyi, kesukaran, paparan',
+    credits: 'Kredit', creditsSub: 'Maklumat projek',
+    language: 'Bahasa', languageSub: 'Melayu / English',
+    storyMode: 'Mod Cerita', storySub: '3 senario khas',
+    leaderboard: 'Leaderboard', leaderSub: 'Ranking tempatan',
+    // Navigasi
+    tabHome: 'Utama', tabFinance: 'Kewangan', tabCareer: 'Kerjaya',
+    tabPolitics: 'Politik', tabNews: 'Berita',
+    // Dashboard
+    nextTurn: 'Teruskan 1 Bulan', nextTurnSub: 'Proses pendapatan, perbelanjaan & peristiwa',
+    oneTurnEquals: 'Satu giliran = 1 bulan. Tekan butang di bawah untuk teruskan masa.',
+    lifeProgress: 'Kemajuan Kehidupan', level: 'Tahap', xp: 'XP',
+    mainStats: 'Statistik Utama', cash: 'Wang Tunai', career: 'Kerjaya',
+    stress: 'Tekanan', integrity: 'Integriti', popularity: 'Populariti',
+    netWorth: 'Nilai Bersih', politicalStatus: 'Status Politik',
+    party: 'Parti', position: 'Jawatan', partyInfluence: 'Pengaruh Parti',
+    grassroots: 'Sokongan Akar Umbi',
+    notInParty: 'Anda belum menyertai mana-mana parti politik. Buka tab Politik untuk melihat peluang.',
+    // Slot
+    slotTitle: '🕹️ Slot Simpanan', slotEmpty: 'Kosong — Klik untuk simpan',
+    slotAuto: 'Auto-Save', slotActive: 'Aktif', slotSave: 'Simpan', slotLoad: 'Muat',
+    slotDelete: 'Padam', slotNewHere: 'Simpan permainan semasa di sini',
+    slotConfirmDelete: 'Padam slot ini? Tindakan ini tidak boleh dibatalkan.',
+    slotSaved: 'Permainan disimpan', slotLoaded: 'Permainan dimuatkan',
+    // Leaderboard
+    lbTitle: '🏅 Leaderboard Tempatan', lbEmpty: 'Belum ada rekod. Mainkan permainan dan bersara untuk rekod.',
+    lbYourRank: 'Kedudukan Anda', lbScore: 'Skor',
+    // Story
+    storyTitle: '🎭 Mod Cerita', storyDesc: 'Pilih senario permulaan yang berbeza',
+    storyStart: 'Mula Senario',
+    // Analitik
+    analyticsTitle: '📊 Analitik Peribadi',
+    // Notif
+    notifTitle: '🔔 Notifikasi', notifMarkAll: 'Tandakan Semua Dibaca',
+    notifClearAll: 'Kosongkan Semua', notifEmpty: 'Tiada notifikasi',
+    // PDF
+    pdfTitle: '📤 Laporan Boleh Cetak', pdfPrint: 'Cetak / Simpan PDF',
+    // Language
+    langTitle: '🌐 Bahasa', langDesc: 'Pilih bahasa antara muka',
+    // Umum
+    close: 'Tutup', cancel: 'Batal', save: 'Simpan', confirm: 'Sahkan',
+    delete: 'Padam', yes: 'Ya', no: 'Tidak'
+  },
+  en: {
+    // Menu
+    newGame: 'New Game', newGameSub: 'Start from age 18',
+    continue: 'Continue Game', continueSub: 'Resume from last save',
+    loadGame: 'Load Game', loadSub: 'Choose from save list',
+    guide: 'Guide', guideSub: 'How to play',
+    settings: 'Settings', settingsSub: 'Sound, difficulty, display',
+    credits: 'Credits', creditsSub: 'Project info',
+    language: 'Language', languageSub: 'Malay / English',
+    storyMode: 'Story Mode', storySub: '3 special scenarios',
+    leaderboard: 'Leaderboard', leaderSub: 'Local ranking',
+    // Navigation
+    tabHome: 'Home', tabFinance: 'Finance', tabCareer: 'Career',
+    tabPolitics: 'Politics', tabNews: 'News',
+    // Dashboard
+    nextTurn: 'Continue 1 Month', nextTurnSub: 'Process income, expenses & events',
+    oneTurnEquals: 'One turn = 1 month. Press the button below to advance time.',
+    lifeProgress: 'Life Progress', level: 'Level', xp: 'XP',
+    mainStats: 'Main Stats', cash: 'Cash', career: 'Career',
+    stress: 'Stress', integrity: 'Integrity', popularity: 'Popularity',
+    netWorth: 'Net Worth', politicalStatus: 'Political Status',
+    party: 'Party', position: 'Position', partyInfluence: 'Party Influence',
+    grassroots: 'Grassroots Support',
+    notInParty: 'You have not joined any political party. Open Politics tab for opportunities.',
+    // Slot
+    slotTitle: '🕹️ Save Slots', slotEmpty: 'Empty — Click to save',
+    slotAuto: 'Auto-Save', slotActive: 'Active', slotSave: 'Save', slotLoad: 'Load',
+    slotDelete: 'Delete', slotNewHere: 'Save current game here',
+    slotConfirmDelete: 'Delete this slot? This action cannot be undone.',
+    slotSaved: 'Game saved', slotLoaded: 'Game loaded',
+    // Leaderboard
+    lbTitle: '🏅 Local Leaderboard', lbEmpty: 'No records yet. Play and retire to record.',
+    lbYourRank: 'Your Rank', lbScore: 'Score',
+    // Story
+    storyTitle: '🎭 Story Mode', storyDesc: 'Choose a different starting scenario',
+    storyStart: 'Start Scenario',
+    // Analitik
+    analyticsTitle: '📊 Personal Analytics',
+    // Notif
+    notifTitle: '🔔 Notifications', notifMarkAll: 'Mark All Read',
+    notifClearAll: 'Clear All', notifEmpty: 'No notifications',
+    // PDF
+    pdfTitle: '📤 Printable Report', pdfPrint: 'Print / Save PDF',
+    // Language
+    langTitle: '🌐 Language', langDesc: 'Choose interface language',
+    // Umum
+    close: 'Close', cancel: 'Cancel', save: 'Save', confirm: 'Confirm',
+    delete: 'Delete', yes: 'Yes', no: 'No'
+  }
+};
+
+function t(key) {
+  return (I18N[currentLang] && I18N[currentLang][key]) || (I18N.ms[key]) || key;
+}
+
+function setLanguage(lang) {
+  currentLang = I18N[lang] ? lang : 'ms';
+  try { localStorage.setItem(LANG_KEY, currentLang); } catch(e) {}
+  settings.language = currentLang;
+  saveSettings();
+  updateUILanguage();
+  showToast(currentLang === 'ms' ? '✅ Bahasa: Melayu' : '✅ Language: English', 'success');
+}
+
+function loadLanguage() {
+  try {
+    const saved = localStorage.getItem(LANG_KEY) || 'ms';
+    currentLang = saved;
+    settings.language = saved;
+  } catch(e) { currentLang = 'ms'; }
+}
+
+function updateUILanguage() {
+  // Update menu utama
+  const map = [
+    ['#btnNewGame .btn-text strong', 'newGame'],
+    ['#btnNewGame .btn-text small', 'newGameSub'],
+    ['#btnContinueGame .btn-text strong', 'continue'],
+    ['#btnLoadGame .btn-text strong', 'loadGame'],
+    ['#btnLoadGame .btn-text small', 'loadSub'],
+    ['#btnGuide .btn-text strong', 'guide'],
+    ['#btnGuide .btn-text small', 'guideSub'],
+    ['#btnSettings .btn-text strong', 'settings'],
+    ['#btnSettings .btn-text small', 'settingsSub'],
+    ['#btnCredits .btn-text strong', 'credits'],
+    ['#btnCredits .btn-text small', 'creditsSub'],
+    ['#btnLangLabel', 'language'],
+    ['#btnLangSub', 'languageSub'],
+    ['#btnStoryLabel', 'storyMode'],
+    ['#btnStorySub', 'storySub'],
+    ['#btnLeaderLabel', 'leaderboard'],
+    ['#btnLeaderSub', 'leaderSub']
+  ];
+  map.forEach(([sel, key]) => {
+    const el = document.querySelector(sel);
+    if (el) el.textContent = t(key);
+  });
+
+  // Update bottom nav
+  const navMap = {
+    dashboard: 'tabHome', finance: 'tabFinance', career: 'tabCareer',
+    politics: 'tabPolitics', news: 'tabNews'
+  };
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    const key = navMap[btn.dataset.tab];
+    if (key) {
+      const label = btn.querySelector('.nav-label');
+      if (label) label.textContent = t(key);
+    }
+  });
+
+  // Refresh permainan jika ada
+  if (state && $('#game').classList.contains('active')) {
+    renderGame();
+  }
+}
+
+function openLanguageModal() {
+  const body = $('#langBody');
+  body.innerHTML = `
+    <p style="font-size:12px;color:var(--kelabu);margin-bottom:12px;">${t('langDesc')}</p>
+    <div class="lang-grid">
+      <button class="lang-option ${currentLang === 'ms' ? 'active' : ''}" data-lang="ms">
+        <span class="lang-flag">🇲🇾</span>
+        <span class="lang-name">Bahasa Melayu</span>
+      </button>
+      <button class="lang-option ${currentLang === 'en' ? 'active' : ''}" data-lang="en">
+        <span class="lang-flag">🇬🇧</span>
+        <span class="lang-name">English</span>
+      </button>
+    </div>
+  `;
+  body.querySelectorAll('[data-lang]').forEach(btn => {
+    btn.onclick = () => {
+      setLanguage(btn.dataset.lang);
+      openLanguageModal();
+    };
+  });
+  $('#langModal').classList.add('open');
+}
+
+/* ============ NOTIFIKASI MANAGER ============ */
+const NotifManager = {
+  items: [],
+  max: 100,
+
+  init() {
+    if (!state) return;
+    if (!state.notifications) state.notifications = [];
+    this.items = state.notifications;
+    this.updateBadge();
+  },
+
+  push(emoji, title, msg, category = 'info') {
+    const notif = {
+      id: uid(),
+      tarikh: state ? state.date.label : new Date().toLocaleDateString(),
+      emoji, title, msg,
+      category,
+      read: false,
+      timestamp: Date.now()
+    };
+    this.items.unshift(notif);
+    if (this.items.length > this.max) this.items = this.items.slice(0, this.max);
+    if (state) state.notifications = this.items;
+    this.updateBadge();
+  },
+
+  markAllRead() {
+    this.items.forEach(n => n.read = true);
+    if (state) state.notifications = this.items;
+    this.updateBadge();
+    saveGame(true);
+  },
+
+  clearAll() {
+    this.items = [];
+    if (state) state.notifications = [];
+    this.updateBadge();
+    saveGame(true);
+  },
+
+  unreadCount() {
+    return this.items.filter(n => !n.read).length;
+  },
+
+  updateBadge() {
+    const badge = $('#notifBadge');
+    if (!badge) return;
+    const count = this.unreadCount();
+    if (count > 0) {
+      badge.textContent = count > 99 ? '99+' : count;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+    // Update badge di side link
+    const sideNotif = document.querySelector('[data-extra5="notif"]');
+    if (sideNotif) {
+      const existing = sideNotif.querySelector('.link-badge');
+      if (count > 0) {
+        if (existing) existing.textContent = count;
+        else {
+          const span = document.createElement('span');
+          span.className = 'link-badge';
+          span.textContent = count;
+          sideNotif.appendChild(span);
+        }
+      } else if (existing) {
+        existing.remove();
+      }
+    }
+  }
+};
+
+function openNotifModal() {
+  NotifManager.init();
+  const body = $('#notifBody');
+  const items = NotifManager.items;
+
+  if (items.length === 0) {
+    body.innerHTML = `<p style="text-align:center;color:var(--kelabu);padding:20px;font-size:13px;">${t('notifEmpty')}</p>`;
+  } else {
+    body.innerHTML = `
+      <div style="font-size:12px;">
+        ${items.slice(0, 40).map(n => `
+          <div class="notif-item ${n.category} ${n.read ? '' : 'unread'}">
+            <span class="notif-icon">${n.emoji}</span>
+            <div class="notif-content">
+              <strong>${n.title}</strong>
+              <div style="font-size:12px;color:var(--kelabu-gelap);margin:2px 0;">${n.msg}</div>
+              <small>${n.tarikh}</small>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    // Auto-mark read
+    setTimeout(() => NotifManager.markAllRead(), 500);
+  }
+
+  $('#notifFooter').innerHTML = `
+    <button class="btn-secondary" id="notifClearBtn">${t('notifClearAll')}</button>
+    <button class="btn-primary" onclick="document.getElementById('notifModal').classList.remove('open')" style="width:auto;margin:0;">${t('close')}</button>
+  `;
+
+  setTimeout(() => {
+    const clearBtn = $('#notifClearBtn');
+    if (clearBtn) clearBtn.onclick = () => {
+      if (confirm('Kosongkan semua notifikasi?')) {
+        NotifManager.clearAll();
+        openNotifModal();
+      }
+    };
+  }, 50);
+
+  $('#notifModal').classList.add('open');
+}
+
+/* ============ SLOT SIMPANAN ============ */
+const SLOT_PREFIX = 'sppm_slot_';
+const MAX_SLOTS = 6;
+
+function getSlotKey(n) { return SLOT_PREFIX + n; }
+
+function listSlotSaves() {
+  const slots = [];
+  for (let i = 1; i <= MAX_SLOTS; i++) {
+    const raw = localStorage.getItem(getSlotKey(i));
+    if (raw) {
+      try {
+        const d = JSON.parse(raw);
+        slots.push({
+          num: i,
+          kosong: false,
+          nama: d.player.nama,
+          level: d.player.level,
+          position: d.player.position,
+          umur: d.player.umur,
+          tarikh: d.date.label,
+          giliran: d.date.turn,
+          wang: d.player.wang,
+          savedAt: d.savedAt || Date.now()
+        });
+      } catch(e) {
+        slots.push({ num: i, kosong: true });
+      }
+    } else {
+      slots.push({ num: i, kosong: true });
+    }
+  }
+  return slots;
+}
+
+function saveToSlot(n) {
+  if (!state) { showToast('Tiada permainan aktif', 'error'); return; }
+  state.savedAt = Date.now();
+  try {
+    localStorage.setItem(getSlotKey(n), JSON.stringify(state));
+    showToast(`${t('slotSaved')} — Slot ${n}`, 'success');
+    if (state) NotifManager.push('💾', 'Permainan Disimpan', `Slot ${n}`, 'info');
+  } catch(e) {
+    showToast('Gagal simpan', 'error');
+  }
+}
+
+function loadFromSlot(n) {
+  try {
+    const raw = localStorage.getItem(getSlotKey(n));
+    if (!raw) { showToast('Slot kosong', 'warn'); return; }
+    if (state && !confirm('Muatkan slot ini? Permainan semasa akan diganti.')) return;
+    state = JSON.parse(raw);
+    enterGame();
+    NotifManager.init();
+    showToast(`${t('slotLoaded')} — Slot ${n}`, 'success');
+  } catch(e) {
+    showToast('Slot rosak', 'error');
+  }
+}
+
+function deleteSlot(n) {
+  if (!confirm(t('slotConfirmDelete'))) return;
+  localStorage.removeItem(getSlotKey(n));
+  showToast(`Slot ${n} dipadam`, 'warn');
+  openSlotsModal();
+}
+
+function openSlotsModal() {
+  const slots = listSlotSaves();
+  const body = $('#slotsBody');
+
+  body.innerHTML = `
+    <p style="font-size:12px;color:var(--kelabu);margin-bottom:12px;">
+      ${currentLang === 'ms' ? 'Simpan atau muatkan permainan dalam mana-mana slot.' : 'Save or load your game in any slot.'}
+    </p>
+
+    <!-- Auto-save slot -->
+    ${localStorage.getItem(SAVE_AUTO_KEY) ? (() => {
+      try {
+        const auto = JSON.parse(localStorage.getItem(SAVE_AUTO_KEY));
+        return `
+          <div class="slot-card auto" data-slot="auto">
+            <div class="slot-num">A</div>
+            <div class="slot-info">
+              <strong>${t('slotAuto')} — ${auto.player.nama}</strong>
+              <small>${auto.player.position || (currentLang === 'ms' ? 'Rakyat' : 'Citizen')} • ${auto.date.label}</small>
+              <div class="slot-meta">
+                <span>Lvl ${auto.player.level}</span>
+                <span>${formatRM(auto.player.wang)}</span>
+                <span>${currentLang === 'ms' ? 'Giliran' : 'Turn'} ${auto.date.turn}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      } catch(e) { return ''; }
+    })() : ''}
+
+    <div class="slot-grid">
+      ${slots.map(s => {
+        if (s.kosong) {
+          return `
+            <button class="slot-card empty" data-slot="${s.num}" data-action="save">
+              <div class="slot-num">${s.num}</div>
+              <div class="slot-info">
+                <strong>Slot ${s.num}</strong>
+                <small>${t('slotEmpty')}</small>
+              </div>
+            </button>
+          `;
+        }
+        return `
+          <div class="slot-card" data-slot="${s.num}">
+            <div class="slot-num">${s.num}</div>
+            <div class="slot-info">
+              <strong>${s.nama}</strong>
+              <small>${s.position || (currentLang === 'ms' ? 'Rakyat' : 'Citizen')} • ${s.tarikh}</small>
+              <div class="slot-meta">
+                <span>Lvl ${s.level}</span>
+                <span>${formatRM(s.wang)}</span>
+                <span>${currentLang === 'ms' ? 'Umur' : 'Age'} ${s.umur}</span>
+              </div>
+            </div>
+            <div class="slot-actions">
+              <button data-action="load" data-slot="${s.num}" title="${t('slotLoad')}">📂</button>
+              <button data-action="save" data-slot="${s.num}" title="${t('slotSave')}">💾</button>
+              <button data-action="delete" data-slot="${s.num}" title="${t('slotDelete')}">🗑️</button>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+
+  body.querySelectorAll('[data-action]').forEach(el => {
+    el.onclick = (e) => {
+      e.stopPropagation();
+      const action = el.dataset.action;
+      const slot = parseInt(el.dataset.slot);
+      if (action === 'save') saveToSlot(slot);
+      else if (action === 'load') loadFromSlot(slot);
+      else if (action === 'delete') deleteSlot(slot);
+      if (action !== 'delete') openSlotsModal();
+    };
+  });
+
+  // Klik kosong slot → simpan
+  body.querySelectorAll('.slot-card.empty').forEach(el => {
+    el.onclick = () => {
+      saveToSlot(parseInt(el.dataset.slot));
+      openSlotsModal();
+    };
+  });
+
+  $('#slotsFooter').innerHTML = `
+    <button class="btn-secondary" onclick="document.getElementById('slotsModal').classList.remove('open')">${t('close')}</button>
+  `;
+
+  $('#slotsModal').classList.add('open');
+}
+
+/* ============ LEADERBOARD ============ */
+const LB_KEY = 'sppm_leaderboard';
+
+function recordToLeaderboard() {
+  if (!state) return;
+  const score = calculateLegacyScore(state);
+  const record = {
+    nama: state.player.nama,
+    negeri: state.player.negeri,
+    position: state.player.position || 'Rakyat',
+    level: state.player.level,
+    umur: state.player.umur,
+    giliran: state.date.turn,
+    skor: Math.round(score.total),
+    rank: score.total >= 85 ? 'LEGENDA' :
+          score.total >= 70 ? 'NEGARAWAN' :
+          score.total >= 55 ? 'PEMIMPIN' :
+          score.total >= 40 ? 'AKTIVIS' : 'RAKYAT',
+    tarikh: new Date().toLocaleDateString(),
+    timestamp: Date.now()
+  };
+  try {
+    const list = JSON.parse(localStorage.getItem(LB_KEY) || '[]');
+    list.push(record);
+    list.sort((a, b) => b.skor - a.skor);
+    const trimmed = list.slice(0, 20);
+    localStorage.setItem(LB_KEY, JSON.stringify(trimmed));
+  } catch(e) {}
+}
+
+function openLeaderboardModal() {
+  let list = [];
+  try {
+    list = JSON.parse(localStorage.getItem(LB_KEY) || '[]');
+  } catch(e) {}
+
+  const body = $('#leaderboardBody');
+  if (list.length === 0) {
+    body.innerHTML = `<p style="text-align:center;color:var(--kelabu);padding:24px;font-size:13px;">${t('lbEmpty')}</p>`;
+  } else {
+    body.innerHTML = `
+      <p style="font-size:12px;color:var(--kelabu);margin-bottom:10px;">
+        ${currentLang === 'ms' ? 'Rekod pemain terdahulu pada peranti ini.' : 'Records of previous players on this device.'}
+      </p>
+      <div class="leader-list">
+        ${list.map((r, i) => `
+          <div class="leader-item rank-${i + 1}">
+            <div class="leader-rank">${i + 1}</div>
+            <div class="leader-info">
+              <strong>${r.nama}</strong>
+              <small>${r.position} • ${r.negeri} • ${currentLang === 'ms' ? 'Umur' : 'Age'} ${r.umur}</small>
+              <small style="color:var(--emas);font-weight:600;letter-spacing:1px;">${r.rank}</small>
+            </div>
+            <div class="leader-score">
+              <strong>${r.skor}</strong>
+              <small>${t('lbScore')}</small>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  $('#leaderboardModal').classList.add('open');
+}
+
+/* ============ MOD CERITA ============ */
+const STORIES = [
+  {
+    id: 'S01',
+    emoji: '🎣',
+    tajuk: 'Anak Nelayan',
+    sub: 'Dari Kampung ke Parlimen',
+    desk: 'Anda dibesarkan dalam keluarga nelayan di pantai Timur. Ibu bapa bekerja keras menampung keluarga. Anda bercita-cita tinggi dan ingin mengubah nasib keluarga.',
+    tags: ['Keluarga B40', 'Pantai Timur', 'Semangat Tinggi'],
+    diff: 'medium',
+    start: {
+      negeri: 'Kelantan',
+      latar: 'B40',
+      wang: 300,
+      pendidikan: 'SPM',
+      kerjaya: 'Pekerja Separuh Masa',
+      matlamat: 'politik',
+      minatPolitik: 7,
+      integrity: 60,
+      charisma: 55,
+      popularity: 15
+    }
+  },
+  {
+    id: 'S02',
+    emoji: '📚',
+    tajuk: 'Anak Guru',
+    sub: 'Didikan & Perjuangan',
+    desk: 'Ibu bapa anda guru sekolah. Anda dibesarkan dalam suasana ilmiah. Diharapkan menjadi pemimpin berpendidikan yang memperjuangkan pendidikan untuk semua.',
+    tags: ['Keluarga M40', 'Pendidikan', 'Idealisme'],
+    diff: 'easy',
+    start: {
+      negeri: 'Johor',
+      latar: 'M40',
+      wang: 1500,
+      pendidikan: 'Diploma',
+      kerjaya: 'Guru',
+      matlamat: 'masyarakat',
+      minatPolitik: 5,
+      integrity: 70,
+      charisma: 50,
+      popularity: 20
+    }
+  },
+  {
+    id: 'S03',
+    emoji: '💼',
+    tajuk: 'Anak Pedagang',
+    sub: 'Bisnes & Pengaruh',
+    desk: 'Keluarga anda berniaga di bandar. Anda mahir dalam perniagaan dan rangkaian. Cita-cita anda adalah menggabungkan perniagaan dengan kepimpinan politik.',
+    tags: ['Keluarga T20', 'Perniagaan', 'Rangkaian'],
+    diff: 'hard',
+    start: {
+      negeri: 'Selangor',
+      latar: 'T20',
+      wang: 15000,
+      pendidikan: 'Ijazah Sarjana Muda',
+      kerjaya: 'Pengurus',
+      matlamat: 'kaya',
+      minatPolitik: 4,
+      integrity: 45,
+      charisma: 65,
+      popularity: 25
+    }
+  }
+];
+
+function openStoryModal() {
+  const body = $('#storyBody');
+  body.innerHTML = `
+    <p style="font-size:12px;color:var(--kelabu);margin-bottom:14px;">${t('storyDesc')}</p>
+    ${STORIES.map(s => `
+      <div class="story-card" data-story="${s.id}">
+        <div class="story-diff ${s.diff}">${s.diff.toUpperCase()}</div>
+        <div class="story-header">
+          <span class="story-icon">${s.emoji}</span>
+          <div>
+            <div class="story-title">${s.tajuk}</div>
+            <div class="story-sub">${s.sub}</div>
+          </div>
+        </div>
+        <div class="story-desc">${s.desk}</div>
+        <div class="story-tags">
+          ${s.tags.map(tag => `<span class="story-tag">${tag}</span>`).join('')}
+        </div>
+      </div>
+    `).join('')}
+  `;
+  body.querySelectorAll('[data-story]').forEach(el => {
+    el.onclick = () => {
+      const id = el.dataset.story;
+      startStory(id);
+    };
+  });
+  $('#storyModal').classList.add('open');
+}
+
+function startStory(storyId) {
+  const story = STORIES.find(s => s.id === storyId);
+  if (!story) return;
+  if (state && !confirm(currentLang === 'ms' ? 'Mulakan cerita ini? Permainan semasa akan diganti.' : 'Start this story? Current game will be replaced.')) return;
+
+  const nama = prompt(currentLang === 'ms' ? 'Nama watak anda:' : 'Your character name:', 'Ahmad');
+  if (!nama) return;
+
+  const s = story.start;
+  const careerData = CAREERS[s.kerjaya] || CAREERS['Tiada Kerja'];
+
+  state = {
+    version: VERSION,
+    createdAt: Date.now(),
+    story: story.id,
+    player: {
+      nama: nama.trim(),
+      umur: 18,
+      jantina: 'Lelaki',
+      negeri: s.negeri,
+      pendidikan: s.pendidikan,
+      latar: s.latar,
+      matlamat: s.matlamat,
+      minatPolitik: s.minatPolitik,
+      avatar: nama.trim().charAt(0).toUpperCase(),
+      level: 0,
+      xp: 0,
+      wang: s.wang,
+      tabungan: 0,
+      hutang: 0,
+      aset: 0,
+      career: s.kerjaya,
+      gaji: careerData.gaji,
+      stress: 0,
+      health: 100,
+      popularity: s.popularity,
+      integrity: s.integrity,
+      charisma: s.charisma,
+      leadership: 30,
+      experience: 0,
+      partyInfluence: 0,
+      grassrootsSupport: 0,
+      mediaRelations: 0,
+      publicTrust: 50,
+      coalitionStability: 50,
+      legalRisk: 0,
+      administration: 20,
+      negotiation: 30,
+      partyRelations: 50,
+      youthSupport: 30,
+      constituencySupport: 0,
+      electionChance: 0,
+      allyLoyalty: 50,
+      party: null,
+      position: null,
+      positions: [],
+      housing: 'IbuBapa',
+      pasangan: null,
+      anak: 0,
+      tanggungan: 0
+    },
+    date: { year: 2025, month: 0, turn: 1, label: 'Jan 2025' },
+    finances: {
+      pendapatanBulanan: careerData.gaji,
+      perbelanjaanBulanan: 800,
+      cashFlow: 0,
+      netWorth: 0,
+      bil: [],
+      transactions: []
+    },
+    relationships: {},
+    eventHistory: [],
+    activeEvents: [],
+    pendingConsequences: [],
+    cooldowns: {},
+    flags: {},
+    news: [],
+    achievements: [],
+    activityHistory: [],
+    notifications: []
+  };
+
+  CHARACTERS.forEach(c => {
+    state.relationships[c.id] = {
+      score: randomInt(0, 20),
+      trust: 10, loyalty: 10, respect: 10,
+      memory: []
+    };
+  });
+
+  state.news.unshift({
+    id: uid(), tarikh: state.date.label,
+    tajuk: `Cerita: ${story.tajuk}`,
+    kategori: 'UMUM',
+    ringkasan: story.desk,
+    status: 'Disahkan dalam dunia simulasi'
+  });
+
+  recalcFinances();
+  $('#storyModal').classList.remove('open');
+  $('#mainMenu').classList.remove('active');
+  saveGame(true);
+  enterGame();
+  NotifManager.init();
+  NotifManager.push(story.emoji, story.tajuk, story.sub, 'gold');
+  showToast(`📖 ${story.tajuk}`, 'success');
+
+  if (settings.cutscene !== false) {
+    playCutscene(story.emoji, story.tajuk, story.sub, 3500);
+  }
+}
+
+/* ============ ANALITIK PERIBADI ============ */
+function openAnalyticsModal() {
+  if (!state) return;
+  const p = state.player;
+  const f = state.finances;
+  const legacy = calculateLegacyScore(state);
+
+  const totalEvents = state.eventHistory.length;
+  const totalNews = state.news.length;
+  const totalProjects = (state.projects || []).length;
+  const siapProjects = (state.projects || []).filter(x => x.status === 'Siap').length;
+  const totalTasks = (state.tasks?.selesai?.length || 0) + (state.tasks?.aktif?.length || 0);
+
+  $('#analyticsBody').innerHTML = `
+    <div class="analytics-section">
+      <h4>📊 Ringkasan Permainan</h4>
+      <div class="analytics-grid">
+        <div class="analytics-item">
+          <label>Total Giliran</label>
+          <strong>${state.date.turn}</strong>
+        </div>
+        <div class="analytics-item">
+          <label>Umur</label>
+          <strong>${p.umur}</strong>
+        </div>
+        <div class="analytics-item">
+          <label>Level</label>
+          <strong>${p.level}</strong>
+        </div>
+        <div class="analytics-item">
+          <label>Skor Legasi</label>
+          <strong>${Math.round(legacy.total)}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="analytics-section">
+      <h4>💰 Kewangan</h4>
+      <div class="analytics-grid">
+        <div class="analytics-item ${p.wang > 5000 ? 'good' : p.wang < 500 ? 'bad' : ''}">
+          <label>Wang Tunai</label>
+          <strong>${formatRM(p.wang)}</strong>
+        </div>
+        <div class="analytics-item">
+          <label>Nilai Bersih</label>
+          <strong>${formatRM(f.netWorth)}</strong>
+        </div>
+        <div class="analytics-item ${p.hutang > 0 ? 'warn' : 'good'}">
+          <label>Hutang</label>
+          <strong>${formatRM(p.hutang)}</strong>
+        </div>
+        <div class="analytics-item">
+          <label>Aliran / Bulan</label>
+          <strong>${formatRM(f.cashFlow)}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="analytics-section">
+      <h4>📈 Aktiviti</h4>
+      <div class="analytics-grid">
+        <div class="analytics-item">
+          <label>Peristiwa Dilalui</label>
+          <strong>${totalEvents}</strong>
+        </div>
+        <div class="analytics-item">
+          <label>Berita Direkod</label>
+          <strong>${totalNews}</strong>
+        </div>
+        <div class="analytics-item">
+          <label>Projek (Siap/Total)</label>
+          <strong>${siapProjects}/${totalProjects}</strong>
+        </div>
+        <div class="analytics-item">
+          <label>Tugasan</label>
+          <strong>${totalTasks}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="analytics-section">
+      <h4>🏛️ Politik</h4>
+      <div class="analytics-grid">
+        <div class="analytics-item">
+          <label>Parti</label>
+          <strong>${p.party ? p.party.singkatan : '-'}</strong>
+        </div>
+        <div class="analytics-item">
+          <label>Jawatan</label>
+          <strong>${p.position || '-'}</strong>
+        </div>
+        <div class="analytics-item">
+          <label>Populariti</label>
+          <strong>${Math.round(p.popularity)}</strong>
+        </div>
+        <div class="analytics-item">
+          <label>Integriti</label>
+          <strong>${Math.round(p.integrity)}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="analytics-section">
+      <h4>🏆 Pencapaian</h4>
+      <p style="font-size:12px;color:var(--kelabu-gelap);">
+        ${(state.achievements || []).length} / ${ACHIEVEMENTS.length} pencapaian dibuka
+      </p>
+      <div class="progress-bar" style="margin-top:8px;">
+        <div class="progress-fill" style="width:${((state.achievements?.length || 0) / ACHIEVEMENTS.length) * 100}%"></div>
+      </div>
+    </div>
+
+    ${state.story ? `
+      <div class="analytics-section" style="background:linear-gradient(135deg,#fffbea,#fff);">
+        <h4>📖 Mod Cerita</h4>
+        <p style="font-size:12px;color:var(--kelabu-gelap);">
+          Anda bermain dalam cerita: <strong>${STORIES.find(x => x.id === state.story)?.tajuk || 'Tidak diketahui'}</strong>
+        </p>
+      </div>
+    ` : ''}
+  `;
+
+  $('#analyticsModal').classList.add('open');
+}
+
+/* ============ LAPORAN PDF ============ */
+function openPDFReport() {
+  if (!state) return;
+  const p = state.player;
+  const f = state.finances;
+  const legacy = calculateLegacyScore(state);
+  const tarikh = new Date().toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  const html = `
+    <div class="pdf-preview" id="pdfPreview">
+      <h1>LAPORAN LEGASI</h1>
+      <div class="pdf-subtitle">Simulator Parti Politik Malaysia — Laporan Rasmi Simulasi</div>
+
+      <h2>Maklumat Pemain</h2>
+      <table>
+        <tr><th width="30%">Nama</th><td>${p.nama}</td></tr>
+        <tr><th>Umur</th><td>${p.umur} tahun</td></tr>
+        <tr><th>Negeri</th><td>${p.negeri}</td></tr>
+        <tr><th>Jantina</th><td>${p.jantina}</td></tr>
+        <tr><th>Pendidikan</th><td>${p.pendidikan}</td></tr>
+        <tr><th>Latar Keluarga</th><td>${p.latar}</td></tr>
+      </table>
+
+      <h2>Kerjaya</h2>
+      <table>
+        <tr><th width="30%">Kerjaya Semasa</th><td>${p.career}</td></tr>
+        <tr><th>Gaji Bulanan</th><td>${formatRM(p.gaji)}</td></tr>
+        <tr><th>Tahap</th><td>${p.level} — ${LEVELS[p.level].nama}</td></tr>
+        <tr><th>Pengalaman</th><td>${p.experience}</td></tr>
+        <tr><th>XP</th><td>${p.xp}</td></tr>
+      </table>
+
+      <h2>Kewangan</h2>
+      <table>
+        <tr><th width="30%">Wang Tunai</th><td>${formatRM(p.wang)}</td></tr>
+        <tr><th>Tabungan</th><td>${formatRM(p.tabungan)}</td></tr>
+        <tr><th>Aset</th><td>${formatRM(p.aset)}</td></tr>
+        <tr><th>Hutang</th><td>${formatRM(p.hutang)}</td></tr>
+        <tr><th>Nilai Bersih</th><td>${formatRM(f.netWorth)}</td></tr>
+        <tr><th>Pendapatan / Bulan</th><td>${formatRM(f.pendapatanBulanan)}</td></tr>
+        <tr><th>Perbelanjaan / Bulan</th><td>${formatRM(f.perbelanjaanBulanan)}</td></tr>
+        <tr><th>Aliran Tunai</th><td>${formatRM(f.cashFlow)}</td></tr>
+      </table>
+
+      <h2>Politik</h2>
+      <table>
+        <tr><th width="30%">Parti</th><td>${p.party ? p.party.nama + ' (' + p.party.singkatan + ')' : 'Tiada'}</td></tr>
+        <tr><th>Jawatan</th><td>${p.position || 'Tiada'}</td></tr>
+        <tr><th>Populariti</th><td>${Math.round(p.popularity)} / 100</td></tr>
+        <tr><th>Integriti</th><td>${Math.round(p.integrity)} / 100</td></tr>
+        <tr><th>Karisma</th><td>${Math.round(p.charisma)} / 100</td></tr>
+        <tr><th>Kepimpinan</th><td>${Math.round(p.leadership)} / 100</td></tr>
+        <tr><th>Pengaruh Parti</th><td>${Math.round(p.partyInfluence)} / 100</td></tr>
+        <tr><th>Sokongan Akar Umbi</th><td>${Math.round(p.grassrootsSupport)} / 100</td></tr>
+      </table>
+
+      ${(state.dun?.won?.length > 0 || state.parlimen?.won?.length > 0) ? `
+        <h2>Kerusi Dimenangi</h2>
+        <ul>
+          ${(state.dun?.won || []).map(w => `<li>${w.kod} ${w.nama} (DUN) — ${w.tarikh}</li>`).join('')}
+          ${(state.parlimen?.won || []).map(w => `<li>${w.kod} ${w.nama} (Parlimen) — ${w.tarikh}</li>`).join('')}
+        </ul>
+      ` : ''}
+
+      ${(state.projects && state.projects.length > 0) ? `
+        <h2>Projek Pembangunan</h2>
+        <table>
+          <tr><th>Nama Projek</th><th>Kos</th><th>Status</th><th>Manfaat</th></tr>
+          ${state.projects.map(pr => `
+            <tr>
+              <td>${pr.nama}</td>
+              <td>${formatRM(pr.kos)}</td>
+              <td>${pr.status}</td>
+              <td>${pr.manfaat}</td>
+            </tr>
+          `).join('')}
+        </table>
+      ` : ''}
+
+      ${(state.achievements && state.achievements.length > 0) ? `
+        <h2>Pencapaian</h2>
+        <ul>
+          ${state.achievements.map(a => `<li><strong>${a.nama}</strong> — dibuka ${a.tarikh}</li>`).join('')}
+        </ul>
+      ` : ''}
+
+      <h2>Skor Legasi</h2>
+      <table>
+        <tr><th width="50%">Jumlah Skor</th><td><strong>${Math.round(legacy.total)} / 100</strong></td></tr>
+        <tr><th>Rank</th><td><strong>${legacy.total >= 85 ? 'LEGENDA' : legacy.total >= 70 ? 'NEGARAWAN' : legacy.total >= 55 ? 'PEMIMPIN' : legacy.total >= 40 ? 'AKTIVIS' : 'RAKYAT'}</strong></td></tr>
+        <tr><th>Pengaruh Politik</th><td>${Math.round(legacy.pengaruh)} / 100</td></tr>
+        <tr><th>Integriti</th><td>${Math.round(legacy.integriti)} / 100</td></tr>
+      </table>
+
+      <h2>Ringkasan Statistik</h2>
+      <table>
+        <tr><th width="50%">Giliran Dimainkan</th><td>${state.date.turn}</td></tr>
+        <tr><th>Peristiwa Dilalui</th><td>${state.eventHistory.length}</td></tr>
+        <tr><th>Berita Direkod</th><td>${state.news.length}</td></tr>
+        <tr><th>Pencapaian Dibuka</th><td>${(state.achievements || []).length} / ${ACHIEVEMENTS.length}</td></tr>
+      </table>
+
+      <h2>Penafian</h2>
+      <p style="font-size:11px;color:#666;font-style:italic;">
+        Semua parti, watak, kawasan, berita dan peristiwa dalam laporan ini adalah
+        FIKSYEN SIMULASI. Ia bukan gambaran mana-mana individu, parti politik, atau
+        peristiwa sebenar Malaysia. Data rasmi SPR tidak digunakan dalam laporan ini.
+      </p>
+
+      <div class="pdf-signature">
+        <em>Dijana oleh Simulator Parti Politik Malaysia v${VERSION}</em>
+      </div>
+
+      <div class="pdf-meta">
+        <span>Dijana pada: ${tarikh}</span>
+        <span>Versi: ${VERSION}</span>
+        <span>Giliran: ${state.date.turn}</span>
+      </div>
+    </div>
+  `;
+
+  $('#pdfBody').innerHTML = html;
+  $('#pdfFooter').innerHTML = `
+    <button class="btn-secondary" onclick="document.getElementById('pdfModal').classList.remove('open')">${t('close')}</button>
+    <button class="btn-primary" id="printBtn" style="width:auto;margin:0;">🖨️ ${t('pdfPrint')}</button>
+  `;
+
+  setTimeout(() => {
+    const btn = $('#printBtn');
+    if (btn) btn.onclick = () => {
+      window.print();
+    };
+  }, 50);
+
+  $('#pdfModal').classList.add('open');
+}
+
+/* ============ HOOK: TAMBAH NOTIFIKASI PADA AKSI PENTING ============ */
+
+/* Hook: level up */
+const _v4CheckLevelUp = checkLevelUp;
+checkLevelUp = function() {
+  const before = state.player.level;
+  _v4CheckLevelUp();
+  if (state.player.level > before) {
+    NotifManager.push('⭐', `Tahap ${state.player.level}`,
+      LEVELS[state.player.level].nama, 'gold');
+  }
+};
+
+/* Hook: kemenangan pilihan raya */
+const _v4ResolveCampaign = resolveCampaign;
+resolveCampaign = function() {
+  const beforePos = state.player.position;
+  _v4ResolveCampaign();
+  if (state.player.position && state.player.position !== beforePos) {
+    NotifManager.push('🎉', 'Kemenangan Pilihan Raya!',
+      `Jawatan: ${state.player.position}`, 'success');
+  }
+};
+
+/* Hook: berita */
+const _v4AddNews = addNews;
+addNews = function(tajuk, ringkasan, kategori) {
+  _v4AddNews(tajuk, ringkasan, kategori);
+  if (kategori === 'POLITIK') {
+    NotifManager.push('📰', tajuk, ringkasan, 'info');
+  } else if (kategori === 'PROJEK') {
+    NotifManager.push('🏗️', tajuk, ringkasan, 'success');
+  }
+};
+
+/* Hook: krisis */
+const _v4ResolveCrisis = resolveCrisis;
+resolveCrisis = function(action) {
+  _v4ResolveCrisis(action);
+  const c = state.crisis.sejarah[state.crisis.sejarah.length - 1];
+  if (c) {
+    NotifManager.push('🚨', `Krisis: ${c.tajuk}`, c.hasil,
+      c.hasil.includes('❌') ? 'error' : 'success');
+  }
+};
+
+/* ============ EXTRA NAV 5 ============ */
+function setupExtraNav5() {
+  const nav = $('#extraNav5');
+  if (!nav) return;
+
+  const observer = new MutationObserver(() => {
+    if ($('#game').classList.contains('active')) {
+      nav.classList.remove('hidden');
+    } else {
+      nav.classList.add('hidden');
+    }
+  });
+  observer.observe($('#game'), { attributes: true, attributeFilter: ['class'] });
+
+  nav.querySelectorAll('[data-extra5]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      AudioManager.click();
+      const action = btn.dataset.extra5;
+      switch(action) {
+        case 'slots': openSlotsModal(); break;
+        case 'leader': openLeaderboardModal(); break;
+        case 'story': openStoryModal(); break;
+        case 'analytics': openAnalyticsModal(); break;
+        case 'notif': openNotifModal(); break;
+        case 'pdf': openPDFReport(); break;
+        case 'lang': openLanguageModal(); break;
+      }
+    });
+  });
+}
+
+/* ============ HOOK: SIMPAN PERMAINAN → NOTIFIKASI ============ */
+const _v4SaveGame = saveGame;
+saveGame = function(auto) {
+  _v4SaveGame(auto);
+};
+
+/* ============ HOOK: BERSARA → REKOD LEADERBOARD ============ */
+const _v4ShowFinalReport = showFinalReport;
+showFinalReport = function() {
+  recordToLeaderboard();
+  NotifManager.push('🏆', 'Laporan Akhir Dijana', 'Skor direkod ke leaderboard', 'gold');
+  _v4ShowFinalReport();
+};
+
+/* ============ BUTANG MENU UTAMA ============ */
+function setupMenuButtons() {
+  const btnLang = $('#btnLanguage');
+  if (btnLang) btnLang.onclick = openLanguageModal;
+  const btnStory = $('#btnStoryMode');
+  if (btnStory) btnStory.onclick = openStoryModal;
+  const btnLeader = $('#btnLeaderboard');
+  if (btnLeader) btnLeader.onclick = openLeaderboardModal;
+}
+
+/* ============ HOOK init UNTUK v5 ============ */
+const _v4Init = init;
+init = function() {
+  _v4Init();
+
+  // Load bahasa
+  loadLanguage();
+
+  // Setup menu butang
+  setupMenuButtons();
+
+  // Setup extra nav v5
+  setupExtraNav5();
+
+  // Update UI mengikut bahasa
+  updateUILanguage();
+
+  // Init NotifManager (jika state ada dari autosave)
+  if (state) NotifManager.init();
+
+  console.log('🌐 v5.0: I18N, Slot, Leaderboard, Story, Analitik, Notif, PDF');
+};
+
 /* ============ JALANKAN ============ */
 document.addEventListener('DOMContentLoaded', init);
