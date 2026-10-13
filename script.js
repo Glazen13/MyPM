@@ -1386,7 +1386,7 @@ function checkLevelUp() {
 /* ============ SISTEM PERISTIWA ============ */
 function maybeTriggerEvent() {
   // 40% peluang peristiwa setiap giliran
-  if (Math.random() > 0.4) return;
+  if (Math.random() > 0.25) return;
 
   // Filter peristiwa yang tidak dalam cooldown
   const available = EVENTS.filter(ev => {
@@ -3161,7 +3161,7 @@ function runFullPRU() {
 /* ============ KRISIS KABINET & UNDI TIDAK PERCAYA ============ */
 function maybeTriggerCrisis() {
   if (!state.player.party) return;
-  if (Math.random() > 0.15) return; // 15% peluang
+  if (Math.random() > 0.3) return; // 15% peluang
   if (state.crisis.aktif) return; // sudah ada krisis
 
   const jenis = pickRandom([
