@@ -2739,3 +2739,213 @@ body.theme-red {
   background: rgba(0, 0, 0, 0.15);
   border-radius: 2px;
 }
+/* ============================================
+   TETAPAN BERSATU (v6.2)
+   ============================================ */
+
+.settings-section {
+  background: var(--kelabu-cerah);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.settings-section h4 {
+  font-size: 13px;
+  color: var(--biru-gelap);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #d8e0ea;
+}
+
+.settings-section .settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 13px;
+  gap: 12px;
+}
+
+.settings-section .settings-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.settings-section .settings-row label {
+  flex: 1;
+  color: var(--kelabu-gelap);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.settings-section .settings-row small {
+  display: block;
+  color: var(--kelabu);
+  font-size: 11px;
+  margin-top: 2px;
+  font-weight: 400;
+}
+
+/* Dropdown dalam tetapan */
+.settings-section .form-group {
+  margin-bottom: 12px;
+}
+
+.settings-section .form-group:last-child {
+  margin-bottom: 0;
+}
+
+.settings-section .form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--kelabu-gelap);
+  margin-bottom: 6px;
+}
+
+.settings-section select,
+.settings-section input[type="text"],
+.settings-section input[type="number"] {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--kelabu-gelap);
+  background: var(--putih);
+}
+
+.settings-section select:focus,
+.settings-section input:focus {
+  outline: none;
+  border-color: var(--biru-muda);
+  box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+}
+
+/* Toggle Switch (guna semula gaya v4) */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.toggle-switch input { display: none; }
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: #cbd5e0;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: var(--putih);
+  border-radius: 50%;
+  left: 3px;
+  top: 3px;
+  transition: var(--transition);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.toggle-switch input:checked + .toggle-slider {
+  background: var(--biru-muda);
+}
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(20px);
+}
+
+/* Theme picker dalam tetapan */
+.settings-section .theme-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.settings-section .theme-swatch {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: var(--transition);
+  position: relative;
+  box-shadow: var(--bayang);
+}
+
+.settings-section .theme-swatch:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--bayang-besar);
+}
+
+.settings-section .theme-swatch.active {
+  border-color: var(--biru-muda);
+  box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.3);
+}
+
+.settings-section .theme-swatch.active::after {
+  content: '✓';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--putih);
+  font-size: 20px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.settings-section .theme-swatch[data-theme="blue"] {
+  background: linear-gradient(135deg, #0a1e3f, #2c5aa0, #d4af37);
+}
+.settings-section .theme-swatch[data-theme="gold"] {
+  background: linear-gradient(135deg, #3a2c0a, #8b6f1f, #f0d97a);
+}
+.settings-section .theme-swatch[data-theme="green"] {
+  background: linear-gradient(135deg, #0a2f1e, #1e8a5c, #f0d97a);
+}
+.settings-section .theme-swatch[data-theme="red"] {
+  background: linear-gradient(135deg, #3f0a0a, #a02c2c, #f0d97a);
+}
+
+/* Info versi */
+.settings-info-box {
+  background: linear-gradient(135deg, #0a1e3f, #1a3a6b);
+  color: var(--putih);
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.settings-info-box .info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.settings-info-box .info-row:last-child { border-bottom: none; }
+.settings-info-box .info-label {
+  color: rgba(255, 255, 255, 0.6);
+}
+.settings-info-box .info-value {
+  color: var(--emas-muda);
+  font-weight: 600;
+}
+
+/* Responsif */
+@media (max-width: 480px) {
+  .settings-section .theme-picker {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
