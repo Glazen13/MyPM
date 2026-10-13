@@ -2025,6 +2025,7 @@ function closeSidePanel() { $('#sidePanel').classList.remove('open'); }
 function handleSideAction(action) {
   closeSidePanel();
   switch(action) {
+    // === Kumpulan asas ===
     case 'save':
       saveGame(false);
       showToast('Permainan disimpan', 'success');
@@ -2039,6 +2040,65 @@ function handleSideAction(action) {
     case 'settings': modalSettings(); break;
     case 'retire': confirmRetire(); break;
     case 'quit': confirmQuit(); break;
+
+    // === Menu Lanjutan (v5) ===
+    case 'slots':
+      if (typeof openSlotsModal === 'function') openSlotsModal();
+      break;
+    case 'leaderboard':
+      if (typeof openLeaderboardModal === 'function') openLeaderboardModal();
+      break;
+    case 'story':
+      if (typeof openStoryModal === 'function') openStoryModal();
+      break;
+    case 'analytics':
+      if (typeof openAnalyticsModal === 'function') openAnalyticsModal();
+      break;
+    case 'notifications':
+      if (typeof openNotifModal === 'function') openNotifModal();
+      break;
+    case 'pdf':
+      if (typeof openPDFReport === 'function') openPDFReport();
+      break;
+    case 'language':
+      if (typeof openLanguageModal === 'function') openLanguageModal();
+      break;
+
+    // === Menu Lanjutan (v4) ===
+    case 'theme':
+      if (typeof openThemePicker === 'function') openThemePicker();
+      break;
+    case 'chart':
+      if (typeof openChartModal === 'function') openChartModal();
+      break;
+
+    // === Menu Lanjutan (v2) ===
+    case 'map':
+      if (typeof openMapModal === 'function') openMapModal();
+      break;
+    case 'svgmap':
+      if (typeof openSVGMapModal === 'function') openSVGMapModal();
+      break;
+
+    // === Menu Lanjutan (v6) ===
+    case 'compare':
+      if (typeof openCompareModal === 'function') openCompareModal();
+      break;
+    case 'io':
+      if (typeof openIOModal === 'function') openIOModal();
+      break;
+    case 'daily':
+      if (typeof openDailyModal === 'function') openDailyModal();
+      break;
+    case 'record':
+      if (typeof openRecordModal === 'function') openRecordModal();
+      break;
+    case 'scenario':
+      if (typeof openScenarioEditorModal === 'function') openScenarioEditorModal();
+      break;
+    case 'ai':
+      if (typeof openAIModal === 'function') openAIModal();
+      break;
   }
 }
 
