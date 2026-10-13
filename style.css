@@ -2599,3 +2599,143 @@ body.theme-red {
     min-width: 0;
   }
 }
+/* ============================================
+   SIDE PANEL DROPDOWN — Menu Lanjutan
+   ============================================ */
+
+.side-dropdown {
+  display: block;
+  width: 100%;
+}
+
+.side-dropdown-toggle {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(44, 90, 160, 0.08), rgba(212, 175, 55, 0.05));
+  border: 1.5px solid rgba(44, 90, 160, 0.15);
+  border-radius: 8px;
+  font-weight: 600;
+  color: var(--biru-gelap);
+  margin: 4px 0;
+  transition: var(--transition);
+}
+
+.side-dropdown-toggle:hover {
+  background: linear-gradient(135deg, rgba(44, 90, 160, 0.15), rgba(212, 175, 55, 0.1));
+  border-color: var(--biru-muda);
+}
+
+.side-dropdown-toggle.open {
+  background: linear-gradient(135deg, var(--biru-muda), var(--biru-sederhana));
+  color: var(--putih);
+  border-color: var(--emas);
+}
+
+.side-dropdown-toggle.open .dropdown-arrow {
+  transform: rotate(180deg);
+  color: var(--emas-muda);
+}
+
+.dropdown-arrow {
+  font-size: 10px;
+  color: var(--kelabu);
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.side-dropdown-menu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.side-dropdown-menu.open {
+  max-height: 800px;
+  opacity: 1;
+  padding: 4px 0 8px;
+  margin: 4px 0;
+}
+
+.side-sub-link {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 10px 14px 10px 28px;
+  text-align: left;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--kelabu-gelap);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: var(--transition);
+  position: relative;
+}
+
+.side-sub-link::before {
+  content: '';
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--kelabu);
+  transition: var(--transition);
+}
+
+.side-sub-link:hover {
+  background: var(--kelabu-cerah);
+  color: var(--biru-muda);
+  padding-left: 32px;
+}
+
+.side-sub-link:hover::before {
+  background: var(--emas);
+  width: 6px;
+  height: 6px;
+}
+
+.side-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+  margin: 10px 8px;
+}
+
+/* Badge notifikasi kecil dalam sub-link */
+.side-sub-link .notif-count {
+  display: inline-block;
+  background: var(--merah);
+  color: var(--putih);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 4px;
+  min-width: 18px;
+  text-align: center;
+}
+.side-sub-link .notif-count.hidden {
+  display: none;
+}
+
+/* Scroll dalam dropdown kalau terlalu panjang */
+.side-dropdown-menu.open {
+  overflow-y: auto;
+  max-height: 400px;
+  scrollbar-width: thin;
+}
+
+.side-dropdown-menu::-webkit-scrollbar {
+  width: 4px;
+}
+
+.side-dropdown-menu::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+}
