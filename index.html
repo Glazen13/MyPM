@@ -350,6 +350,76 @@
   <button class="extra-nav-btn" data-extra="budget">💰 Bajet</button>
   <button class="extra-nav-btn" data-extra="cabinet">🏛️ Kabinet</button>
 </div>
+  <!-- ============ MODUL v3.0 ============ -->
+
+<!-- Modal PRU (Pilihan Raya Umum) -->
+<div id="pruModal" class="modal">
+  <div class="modal-content" style="max-width:700px;">
+    <div class="modal-header">
+      <h3>🗳️ Pilihan Raya Umum (Simulasi)</h3>
+      <button class="icon-btn" onclick="document.getElementById('pruModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="pruBody"></div>
+    <div class="modal-footer" id="pruFooter"></div>
+  </div>
+</div>
+
+<!-- Modal Krisis Kabinet -->
+<div id="crisisModal" class="modal">
+  <div class="modal-content" style="max-width:600px;">
+    <div class="modal-header" style="background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;">
+      <h3 style="color:#fff;">🚨 Krisis Politik</h3>
+      <button class="icon-btn" style="background:rgba(255,255,255,0.2);color:#fff;"
+        onclick="document.getElementById('crisisModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="crisisBody"></div>
+    <div class="modal-footer" id="crisisFooter"></div>
+  </div>
+</div>
+
+<!-- Modal Watak AI -->
+<div id="charModal" class="modal">
+  <div class="modal-content" style="max-width:600px;">
+    <div class="modal-header">
+      <h3 id="charTitle">👤 Watak</h3>
+      <button class="icon-btn" onclick="document.getElementById('charModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="charBody"></div>
+  </div>
+</div>
+
+<!-- Modal Laporan Legasi -->
+<div id="legacyModal" class="modal">
+  <div class="modal-content" style="max-width:700px;">
+    <div class="modal-header">
+      <h3>🏆 Laporan Legasi</h3>
+      <button class="icon-btn" onclick="document.getElementById('legacyModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="legacyBody"></div>
+    <div class="modal-footer" id="legacyFooter"></div>
+  </div>
+</div>
+
+<!-- Modal Pilihan Raya Kecil -->
+<div id="byElectionModal" class="modal">
+  <div class="modal-content" style="max-width:560px;">
+    <div class="modal-header">
+      <h3>📮 Pilihan Raya Kecil</h3>
+      <button class="icon-btn" onclick="document.getElementById('byElectionModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="byElectionBody"></div>
+  </div>
+</div>
+
+<!-- Butang tambahan dalam side panel (akan di-append via JS) -->
+
+<!-- Nav tambahan v3 -->
+<div id="extraNav3" class="extra-nav hidden" style="bottom:118px;">
+  <button class="extra-nav-btn" data-extra3="pru">🗳️ PRU</button>
+  <button class="extra-nav-btn" data-extra3="chars">👥 Watak</button>
+  <button class="extra-nav-btn" data-extra3="legacy">🏆 Legasi</button>
+  <button class="extra-nav-btn" data-extra3="timeline">📅 Timeline</button>
+</div>
 <script src="script.js"></script>
 </body>
 </html>
