@@ -2672,28 +2672,7 @@ function init() {
 
 /* ============ PANGKALAN DATA: KAWASAN PARLIMEN (SAMPEL SIMULASI) ============ */
 /* Nota: Ini adalah data SIMULASI bagi tujuan permainan. Bukan data rasmi SPR. */
-const PARLIMEN_DB = [
-  { kod: 'P.001', nama: 'Padang Besar', negeri: 'Perlis', pengundi: 52000, penyandang: 'Simulasi', parti: 'BNR' },
-  { kod: 'P.002', nama: 'Kangar', negeri: 'Perlis', pengundi: 48000, penyandang: 'Simulasi', parti: 'PRB' },
-  { kod: 'P.003', nama: 'Arau', negeri: 'Perlis', pengundi: 45000, penyandang: 'Simulasi', parti: 'PIN' },
-  { kod: 'P.010', nama: 'Alor Setar', negeri: 'Kedah', pengundi: 78000, penyandang: 'Simulasi', parti: 'PRB' },
-  { kod: 'P.020', nama: 'Kangar Town', negeri: 'Kedah', pengundi: 65000, penyandang: 'Simulasi', parti: 'BNR' },
-  { kod: 'P.030', nama: 'Kota Bharu', negeri: 'Kelantan', pengundi: 82000, penyandang: 'Simulasi', parti: 'PIN' },
-  { kod: 'P.040', nama: 'Kuala Terengganu', negeri: 'Terengganu', pengundi: 76000, penyandang: 'Simulasi', parti: 'PIN' },
-  { kod: 'P.050', nama: 'Ipoh Timor', negeri: 'Perak', pengundi: 88000, penyandang: 'Simulasi', parti: 'PPP' },
-  { kod: 'P.060', nama: 'Petaling Jaya', negeri: 'Selangor', pengundi: 95000, penyandang: 'Simulasi', parti: 'PPP' },
-  { kod: 'P.070', nama: 'Shah Alam', negeri: 'Selangor', pengundi: 105000, penyandang: 'Simulasi', parti: 'PPP' },
-  { kod: 'P.080', nama: 'Cheras', negeri: 'W.P. Kuala Lumpur', pengundi: 110000, penyandang: 'Simulasi', parti: 'PPP' },
-  { kod: 'P.090', nama: 'Titiwangsa', negeri: 'W.P. Kuala Lumpur', pengundi: 78000, penyandang: 'Simulasi', parti: 'BNR' },
-  { kod: 'P.100', nama: 'Seremban', negeri: 'Negeri Sembilan', pengundi: 85000, penyandang: 'Simulasi', parti: 'PRB' },
-  { kod: 'P.110', nama: 'Melaka Tengah', negeri: 'Melaka', pengundi: 72000, penyandang: 'Simulasi', parti: 'BNR' },
-  { kod: 'P.120', nama: 'Johor Bahru', negeri: 'Johor', pengundi: 98000, penyandang: 'Simulasi', parti: 'BNR' },
-  { kod: 'P.130', nama: 'Kuantan', negeri: 'Pahang', pengundi: 68000, penyandang: 'Simulasi', parti: 'BNR' },
-  { kod: 'P.140', nama: 'Kota Kinabalu', negeri: 'Sabah', pengundi: 72000, penyandang: 'Simulasi', parti: 'PSM' },
-  { kod: 'P.150', nama: 'Kuching', negeri: 'Sarawak', pengundi: 80000, penyandang: 'Simulasi', parti: 'PSB' }
-];
 
-/* ============ PANGKALAN DATA: KAWASAN DUN (SAMPEL SIMULASI) ============ */
 const DUN_DB = [
   { kod: 'N.01', nama: 'Titi Tinggi', negeri: 'Perlis', parlimenInduk: 'P.001', pengundi: 18000 },
   { kod: 'N.02', nama: 'Beseri', negeri: 'Perlis', parlimenInduk: 'P.001', pengundi: 15000 },
