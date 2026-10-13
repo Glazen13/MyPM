@@ -2324,3 +2324,278 @@ body.theme-red {
 @media (min-width: 600px) {
   .analytics-grid { grid-template-columns: repeat(3, 1fr); }
 }
+/* ============================================
+   MODUL v6.1 — Cipta Watak Bebas
+   ============================================ */
+
+/* ============ MUAT NAIK GAMBAR PROFIL ============ */
+.profile-upload-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.profile-photo-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.photo-preview {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: var(--kelabu-cerah);
+  border: 3px dashed #cbd5e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: var(--transition);
+  position: relative;
+}
+
+.profile-photo-btn:hover .photo-preview {
+  border-color: var(--biru-muda);
+  background: #eef4fb;
+  transform: scale(1.03);
+}
+
+.photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.photo-placeholder {
+  font-size: 40px;
+  color: var(--kelabu);
+}
+
+.photo-label {
+  font-size: 12px;
+  color: var(--biru-muda);
+  font-weight: 600;
+}
+
+.btn-remove-photo {
+  background: rgba(231, 76, 60, 0.1);
+  color: var(--merah);
+  border: 1.5px solid rgba(231, 76, 60, 0.3);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: var(--transition);
+}
+.btn-remove-photo:hover {
+  background: rgba(231, 76, 60, 0.2);
+}
+.btn-remove-photo.hidden { display: none; }
+
+/* ============ TANGGUNGAN LIST ============ */
+.tanggungan-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tanggungan-empty {
+  font-size: 12px;
+  color: var(--kelabu);
+  text-align: center;
+  padding: 14px;
+  background: var(--kelabu-cerah);
+  border-radius: 8px;
+  font-style: italic;
+}
+
+.tanggungan-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--kelabu-cerah);
+  border-radius: 10px;
+  padding: 10px;
+  animation: slideDown 0.3s ease;
+}
+
+.tanggungan-item .tg-emoji {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.tanggungan-item .tg-fields {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.tanggungan-item select,
+.tanggungan-item input {
+  padding: 6px 8px;
+  font-size: 12px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  background: var(--putih);
+  font-family: inherit;
+  color: var(--kelabu-gelap);
+}
+
+.tanggungan-item select {
+  min-width: 100px;
+  flex: 1;
+}
+
+.tanggungan-item input {
+  min-width: 80px;
+  flex: 0 0 100px;
+}
+
+.tanggungan-item .tg-remove {
+  background: rgba(231, 76, 60, 0.1);
+  color: var(--merah);
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+.tanggungan-item .tg-remove:hover {
+  background: rgba(231, 76, 60, 0.25);
+}
+
+.btn-add-tanggungan {
+  width: 100%;
+  background: transparent;
+  border: 2px dashed var(--biru-muda);
+  color: var(--biru-muda);
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: var(--transition);
+}
+.btn-add-tanggungan:hover {
+  background: rgba(44, 90, 160, 0.05);
+  border-style: solid;
+}
+
+/* ============ RINGKASAN KEWANGAN AUTO ============ */
+.summary-card {
+  background: linear-gradient(135deg, #0a1e3f, #1a3a6b);
+  color: var(--putih);
+  border: none;
+}
+.summary-card h3 {
+  color: var(--emas-muda);
+  margin-bottom: 14px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.summary-item {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--emas);
+}
+.summary-item label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 4px;
+}
+.summary-item strong {
+  font-size: 14px;
+  color: var(--putih);
+}
+.summary-item.positive {
+  border-left-color: var(--hijau);
+}
+.summary-item.positive strong {
+  color: #a8f0c6;
+}
+.summary-item.negative {
+  border-left-color: var(--merah);
+}
+.summary-item.negative strong {
+  color: #ffb3ad;
+}
+.summary-item.highlight {
+  border-left-color: var(--emas);
+  background: rgba(212, 175, 55, 0.15);
+  grid-column: 1 / -1;
+}
+.summary-item.highlight strong {
+  font-size: 18px;
+  color: var(--emas-muda);
+}
+
+.summary-note {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 10px;
+  grid-column: 1 / -1;
+  text-align: center;
+  font-style: italic;
+}
+
+/* ============ GAMBAR PROFIL DALAM PERMAINAN ============ */
+.player-avatar img,
+.side-profile .big-avatar img,
+#playerAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.side-profile .big-avatar {
+  overflow: hidden;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 480px) {
+  .photo-preview {
+    width: 90px;
+    height: 90px;
+  }
+  .photo-placeholder {
+    font-size: 32px;
+  }
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+  .tanggungan-item .tg-fields {
+    flex-direction: column;
+  }
+  .tanggungan-item input {
+    flex: 1;
+    min-width: 0;
+  }
+}
