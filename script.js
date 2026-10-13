@@ -3263,7 +3263,7 @@ function processCharacterActions() {
   });
 
   // 25% peluang setiap giliran ada tindakan watak
-  if (Math.random() > 0.25) return;
+  if (Math.random() > 0.10) return;
 
   const char = pickRandom(CHARACTERS);
   const rel = state.relationships[char.id];
