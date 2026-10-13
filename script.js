@@ -5984,5 +5984,58 @@ init = function() {
   console.log('🌐 v5.0: I18N, Slot, Leaderboard, Story, Analitik, Notif, PDF');
 };
 
+/* ============ SIDE PANEL DROPDOWN HANDLER ============ */
+function setupSideDropdown() {
+  const toggle = document.querySelector('[data-toggle="advanced"]');
+  const menu = document.getElementById('sideAdvancedMenu');
+  if (!toggle || !menu) return;
+
+  // Buang event lama jika ada (elak duplicate)
+  toggle.removeEventListener('click', toggle._handler);
+  toggle._handler = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggle.classList.toggle('open');
+    menu.classList.toggle('open');
+  };
+  toggle.addEventListener('click', toggle._handler);
+
+  // Bind sub-link (buang lama dulu)
+  menu.querySelectorAll('.side-sub-link').forEach(btn => {
+    btn.removeEventListener('click', btn._handler);
+    btn._handler = () => {
+      const action = btn.dataset.action;
+      // Kekal buka dropdown supaya mudah tekan butang lain
+      handleSideAction(action);
+    };
+    btn.addEventListener('click', btn._handler);
+  });
+
+  // Update badge notifikasi
+  updateSideNotifCount();
+}
+
+function updateSideNotifCount() {
+  const badge = document.getElementById('sideNotifCount');
+  if (!badge) return;
+  if (typeof NotifManager !== 'undefined' && NotifManager.items) {
+    const count = NotifManager.items.filter(n => !n.read).length;
+    if (count > 0) {
+      badge.textContent = count > 99 ? '99+' : count;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  } else {
+    badge.classList.add('hidden');
+  }
+}
+
+/* Patch openSidePanel untuk setup dropdown setiap kali dibuka */
+const _v61_openSidePanel2 = openSidePanel;
+openSidePanel = function() {
+  _v61_openSidePanel2();
+  setTimeout(setupSideDropdown, 50);
+};
 /* ============ JALANKAN ============ */
 document.addEventListener('DOMContentLoaded', init);
