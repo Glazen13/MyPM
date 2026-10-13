@@ -1921,8 +1921,6 @@ function init() {
   // Expose function ke global untuk onclick
   window.closeModal = closeModal;
 }
-
-/* ============ JALANKAN ============ */
 /* ============================================================
    SIMULATOR PARTI POLITIK MALAYSIA — SCRIPT.JS v2.0
    Modul Lanjutan: Kawasan, Peta, Kempen, Kabinet, Tugas, Projek, Bajet
@@ -2401,4 +2399,480 @@ function resolveCampaign() {
       `<p style="color:var(--merah);font-weight:600;text-align:center;">Anda tidak berjaya kali ini</p>
        <p style="text-align:center;">Jangan putus asa. Bina semula sokongan dan cuba lagi.</p>
        <p style="font-size:12px;color:var(--kelabu);text-align:center;">Peluang anda: ${Math.round(chance)}%</p>`,
-      `<button class="btn-primary" onclick
+      `<button class="btn-primary" onclick="closeModal()" style="width:auto;margin:0;">OK</button>`
+    );
+  }
+
+  campaignState = null;
+}
+
+function abortCampaign() {
+  if (confirm('Tinggalkan kempen? Deposit dan kos tidak akan dikembalikan.')) {
+    campaignState = null;
+    $('#campaignModal').classList.remove('open');
+    showToast('Kempen dihentikan', 'warn');
+  }
+}
+
+/* ============ KABINET & PELANTIKAN ============ */
+function openCabinetModal() {
+  initV2State();
+  const p = state.player;
+  const body = $('#cabinetBody');
+
+  const eligible = checkCabinetEligibility();
+
+  body.innerHTML = `
+    <div class="pos-card">
+      <div class="pos-title">KEDUDUKAN SEMASA</div>
+      <div class="pos-name">${p.position || 'Rakyat Biasa'}</div>
+      <div class="pos-meta">${p.party ? p.party.nama : 'Tiada parti'}</div>
+      <div class="pos-kpi">
+        <div>Populariti: ${Math.round(p.popularity)}</div>
+        <div>Integriti: ${Math.round(p.integrity)}</div>
+        <div>Kepimpinan: ${Math.round(p.leadership)}</div>
+        <div>Pengalaman: ${Math.round(p.experience)}</div>
+      </div>
+    </div>
+
+    <h4 style="color:var(--biru-gelap);font-size:13px;margin-top:14px;">📋 Kelayakan Pelantikan</h4>
+    <div class="stat-grid">
+      <div class="stat-item ${eligible.menteri ? 'good' : 'bad'}">
+        <label>Menteri</label>
+        <strong>${eligible.menteri ? 'Layak' : 'Belum Layak'}</strong>
+      </div>
+      <div class="stat-item ${eligible.timbalan ? 'good' : 'bad'}">
+        <label>Timbalan Menteri</label>
+        <strong>${eligible.timbalan ? 'Layak' : 'Belum Layak'}</strong>
+      </div>
+      <div class="stat-item ${eligible.exco ? 'good' : 'bad'}">
+        <label>EXCO Negeri</label>
+        <strong>${eligible.exco ? 'Layak' : 'Belum Layak'}</strong>
+      </div>
+      <div class="stat-item ${eligible.senator ? 'good' : 'bad'}">
+        <label>Senator</label>
+        <strong>${eligible.senator ? 'Layak' : 'Belum Layak'}</strong>
+      </div>
+    </div>
+
+    <h4 style="color:var(--biru-gelap);font-size:13px;margin-top:16px;">🏛️ Portfolio Kementerian (Simulasi)</h4>
+    <div class="cabinet-grid">
+      ${MINISTRIES.map(m => `
+        <div class="cabinet-item">
+          <span class="c-icon">${m.emoji}</span>
+          <div class="c-info">
+            <strong>${m.nama}</strong>
+            <small>${m.kpi}</small>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    ${eligible.menteri && !p.isMenteri
+      ? `<button class="btn-primary" id="lobbyBtn" style="margin-top:14px;">📨 Lobi Pelantikan Menteri</button>`
+      : ''
+    }
+  `;
+
+  const lobby = $('#lobbyBtn');
+  if (lobby) lobby.onclick = lobbyMinister;
+
+  $('#cabinetModal').classList.add('open');
+}
+
+function checkCabinetEligibility() {
+  const p = state.player;
+  return {
+    menteri: p.level >= 10 && p.popularity >= 60 && p.integrity >= 60 && p.leadership >= 60,
+    timbalan: p.level >= 9 && p.popularity >= 50 && p.leadership >= 50,
+    exco: p.level >= 8 && p.popularity >= 40,
+    senator: p.level >= 6 && p.popularity >= 30
+  };
+}
+
+function lobbyMinister() {
+  const p = state.player;
+  const chance = clamp(
+    p.popularity * 0.3 + p.integrity * 0.2 + p.partyInfluence * 0.3 + p.leadership * 0.2,
+    5, 85
+  );
+
+  if (Math.random() * 100 < chance) {
+    const m = pickRandom(MINISTRIES);
+    p.position = `Menteri ${m.nama}`;
+    p.isMenteri = true;
+    p.cabinetPortfolio = m;
+    generateTasksForPosition();
+    addNews(`${p.nama} dilantik Menteri ${m.nama}`, 'Pelantikan kabinet simulasi', 'POLITIK');
+    saveGame(true);
+    $('#cabinetModal').classList.remove('open');
+    renderGame();
+    openModal('🎖️ Pelantikan',
+      `<p style="text-align:center;">Anda telah dilantik sebagai</p>
+       <p style="text-align:center;font-size:18px;font-weight:700;color:var(--biru-muda);">
+         Menteri ${m.nama}
+       </p>
+       <p style="font-size:12px;color:var(--kelabu);text-align:center;">
+         KPI utama: ${m.kpi}
+       </p>`,
+      `<button class="btn-primary" onclick="closeModal()" style="width:auto;margin:0;">Terima</button>`
+    );
+  } else {
+    showToast('Pelantikan tidak berjaya kali ini', 'warn');
+    $('#cabinetModal').classList.remove('open');
+  }
+}
+
+/* ============ PUSAT TUGAS RASMI ============ */
+function generateTasksForPosition() {
+  const p = state.player;
+  let posKey = 'Ahli Biasa';
+  if (p.position) {
+    if (p.position.includes('Perdana Menteri')) posKey = 'Perdana Menteri';
+    else if (p.position.includes('Menteri')) posKey = 'Menteri';
+    else if (p.position === 'Ahli Parlimen') posKey = 'Ahli Parlimen';
+    else if (p.position === 'ADUN') posKey = 'ADUN';
+  }
+
+  const templates = TASK_TEMPLATES[posKey] || TASK_TEMPLATES['Ahli Biasa'];
+  state.tasks.aktif = templates.map(t => ({
+    ...t,
+    status: 'aktif',
+    dueTurn: state.date.turn + 1 + randomInt(0, 1)
+  }));
+}
+
+function openTaskModal() {
+  initV2State();
+  if (!state.tasks.aktif || state.tasks.aktif.length === 0) {
+    generateTasksForPosition();
+  }
+
+  const body = $('#taskBody');
+  const tasks = state.tasks.aktif;
+
+  body.innerHTML = `
+    <p style="font-size:12px;color:var(--kelabu);margin-bottom:12px;">
+      Tugasan berkaitan jawatan anda: <strong>${state.player.position || 'Rakyat'}</strong>
+    </p>
+    ${tasks.length === 0
+      ? '<p>Tidak ada tugasan aktif.</p>'
+      : tasks.map(t => `
+          <div class="task-item priority-${t.prioriti}">
+            <h5>${t.tajuk}</h5>
+            <p>${t.desk}</p>
+            <div class="task-meta">
+              <span>Prioriti: ${t.prioriti.toUpperCase()}</span>
+              <span>Tarikh akhir: Giliran ${t.dueTurn}</span>
+            </div>
+            <div class="task-actions">
+              <button style="background:var(--hijau);color:#fff;" data-task="${t.id}" data-taction="selesai">
+                ✅ Selesai
+              </button>
+              <button style="background:var(--kelabu-cerah);color:var(--kelabu-gelap);" data-task="${t.id}" data-taction="tangguh">
+                ⏸️ Tangguh
+              </button>
+            </div>
+          </div>
+        `).join('')
+    }
+  `;
+
+  body.querySelectorAll('[data-taction]').forEach(btn => {
+    btn.addEventListener('click', () => handleTaskAction(btn.dataset.task, btn.dataset.taction));
+  });
+
+  $('#taskModal').classList.add('open');
+}
+
+function handleTaskAction(taskId, action) {
+  const idx = state.tasks.aktif.findIndex(t => t.id === taskId);
+  if (idx === -1) return;
+  const task = state.tasks.aktif[idx];
+
+  if (action === 'selesai') {
+    state.tasks.aktif.splice(idx, 1);
+    state.tasks.selesai.push({ ...task, tarikh: state.date.label });
+    state.player.xp += 15;
+    addXP(15);
+    state.player.popularity = clamp(state.player.popularity + 2, 0, 100);
+    checkLevelUp();
+    showToast(`✅ ${task.tajuk} selesai`, 'success');
+  } else if (action === 'tangguh') {
+    task.dueTurn += 1;
+    state.player.popularity = clamp(state.player.popularity - 1, 0, 100);
+    showToast('Tugasan ditangguh', 'warn');
+  }
+
+  saveGame(true);
+  openTaskModal();
+  renderGame();
+}
+
+/* ============ PROJEK PEMBANGUNAN ============ */
+function openProjectModal() {
+  initV2State();
+  const body = $('#projectBody');
+
+  body.innerHTML = `
+    <p style="font-size:12px;color:var(--kelabu);margin-bottom:12px;">
+      Cadang dan laksana projek. Projek memerlukan masa dan kos.
+    </p>
+
+    <h4 style="color:var(--biru-gelap);font-size:13px;">📌 Projek Aktif</h4>
+    ${state.projects.length === 0
+      ? '<p style="font-size:12px;color:var(--kelabu);">Belum ada projek.</p>'
+      : state.projects.map(pr => `
+          <div class="project-item">
+            <h5>${pr.emoji} ${pr.nama}</h5>
+            <div class="proj-desc">${pr.desk}</div>
+            <div class="proj-stats">
+              <span>Kos: ${formatRM(pr.kos)}</span>
+              <span>Masa: ${pr.masa} giliran</span>
+              <span>Status: ${pr.status}</span>
+              <span>Manfaat: ${pr.manfaat}</span>
+            </div>
+            ${pr.progress !== undefined
+              ? `<div class="stage-progress"><div class="stage-progress-fill" style="width:${pr.progress}%"></div></div>`
+              : ''}
+          </div>
+        `).join('')
+    }
+
+    <h4 style="color:var(--biru-gelap);font-size:13px;margin-top:16px;">➕ Cadang Projek Baharu</h4>
+    <div style="font-size:12px;">
+      ${PROJECT_TYPES.map(p => `
+        <button class="const-item" data-prj="${p.id}" style="width:100%;">
+          <span style="font-size:16px;">${p.emoji}</span>
+          <strong style="margin-left:8px;font-size:13px;color:var(--biru-gelap);">${p.nama}</strong>
+          <span class="meta">Kos: ${formatRM(p.kos)} • Masa: ${p.masa} giliran • ${p.manfaat}</span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+
+  body.querySelectorAll('[data-prj]').forEach(btn => {
+    btn.addEventListener('click', () => proposeProject(btn.dataset.prj));
+  });
+
+  $('#projectModal').classList.add('open');
+}
+
+function proposeProject(prjId) {
+  const prj = PROJECT_TYPES.find(p => p.id === prjId);
+  if (!prj) return;
+
+  openModal('Cadang Projek',
+    `<div style="text-align:center;font-size:36px;">${prj.emoji}</div>
+     <h4 style="text-align:center;color:var(--biru-gelap);">${prj.nama}</h4>
+     <div class="stat-grid mt-16">
+       <div class="stat-item"><label>Kos</label><strong>${formatRM(prj.kos)}</strong></div>
+       <div class="stat-item"><label>Masa</label><strong>${prj.masa} giliran</strong></div>
+       <div class="stat-item"><label>Manfaat</label><strong>${prj.manfaat}</strong></div>
+       <div class="stat-item"><label>Wang Anda</label><strong>${formatRM(state.player.wang)}</strong></div>
+     </div>
+     <p style="font-size:12px;color:var(--kelabu);margin-top:12px;">
+       Untuk jawatan rasmi, projek boleh dicadangkan melalui bajet kerajaan.
+       Sebagai rakyat biasa, projek ini menggunakan wang peribadi/dana sumbangan.
+     </p>`,
+    `<button class="btn-secondary" onclick="closeModal()">Batal</button>
+     <button class="btn-primary" id="confirmProj" style="width:auto;margin:0;">Laksana</button>`
+  );
+  setTimeout(() => {
+    const btn = $('#confirmProj');
+    if (btn) btn.onclick = () => {
+      const p = state.player;
+      // Projek rasmi guna bajet; rakyat guna wang sendiri
+      const hasOffice = p.position && p.position !== 'Ahli Biasa';
+      if (hasOffice) {
+        if (state.budget.federal < prj.kos) {
+          showToast('Bajet tidak mencukupi', 'error');
+          return;
+        }
+        state.budget.federal -= prj.kos;
+        state.budget.committed += prj.kos;
+      } else {
+        if (p.wang < prj.kos) {
+          showToast('Wang tidak mencukupi', 'error');
+          return;
+        }
+        p.wang -= prj.kos;
+        addTransaction(`Projek: ${prj.nama}`, -prj.kos);
+      }
+
+      state.projects.push({
+        id: uid(),
+        nama: prj.nama,
+        emoji: prj.emoji,
+        kos: prj.kos,
+        masa: prj.masa,
+        manfaat: prj.manfaat,
+        status: 'Dalam Pelaksanaan',
+        progress: 0,
+        giliranMula: state.date.turn,
+        giliranSiap: state.date.turn + prj.masa,
+        desk: `Projek pembangunan ${prj.manfaat.toLowerCase()}`
+      });
+
+      addNews(`${p.nama} lancar projek ${prj.nama}`, 'Projek pembangunan simulasi', 'PROJEK');
+      saveGame(true);
+      closeModal();
+      openProjectModal();
+      renderGame();
+      showToast('Projek dilancarkan', 'success');
+    };
+  }, 50);
+}
+
+/* ============ BAJET & PERUNTUKAN ============ */
+function openBudgetModal() {
+  initV2State();
+  const p = state.player;
+  const body = $('#budgetBody');
+
+  // Sediakan bajet awal jika belum ada
+  if (state.budget.federal === 0 && p.position) {
+    const budgetByPos = {
+      'Perdana Menteri': 50000000,
+      'Menteri': 10000000,
+      'Ahli Parlimen': 1000000,
+      'ADUN': 500000
+    };
+    state.budget.federal = budgetByPos[p.position] || 0;
+  }
+
+  const total = state.budget.federal + state.budget.committed;
+  const usedPct = total > 0 ? (state.budget.used / total) * 100 : 0;
+  const commitPct = total > 0 ? (state.budget.committed / total) * 100 : 0;
+  const availPct = Math.max(0, 100 - usedPct - commitPct);
+
+  body.innerHTML = `
+    <div class="pos-card">
+      <div class="pos-title">PERUNTUKAN RASMI (SIMULASI)</div>
+      <div class="pos-name">${formatRM(state.budget.federal)}</div>
+      <div class="pos-meta">Jawatan: ${p.position || 'Tiada'}</div>
+    </div>
+
+    <div class="budget-bar">
+      <div class="budget-seg used" style="width:${usedPct}%">DIGUNA</div>
+      <div class="budget-seg committed" style="width:${commitPct}%">KOMIT</div>
+      <div class="budget-seg available" style="width:${availPct}%">BAKI</div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-item bad">
+        <label>Dibelanjakan</label>
+        <strong>${formatRM(state.budget.used)}</strong>
+      </div>
+      <div class="stat-item warn">
+        <label>Komitmen</label>
+        <strong>${formatRM(state.budget.committed)}</strong>
+      </div>
+      <div class="stat-item good">
+        <label>Baki Tersedia</label>
+        <strong>${formatRM(state.budget.federal)}</strong>
+      </div>
+      <div class="stat-item">
+        <label>Bajet Negeri</label>
+        <strong>${formatRM(state.budget.state)}</strong>
+      </div>
+    </div>
+
+    <p style="font-size:11px;color:var(--kelabu);margin-top:14px;">
+      ⚠️ Wang peribadi, parti, kempen dan kerajaan diasingkan sepenuhnya dalam simulasi.
+    </p>
+  `;
+
+  $('#budgetModal').classList.add('open');
+}
+
+/* ============ INTEGRASI: PROSES PROJEK DALAM GILIRAN ============ */
+function processProjects() {
+  if (!state.projects) return;
+  state.projects.forEach(pr => {
+    if (pr.status === 'Dalam Pelaksanaan') {
+      const totalMasa = pr.masa;
+      const lepas = state.date.turn - pr.giliranMula;
+      pr.progress = clamp((lepas / totalMasa) * 100, 0, 100);
+      if (lepas >= totalMasa) {
+        pr.status = 'Siap';
+        pr.progress = 100;
+        state.player.popularity = clamp(state.player.popularity + 8, 0, 100);
+        state.player.integrity = clamp(state.player.integrity + 3, 0, 100);
+        addNews(`Projek ${pr.nama} siap`, 'Hasil pembangunan simulasi', 'PROJEK');
+      }
+    }
+  });
+}
+
+/* ============ INTEGRASI: PROSES TUGAS TERTUNGGAK ============ */
+function processTasks() {
+  if (!state.tasks || !state.tasks.aktif) return;
+  const overdue = [];
+  state.tasks.aktif = state.tasks.aktif.filter(t => {
+    if (state.date.turn > t.dueTurn) {
+      overdue.push(t);
+      return false;
+    }
+    return true;
+  });
+  overdue.forEach(t => {
+    state.tasks.tertunggak.push({ ...t, tarikh: state.date.label });
+    state.player.popularity = clamp(state.player.popularity - 3, 0, 100);
+  });
+  if (overdue.length > 0) {
+    showToast(`${overdue.length} tugasan tertunggak!`, 'warn');
+  }
+}
+
+/* ============ EXTRA NAV BUTTONS ============ */
+function setupExtraNav() {
+  const nav = $('#extraNav');
+  if (!nav) return;
+
+  // Tunjuk nav tambahan bila dalam game
+  const observer = new MutationObserver(() => {
+    if ($('#game').classList.contains('active')) {
+      nav.classList.remove('hidden');
+    } else {
+      nav.classList.add('hidden');
+    }
+  });
+  observer.observe($('#game'), { attributes: true, attributeFilter: ['class'] });
+
+  nav.querySelectorAll('[data-extra]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.extra;
+      switch(action) {
+        case 'map': openMapModal(); break;
+        case 'tasks': openTaskModal(); break;
+        case 'projects': openProjectModal(); break;
+        case 'budget': openBudgetModal(); break;
+        case 'cabinet': openCabinetModal(); break;
+      }
+    });
+  });
+}
+
+/* ============ PATCH nextTurn UNTUK v2.0 ============ */
+const _originalNextTurn = nextTurn;
+nextTurn = function() {
+  _originalNextTurn();
+  // Proses modul lanjutan
+  processProjects();
+  processTasks();
+  saveGame(true);
+};
+
+/* ============ PATCH init UNTUK v2.0 ============ */
+const _originalInit = init;
+init = function() {
+  _originalInit();
+  setupExtraNav();
+  initV2State();
+};
+/* ============ SEMUA KOD v2.0 DI ATAS ============ */
+/* ... tampal SEMUA kod v2.0 di sini ... */
+
+/* ============ JALANKAN ============ */
+document.addEventListener('DOMContentLoaded', init);
