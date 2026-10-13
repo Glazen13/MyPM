@@ -1,7 +1,7 @@
 {
   "name": "Simulator Rakyat Malaysia",
   "short_name": "SRM",
-  "description": "Simulasi fiksyen kehidupan, politik dan pilihan raya Malaysia",
+  "description": "Simulasi fiksyen Keluarga • Kerjaya • Komuniti • Negara",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
