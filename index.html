@@ -5,11 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0a1e3f">
 <title>Simulator Rakyat Malaysia</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SRM">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- ============ SKRIN PEMBUKAAN ============ -->
+<!-- ============ SPLASH ============ -->
 <div id="splash" class="screen active">
   <div class="splash-bg"></div>
   <div class="splash-content">
@@ -26,7 +30,7 @@
   </div>
 </div>
 
-<!-- ============ SKRIN MENU UTAMA ============ -->
+<!-- ============ MENU UTAMA ============ -->
 <div id="mainMenu" class="screen">
   <div class="menu-bg"></div>
   <div class="menu-content">
@@ -58,24 +62,24 @@
       <button class="btn-menu" id="btnCredits">
         <span class="btn-icon">ℹ️</span>
         <span class="btn-text"><strong>Kredit</strong><small>Maklumat projek</small></span>
-        <button class="btn-menu" id="btnLanguage">
-  <span class="btn-icon">🌐</span>
-  <span class="btn-text"><strong id="btnLangLabel">Bahasa</strong><small id="btnLangSub">Melayu / English</small></span>
-</button>
-<button class="btn-menu" id="btnStoryMode">
-  <span class="btn-icon">🎭</span>
-  <span class="btn-text"><strong id="btnStoryLabel">Mod Cerita</strong><small id="btnStorySub">3 senario khas</small></span>
-</button>
-<button class="btn-menu" id="btnLeaderboard">
-  <span class="btn-icon">🏅</span>
-  <span class="btn-text"><strong id="btnLeaderLabel">Leaderboard</strong><small id="btnLeaderSub">Ranking tempatan</small></span>
-</button>
+      </button>
+      <button class="btn-menu" id="btnLanguage">
+        <span class="btn-icon">🌐</span>
+        <span class="btn-text"><strong id="btnLangLabel">Bahasa</strong><small id="btnLangSub">Melayu / English</small></span>
+      </button>
+      <button class="btn-menu" id="btnStoryMode">
+        <span class="btn-icon">🎭</span>
+        <span class="btn-text"><strong id="btnStoryLabel">Mod Cerita</strong><small id="btnStorySub">3 senario khas</small></span>
+      </button>
+      <button class="btn-menu" id="btnLeaderboard">
+        <span class="btn-icon">🏅</span>
+        <span class="btn-text"><strong id="btnLeaderLabel">Leaderboard</strong><small id="btnLeaderSub">Ranking tempatan</small></span>
       </button>
     </div>
   </div>
 </div>
 
-<!-- ============ SKRIN CIPTA WATAK (v6.1 — Bebas) ============ -->
+<!-- ============ CIPTA WATAK ============ -->
 <div id="createChar" class="screen">
   <div class="page-content">
     <div class="page-header">
@@ -83,11 +87,8 @@
       <h2>Cipta Watak</h2>
     </div>
 
-    <!-- KAD 1: PROFIL ASAS -->
     <div class="card">
       <h3>👤 Profil Asas</h3>
-
-      <!-- Gambar profil -->
       <div class="profile-upload-wrap">
         <label for="inputPhoto" class="profile-photo-btn" id="photoPreviewBtn">
           <div id="photoPreview" class="photo-preview">
@@ -98,12 +99,10 @@
         </label>
         <button type="button" id="btnRemovePhoto" class="btn-remove-photo hidden">✕ Buang Gambar</button>
       </div>
-
       <div class="form-group">
         <label>Nama Penuh</label>
         <input type="text" id="inputName" maxlength="40" placeholder="Contoh: Ahmad bin Ismail" value="Ahmad bin Ismail">
       </div>
-
       <div class="form-row">
         <div class="form-group">
           <label>Umur Permulaan</label>
@@ -117,14 +116,12 @@
           </select>
         </div>
       </div>
-
       <div class="form-group">
         <label>Negeri Tempat Tinggal</label>
         <select id="inputState"></select>
       </div>
     </div>
 
-    <!-- KAD 2: PENDIDIKAN & KELUARGA -->
     <div class="card">
       <h3>🎓 Pendidikan & Keluarga</h3>
       <div class="form-group">
@@ -148,19 +145,15 @@
       <div class="form-group">
         <label>Wang Tunai Awal (RM)</label>
         <input type="number" id="inputCash" min="0" value="500" placeholder="Contoh: 500">
-        <small style="font-size:11px;color:var(--kelabu);">Berapa simpanan tunai anda pada permulaan?</small>
       </div>
     </div>
 
-    <!-- KAD 3: KERJAYA (BEBAS) -->
     <div class="card">
       <h3>💼 Kerjaya & Gaji (Bebas)</h3>
       <div class="form-group">
         <label>Nama / Jenis Pekerjaan</label>
-        <input type="text" id="inputJobName" maxlength="50" placeholder="Contoh: Jurutera, Guru, Peniaga, Freelancer" value="Pekerja Am">
-        <small style="font-size:11px;color:var(--kelabu);">Taip apa-apa pekerjaan anda mahu.</small>
+        <input type="text" id="inputJobName" maxlength="50" placeholder="Contoh: Jurutera, Guru, Peniaga" value="Pekerja Am">
       </div>
-
       <div class="form-row">
         <div class="form-group">
           <label>Gaji Bulanan (RM)</label>
@@ -177,18 +170,14 @@
           </select>
         </div>
       </div>
-
       <div class="form-group">
         <label>Potongan / Cukai Bulanan (RM)</label>
         <input type="number" id="inputTax" min="0" value="0" placeholder="0">
-        <small style="font-size:11px;color:var(--kelabu);">Kalau ada potongan KWSP/SOCSO/cukai yang ditolak dari gaji.</small>
       </div>
     </div>
 
-    <!-- KAD 4: PERBELANJAAN BULANAN -->
     <div class="card">
       <h3>💸 Perbelanjaan Bulanan</h3>
-
       <div class="form-group">
         <label>Status Tempat Tinggal</label>
         <select id="inputHousingType">
@@ -197,46 +186,35 @@
           <option value="Milik">Rumah sendiri / sedang bayar pinjaman</option>
         </select>
       </div>
-
       <div class="form-group">
         <label>Sewa / Bayaran Rumah Sebulan (RM)</label>
         <input type="number" id="inputRent" min="0" value="0" placeholder="0">
       </div>
-
       <div class="form-group">
         <label>Hutang Bulanan (RM)</label>
         <input type="number" id="inputMonthlyDebt" min="0" value="0" placeholder="0">
-        <small style="font-size:11px;color:var(--kelabu);">Pinjaman kereta, PTPTN, kad kredit, dll. (jumlah bayaran bulanan)</small>
       </div>
-
       <div class="form-group">
         <label>Jumlah Baki Hutang Keseluruhan (RM)</label>
         <input type="number" id="inputTotalDebt" min="0" value="0" placeholder="0">
-        <small style="font-size:11px;color:var(--kelabu);">Berapa lagi hutang yang belum dibayar.</small>
       </div>
-
       <div class="form-group">
         <label>Perbelanjaan Harian Lain (RM/bulan)</label>
         <input type="number" id="inputLivingCost" min="0" value="800" placeholder="800">
-        <small style="font-size:11px;color:var(--kelabu);">Makanan, pengangkutan, utiliti, dll.</small>
       </div>
     </div>
 
-    <!-- KAD 5: TANGGUNGAN -->
     <div class="card">
       <h3>👨‍👩‍👧 Tanggungan Keluarga</h3>
       <p style="font-size:12px;color:var(--kelabu);margin-bottom:12px;">
-        Tambah ahli keluarga yang bergantung pada anda (anak, isteri/suami, ibu bapa).
+        Tambah ahli keluarga yang bergantung pada anda.
       </p>
-
       <div id="tanggunganList" class="tanggungan-list"></div>
-
       <button type="button" class="btn-add-tanggungan" id="btnAddTanggungan">
         ➕ Tambah Tanggungan
       </button>
     </div>
 
-    <!-- KAD 6: MATLAMAT -->
     <div class="card">
       <h3>🎯 Matlamat Hidup</h3>
       <div class="form-group">
@@ -250,28 +228,24 @@
         </select>
       </div>
       <div class="form-group">
-        <label>Minat Politik (0 = tidak langsung, 10 = sangat berminat)</label>
+        <label>Minat Politik (0 = tidak, 10 = sangat berminat)</label>
         <input type="range" id="inputPoliticsInterest" min="0" max="10" value="3">
         <span id="interestLabel" class="range-label">3 / 10</span>
       </div>
     </div>
 
-    <!-- RINGKASAN AUTO -->
     <div class="card summary-card">
       <h3>📊 Ringkasan Kewangan Awal</h3>
-      <div class="summary-grid" id="summaryGrid">
-        <!-- Diisi oleh JS -->
-      </div>
+      <div class="summary-grid" id="summaryGrid"></div>
     </div>
 
     <button class="btn-primary btn-large" id="btnStartLife">▶️ Mulakan Simulasi</button>
   </div>
 </div>
 
-<!-- ============ SKRIN PERMAINAN UTAMA ============ -->
+<!-- ============ SKRIN PERMAINAN ============ -->
 <div id="game" class="screen">
 
-  <!-- TOP BAR -->
   <header class="topbar">
     <div class="topbar-left">
       <button class="icon-btn" id="btnMenuGame">☰</button>
@@ -297,83 +271,70 @@
     </div>
   </header>
 
-  <!-- MAIN CONTENT -->
-  <main class="game-content" id="gameContent">
-    <!-- Diisi oleh JavaScript -->
-  </main>
+  <main class="game-content" id="gameContent"></main>
 
-  <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
-    <button class="nav-btn active" data-tab="dashboard">
-      <span class="nav-icon">🏠</span><span class="nav-label">Utama</span>
-    </button>
-    <button class="nav-btn" data-tab="finance">
-      <span class="nav-icon">💰</span><span class="nav-label">Kewangan</span>
-    </button>
-    <button class="nav-btn" data-tab="career">
-      <span class="nav-icon">💼</span><span class="nav-label">Kerjaya</span>
-    </button>
-    <button class="nav-btn" data-tab="politics">
-      <span class="nav-icon">🏛️</span><span class="nav-label">Politik</span>
-    </button>
-    <button class="nav-btn" data-tab="news">
-      <span class="nav-icon">📰</span><span class="nav-label">Berita</span>
-    </button>
+    <button class="nav-btn active" data-tab="dashboard"><span class="nav-icon">🏠</span><span class="nav-label">Utama</span></button>
+    <button class="nav-btn" data-tab="finance"><span class="nav-icon">💰</span><span class="nav-label">Kewangan</span></button>
+    <button class="nav-btn" data-tab="career"><span class="nav-icon">💼</span><span class="nav-label">Kerjaya</span></button>
+    <button class="nav-btn" data-tab="politics"><span class="nav-icon">🏛️</span><span class="nav-label">Politik</span></button>
+    <button class="nav-btn" data-tab="news"><span class="nav-icon">📰</span><span class="nav-label">Berita</span></button>
   </nav>
 
-</div>
+  <!-- SIDE PANEL — DALAM #game -->
+  <div id="sidePanel" class="side-panel">
+    <div class="side-panel-content">
+      <div class="side-header">
+        <h3>Menu</h3>
+        <button class="icon-btn" id="btnClosePanel">✕</button>
+      </div>
+      <div class="side-profile" id="sideProfile"></div>
+      <div class="side-links">
+        <button class="side-link" data-action="save">💾 Simpan Permainan</button>
+        <button class="side-link" data-action="load">📂 Muatkan Permainan</button>
 
-<div class="side-links">
+        <div class="side-dropdown" id="sideAdvancedDropdown">
+          <button class="side-link side-dropdown-toggle" data-toggle="advanced">
+            <span>⚙️ Menu Lanjutan</span>
+            <span class="dropdown-arrow">▼</span>
+          </button>
+          <div class="side-dropdown-menu" id="sideAdvancedMenu">
+            <button class="side-sub-link" data-action="slots">🕹️ Slot Simpanan</button>
+            <button class="side-sub-link" data-action="leaderboard">🏅 Leaderboard</button>
+            <button class="side-sub-link" data-action="story">🎭 Mod Cerita</button>
+            <button class="side-sub-link" data-action="analytics">📊 Analitik Peribadi</button>
+            <button class="side-sub-link" data-action="notifications">🔔 Notifikasi <span class="notif-count hidden" id="sideNotifCount">0</span></button>
+            <button class="side-sub-link" data-action="pdf">📤 Laporan PDF</button>
+            <button class="side-sub-link" data-action="language">🌐 Bahasa</button>
+            <button class="side-sub-link" data-action="compare">📊 Bandingkan Slot</button>
+            <button class="side-sub-link" data-action="io">🌍 Import / Export</button>
+            <button class="side-sub-link" data-action="daily">🎯 Cabaran Harian</button>
+            <button class="side-sub-link" data-action="record">🎥 Rakam Gameplay</button>
+            <button class="side-sub-link" data-action="scenario">🎨 Editor Senario</button>
+            <button class="side-sub-link" data-action="theme">🎨 Tema Warna</button>
+            <button class="side-sub-link" data-action="chart">📈 Graf Statistik</button>
+            <button class="side-sub-link" data-action="map">🗺️ Peta Malaysia</button>
+            <button class="side-sub-link" data-action="ai">🤖 AI Watak</button>
+          </div>
+        </div>
 
-  <!-- Kumpulan 1: Simpan & Muat -->
-  <button class="side-link" data-action="save">💾 Simpan Permainan</button>
-  <button class="side-link" data-action="load">📂 Muatkan Permainan</button>
+        <div class="side-divider"></div>
+        <button class="side-link" data-action="stats">📊 Statistik Penuh</button>
+        <button class="side-link" data-action="relationships">👥 Hubungan Watak</button>
+        <button class="side-link" data-action="history">📜 Sejarah Aktiviti</button>
+        <button class="side-link" data-action="achievements">🏆 Pencapaian</button>
 
-  <!-- Drop-down Menu Lanjutan -->
-  <div class="side-dropdown" id="sideAdvancedDropdown">
-    <button class="side-link side-dropdown-toggle" data-toggle="advanced">
-      <span>⚙️ Menu Lanjutan</span>
-      <span class="dropdown-arrow">▼</span>
-    </button>
-    <div class="side-dropdown-menu" id="sideAdvancedMenu">
-      <button class="side-sub-link" data-action="slots">🕹️ Slot Simpanan</button>
-      <button class="side-sub-link" data-action="leaderboard">🏅 Leaderboard</button>
-      <button class="side-sub-link" data-action="story">🎭 Mod Cerita</button>
-      <button class="side-sub-link" data-action="analytics">📊 Analitik Peribadi</button>
-      <button class="side-sub-link" data-action="notifications">🔔 Notifikasi <span class="notif-count hidden" id="sideNotifCount">0</span></button>
-      <button class="side-sub-link" data-action="pdf">📤 Laporan PDF</button>
-      <button class="side-sub-link" data-action="language">🌐 Bahasa</button>
-      <button class="side-sub-link" data-action="compare">📊 Bandingkan Slot</button>
-      <button class="side-sub-link" data-action="io">🌍 Import / Export</button>
-      <button class="side-sub-link" data-action="daily">🎯 Cabaran Harian</button>
-      <button class="side-sub-link" data-action="record">🎥 Rakam Gameplay</button>
-      <button class="side-sub-link" data-action="scenario">🎨 Editor Senario</button>
-      <button class="side-sub-link" data-action="theme">🎨 Tema Warna</button>
-      <button class="side-sub-link" data-action="chart">📈 Graf Statistik</button>
-      <button class="side-sub-link" data-action="map">🗺️ Peta Malaysia</button>
-      <button class="side-sub-link" data-action="ai">🤖 AI Watak</button>
+        <div class="side-divider"></div>
+        <button class="side-link" data-action="settings">⚙️ Tetapan</button>
+        <button class="side-link danger" data-action="retire">🚪 Bersara & Laporan Akhir</button>
+        <button class="side-link danger" data-action="quit">❌ Keluar ke Menu</button>
+      </div>
     </div>
   </div>
 
-  <!-- Pemisah -->
-  <div class="side-divider"></div>
-
-  <!-- Kumpulan 2: Maklumat -->
-  <button class="side-link" data-action="stats">📊 Statistik Penuh</button>
-  <button class="side-link" data-action="relationships">👥 Hubungan Watak</button>
-  <button class="side-link" data-action="history">📜 Sejarah Aktiviti</button>
-  <button class="side-link" data-action="achievements">🏆 Pencapaian</button>
-
-  <!-- Pemisah -->
-  <div class="side-divider"></div>
-
-  <!-- Kumpulan 3: Tetapan & Keluar -->
-  <button class="side-link" data-action="settings">⚙️ Tetapan</button>
-  <button class="side-link danger" data-action="retire">🚪 Bersara & Laporan Akhir</button>
-  <button class="side-link danger" data-action="quit">❌ Keluar ke Menu</button>
-
 </div>
-<!-- ============ MODAL ============ -->
+
+<!-- ============ MODAL-MODAL ============ -->
 <div id="modal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
@@ -385,10 +346,8 @@
   </div>
 </div>
 
-<!-- ============ TOAST ============ -->
 <div id="toast" class="toast"></div>
 
-<!-- ============ MODAL PERISTIWA ============ -->
 <div id="eventModal" class="modal event-modal">
   <div class="modal-content event-content">
     <div class="event-header">
@@ -399,9 +358,8 @@
     <div class="event-choices" id="eventChoices"></div>
   </div>
 </div>
-<!-- ============ PANEL LANJUTAN v2.0 ============ -->
 
-<!-- Modal Peta Malaysia -->
+<!-- Modal Peta -->
 <div id="mapModal" class="modal">
   <div class="modal-content" style="max-width:640px;">
     <div class="modal-header">
@@ -412,7 +370,6 @@
   </div>
 </div>
 
-<!-- Modal Parlimen / DUN -->
 <div id="constituencyModal" class="modal">
   <div class="modal-content" style="max-width:640px;">
     <div class="modal-header">
@@ -423,7 +380,6 @@
   </div>
 </div>
 
-<!-- Modal Kempen Pilihan Raya -->
 <div id="campaignModal" class="modal">
   <div class="modal-content" style="max-width:560px;">
     <div class="modal-header">
@@ -435,7 +391,6 @@
   </div>
 </div>
 
-<!-- Modal Kabinet -->
 <div id="cabinetModal" class="modal">
   <div class="modal-content" style="max-width:640px;">
     <div class="modal-header">
@@ -446,7 +401,6 @@
   </div>
 </div>
 
-<!-- Modal Pusat Tugas -->
 <div id="taskModal" class="modal">
   <div class="modal-content" style="max-width:600px;">
     <div class="modal-header">
@@ -458,7 +412,6 @@
   </div>
 </div>
 
-<!-- Modal Projek -->
 <div id="projectModal" class="modal">
   <div class="modal-content" style="max-width:640px;">
     <div class="modal-header">
@@ -470,7 +423,6 @@
   </div>
 </div>
 
-<!-- Modal Bajet -->
 <div id="budgetModal" class="modal">
   <div class="modal-content" style="max-width:600px;">
     <div class="modal-header">
@@ -481,17 +433,6 @@
   </div>
 </div>
 
-<!-- Nav tambahan (di bawah bottom-nav) -->
-<div id="extraNav" class="extra-nav hidden">
-  <button class="extra-nav-btn" data-extra="map">🗺️ Peta</button>
-  <button class="extra-nav-btn" data-extra="tasks">📋 Tugas</button>
-  <button class="extra-nav-btn" data-extra="projects">🏗️ Projek</button>
-  <button class="extra-nav-btn" data-extra="budget">💰 Bajet</button>
-  <button class="extra-nav-btn" data-extra="cabinet">🏛️ Kabinet</button>
-</div>
-  <!-- ============ MODUL v3.0 ============ -->
-
-<!-- Modal PRU (Pilihan Raya Umum) -->
 <div id="pruModal" class="modal">
   <div class="modal-content" style="max-width:700px;">
     <div class="modal-header">
@@ -503,7 +444,6 @@
   </div>
 </div>
 
-<!-- Modal Krisis Kabinet -->
 <div id="crisisModal" class="modal">
   <div class="modal-content" style="max-width:600px;">
     <div class="modal-header" style="background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;">
@@ -516,7 +456,6 @@
   </div>
 </div>
 
-<!-- Modal Watak AI -->
 <div id="charModal" class="modal">
   <div class="modal-content" style="max-width:600px;">
     <div class="modal-header">
@@ -527,7 +466,6 @@
   </div>
 </div>
 
-<!-- Modal Laporan Legasi -->
 <div id="legacyModal" class="modal">
   <div class="modal-content" style="max-width:700px;">
     <div class="modal-header">
@@ -539,7 +477,6 @@
   </div>
 </div>
 
-<!-- Modal Pilihan Raya Kecil -->
 <div id="byElectionModal" class="modal">
   <div class="modal-content" style="max-width:560px;">
     <div class="modal-header">
@@ -550,24 +487,6 @@
   </div>
 </div>
 
-<!-- Butang tambahan dalam side panel (akan di-append via JS) -->
-
-<!-- Nav tambahan v3 -->
-<div id="extraNav3" class="extra-nav hidden" style="bottom:118px;">
-  <button class="extra-nav-btn" data-extra3="pru">🗳️ PRU</button>
-  <button class="extra-nav-btn" data-extra3="chars">👥 Watak</button>
-  <button class="extra-nav-btn" data-extra3="legacy">🏆 Legasi</button>
-  <button class="extra-nav-btn" data-extra3="timeline">📅 Timeline</button>
-</div>
-  <!-- ============ MODUL v4.0 ============ -->
-
-<!-- Meta PWA -->
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="SRM">
-
-<!-- Modal Graf -->
 <div id="chartModal" class="modal">
   <div class="modal-content" style="max-width:640px;">
     <div class="modal-header">
@@ -578,9 +497,6 @@
   </div>
 </div>
 
-
-
-<!-- Modal Peta SVG -->
 <div id="svgMapModal" class="modal">
   <div class="modal-content" style="max-width:700px;">
     <div class="modal-header">
@@ -591,7 +507,6 @@
   </div>
 </div>
 
-<!-- Cutscene overlay -->
 <div id="cutscene" class="cutscene hidden">
   <div class="cutscene-content">
     <div class="cutscene-emoji" id="cutEmoji">🏛️</div>
@@ -601,23 +516,8 @@
   </div>
 </div>
 
-<!-- Nav tambahan v4 -->
-<div id="extraNav4" class="extra-nav hidden" style="bottom:168px;">
-  <button class="extra-nav-btn" data-extra4="chart">📊 Graf</button>
-  <button class="extra-nav-btn" data-extra4="svgmap">🗺️ Peta SVG</button>
-  <button class="extra-nav-btn" data-extra4="advset">⚙️ Lanjutan</button>
-  <button class="extra-nav-btn" data-extra4="theme">🎨 Tema</button>
-</div>
+<div id="audioIndicator" class="audio-indicator hidden" onclick="toggleMute()">🔊</div>
 
-<!-- Theme picker (akan di-inject via JS) -->
-
-<!-- Audio indicator -->
-<div id="audioIndicator" class="audio-indicator hidden" onclick="toggleMute()">
-  🔊
-</div>
-  <!-- ============ MODUL v5.0 ============ -->
-
-<!-- Modal Bahasa -->
 <div id="langModal" class="modal">
   <div class="modal-content" style="max-width:460px;">
     <div class="modal-header">
@@ -628,7 +528,6 @@
   </div>
 </div>
 
-<!-- Modal Berbilang Slot Simpanan -->
 <div id="slotsModal" class="modal">
   <div class="modal-content" style="max-width:620px;">
     <div class="modal-header">
@@ -640,7 +539,6 @@
   </div>
 </div>
 
-<!-- Modal Leaderboard -->
 <div id="leaderboardModal" class="modal">
   <div class="modal-content" style="max-width:640px;">
     <div class="modal-header">
@@ -651,7 +549,6 @@
   </div>
 </div>
 
-<!-- Modal Mod Cerita -->
 <div id="storyModal" class="modal">
   <div class="modal-content" style="max-width:640px;">
     <div class="modal-header">
@@ -662,7 +559,6 @@
   </div>
 </div>
 
-<!-- Modal Analitik Peribadi -->
 <div id="analyticsModal" class="modal">
   <div class="modal-content" style="max-width:700px;">
     <div class="modal-header">
@@ -673,7 +569,6 @@
   </div>
 </div>
 
-<!-- Modal Notifikasi -->
 <div id="notifModal" class="modal">
   <div class="modal-content" style="max-width:560px;">
     <div class="modal-header">
@@ -685,7 +580,6 @@
   </div>
 </div>
 
-<!-- Modal PDF Preview (Laporan cetak) -->
 <div id="pdfModal" class="modal">
   <div class="modal-content" style="max-width:700px;">
     <div class="modal-header">
@@ -697,10 +591,8 @@
   </div>
 </div>
 
-
-
-<!-- Notifikasi badge (di topbar) -->
 <div id="notifBadge" class="notif-badge hidden">0</div>
+
 <script src="parlimen-data.js"></script>
 <script src="script.js"></script>
 </body>
