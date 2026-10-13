@@ -3,7 +3,7 @@
    Membolehkan permainan dimainkan LUAR TALIAN selepas lawatan pertama
    ============================================================ */
 
-const CACHE_NAME = 'sppm-v4-cache-v1';
+const CACHE_VERSION = 'srm-v1-' + '1.0.0';
 const ASSETS = [
   './',
   './index.html',
