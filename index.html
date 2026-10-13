@@ -420,6 +420,72 @@
   <button class="extra-nav-btn" data-extra3="legacy">🏆 Legasi</button>
   <button class="extra-nav-btn" data-extra3="timeline">📅 Timeline</button>
 </div>
+  <!-- ============ MODUL v4.0 ============ -->
+
+<!-- Meta PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SPPM">
+
+<!-- Modal Graf -->
+<div id="chartModal" class="modal">
+  <div class="modal-content" style="max-width:640px;">
+    <div class="modal-header">
+      <h3>📊 Graf Statistik</h3>
+      <button class="icon-btn" onclick="document.getElementById('chartModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="chartBody"></div>
+  </div>
+</div>
+
+<!-- Modal Tetapan Lanjutan -->
+<div id="advSettingsModal" class="modal">
+  <div class="modal-content" style="max-width:560px;">
+    <div class="modal-header">
+      <h3>⚙️ Tetapan Lanjutan</h3>
+      <button class="icon-btn" onclick="document.getElementById('advSettingsModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="advSettingsBody"></div>
+    <div class="modal-footer" id="advSettingsFooter"></div>
+  </div>
+</div>
+
+<!-- Modal Peta SVG -->
+<div id="svgMapModal" class="modal">
+  <div class="modal-content" style="max-width:700px;">
+    <div class="modal-header">
+      <h3>🗺️ Peta Malaysia (SVG)</h3>
+      <button class="icon-btn" onclick="document.getElementById('svgMapModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="svgMapBody"></div>
+  </div>
+</div>
+
+<!-- Cutscene overlay -->
+<div id="cutscene" class="cutscene hidden">
+  <div class="cutscene-content">
+    <div class="cutscene-emoji" id="cutEmoji">🏛️</div>
+    <h2 class="cutscene-title" id="cutTitle">Tajuk</h2>
+    <p class="cutscene-sub" id="cutSub">Subtitle</p>
+    <button class="btn-skip" onclick="skipCutscene()">⏭️ Langkau</button>
+  </div>
+</div>
+
+<!-- Nav tambahan v4 -->
+<div id="extraNav4" class="extra-nav hidden" style="bottom:168px;">
+  <button class="extra-nav-btn" data-extra4="chart">📊 Graf</button>
+  <button class="extra-nav-btn" data-extra4="svgmap">🗺️ Peta SVG</button>
+  <button class="extra-nav-btn" data-extra4="advset">⚙️ Lanjutan</button>
+  <button class="extra-nav-btn" data-extra4="theme">🎨 Tema</button>
+</div>
+
+<!-- Theme picker (akan di-inject via JS) -->
+
+<!-- Audio indicator -->
+<div id="audioIndicator" class="audio-indicator hidden" onclick="toggleMute()">
+  🔊
+</div>
 <script src="script.js"></script>
 </body>
 </html>
