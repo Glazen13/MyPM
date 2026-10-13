@@ -1256,13 +1256,11 @@ function addNews(tajuk, ringkasan, kategori = 'UMUM') {
 
 /* ============ SISTEM GILIRAN ============ */
 function nextTurn() {
-  // Proses 4 bulan
-  for (let i = 0; i < 4; i++) {
-    processMonth();
-  }
+  // Proses 1 bulan sahaja
+  processMonth();
 
-  // Majukan kalendar
-  state.date.month += 4;
+  // Majukan kalendar 1 bulan
+  state.date.month += 1;
   while (state.date.month >= 12) {
     state.date.month -= 12;
     state.date.year += 1;
@@ -1270,7 +1268,8 @@ function nextTurn() {
   state.date.turn += 1;
   state.date.label = getMonthLabel(state.date.month) + ' ' + state.date.year;
 
-  state.player.umur += (state.date.turn % 3 === 0) ? 1 : 0;
+  // Umur naik setiap 12 giliran (12 bulan = 1 tahun)
+  state.player.umur += (state.date.turn % 12 === 0) ? 1 : 0;
 
   // Periksa peristiwa rawak
   maybeTriggerEvent();
