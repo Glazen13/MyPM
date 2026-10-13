@@ -323,28 +323,56 @@
 
 </div>
 
-<!-- ============ PANEL SISI (MENU) ============ -->
-<div id="sidePanel" class="side-panel">
-  <div class="side-panel-content">
-    <div class="side-header">
-      <h3>Menu</h3>
-      <button class="icon-btn" id="btnClosePanel">✕</button>
-    </div>
-    <div class="side-profile" id="sideProfile"></div>
-    <div class="side-links">
-      <button class="side-link" data-action="save">💾 Simpan Permainan</button>
-      <button class="side-link" data-action="load">📂 Muatkan</button>
-      <button class="side-link" data-action="stats">📊 Statistik Penuh</button>
-      <button class="side-link" data-action="relationships">👥 Hubungan</button>
-      <button class="side-link" data-action="history">📜 Sejarah Aktiviti</button>
-      <button class="side-link" data-action="achievements">🏆 Pencapaian</button>
-      <button class="side-link" data-action="settings">⚙️ Tetapan</button>
-      <button class="side-link danger" data-action="retire">🚪 Bersara & Laporan Akhir</button>
-      <button class="side-link danger" data-action="quit">❌ Keluar ke Menu</button>
+<div class="side-links">
+
+  <!-- Kumpulan 1: Simpan & Muat -->
+  <button class="side-link" data-action="save">💾 Simpan Permainan</button>
+  <button class="side-link" data-action="load">📂 Muatkan Permainan</button>
+
+  <!-- Drop-down Menu Lanjutan -->
+  <div class="side-dropdown" id="sideAdvancedDropdown">
+    <button class="side-link side-dropdown-toggle" data-toggle="advanced">
+      <span>⚙️ Menu Lanjutan</span>
+      <span class="dropdown-arrow">▼</span>
+    </button>
+    <div class="side-dropdown-menu" id="sideAdvancedMenu">
+      <button class="side-sub-link" data-action="slots">🕹️ Slot Simpanan</button>
+      <button class="side-sub-link" data-action="leaderboard">🏅 Leaderboard</button>
+      <button class="side-sub-link" data-action="story">🎭 Mod Cerita</button>
+      <button class="side-sub-link" data-action="analytics">📊 Analitik Peribadi</button>
+      <button class="side-sub-link" data-action="notifications">🔔 Notifikasi <span class="notif-count hidden" id="sideNotifCount">0</span></button>
+      <button class="side-sub-link" data-action="pdf">📤 Laporan PDF</button>
+      <button class="side-sub-link" data-action="language">🌐 Bahasa</button>
+      <button class="side-sub-link" data-action="compare">📊 Bandingkan Slot</button>
+      <button class="side-sub-link" data-action="io">🌍 Import / Export</button>
+      <button class="side-sub-link" data-action="daily">🎯 Cabaran Harian</button>
+      <button class="side-sub-link" data-action="record">🎥 Rakam Gameplay</button>
+      <button class="side-sub-link" data-action="scenario">🎨 Editor Senario</button>
+      <button class="side-sub-link" data-action="theme">🎨 Tema Warna</button>
+      <button class="side-sub-link" data-action="chart">📈 Graf Statistik</button>
+      <button class="side-sub-link" data-action="map">🗺️ Peta Malaysia</button>
+      <button class="side-sub-link" data-action="ai">🤖 AI Watak</button>
     </div>
   </div>
-</div>
 
+  <!-- Pemisah -->
+  <div class="side-divider"></div>
+
+  <!-- Kumpulan 2: Maklumat -->
+  <button class="side-link" data-action="stats">📊 Statistik Penuh</button>
+  <button class="side-link" data-action="relationships">👥 Hubungan Watak</button>
+  <button class="side-link" data-action="history">📜 Sejarah Aktiviti</button>
+  <button class="side-link" data-action="achievements">🏆 Pencapaian</button>
+
+  <!-- Pemisah -->
+  <div class="side-divider"></div>
+
+  <!-- Kumpulan 3: Tetapan & Keluar -->
+  <button class="side-link" data-action="settings">⚙️ Tetapan</button>
+  <button class="side-link danger" data-action="retire">🚪 Bersara & Laporan Akhir</button>
+  <button class="side-link danger" data-action="quit">❌ Keluar ke Menu</button>
+
+</div>
 <!-- ============ MODAL ============ -->
 <div id="modal" class="modal">
   <div class="modal-content">
