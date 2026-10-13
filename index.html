@@ -75,7 +75,7 @@
   </div>
 </div>
 
-<!-- ============ SKRIN CIPTA WATAK ============ -->
+<!-- ============ SKRIN CIPTA WATAK (v6.1 — Bebas) ============ -->
 <div id="createChar" class="screen">
   <div class="page-content">
     <div class="page-header">
@@ -83,12 +83,27 @@
       <h2>Cipta Watak</h2>
     </div>
 
+    <!-- KAD 1: PROFIL ASAS -->
     <div class="card">
       <h3>👤 Profil Asas</h3>
+
+      <!-- Gambar profil -->
+      <div class="profile-upload-wrap">
+        <label for="inputPhoto" class="profile-photo-btn" id="photoPreviewBtn">
+          <div id="photoPreview" class="photo-preview">
+            <span class="photo-placeholder">📷</span>
+          </div>
+          <span class="photo-label">Muat Naik Gambar Profil</span>
+          <input type="file" id="inputPhoto" accept="image/*" hidden>
+        </label>
+        <button type="button" id="btnRemovePhoto" class="btn-remove-photo hidden">✕ Buang Gambar</button>
+      </div>
+
       <div class="form-group">
         <label>Nama Penuh</label>
         <input type="text" id="inputName" maxlength="40" placeholder="Contoh: Ahmad bin Ismail" value="Ahmad bin Ismail">
       </div>
+
       <div class="form-row">
         <div class="form-group">
           <label>Umur Permulaan</label>
@@ -102,14 +117,16 @@
           </select>
         </div>
       </div>
+
       <div class="form-group">
         <label>Negeri Tempat Tinggal</label>
         <select id="inputState"></select>
       </div>
     </div>
 
+    <!-- KAD 2: PENDIDIKAN & KELUARGA -->
     <div class="card">
-      <h3>🎓 Latar Belakang</h3>
+      <h3>🎓 Pendidikan & Keluarga</h3>
       <div class="form-group">
         <label>Tahap Pendidikan</label>
         <select id="inputEducation">
@@ -128,24 +145,98 @@
           <option value="T20">T20 — Keluarga Berpendapatan Tinggi</option>
         </select>
       </div>
+      <div class="form-group">
+        <label>Wang Tunai Awal (RM)</label>
+        <input type="number" id="inputCash" min="0" value="500" placeholder="Contoh: 500">
+        <small style="font-size:11px;color:var(--kelabu);">Berapa simpanan tunai anda pada permulaan?</small>
+      </div>
     </div>
 
+    <!-- KAD 3: KERJAYA (BEBAS) -->
     <div class="card">
-      <h3>💼 Kerjaya & Kewangan Awal</h3>
+      <h3>💼 Kerjaya & Gaji (Bebas)</h3>
       <div class="form-group">
-        <label>Kerjaya Permulaan</label>
-        <select id="inputCareer"></select>
+        <label>Nama / Jenis Pekerjaan</label>
+        <input type="text" id="inputJobName" maxlength="50" placeholder="Contoh: Jurutera, Guru, Peniaga, Freelancer" value="Pekerja Am">
+        <small style="font-size:11px;color:var(--kelabu);">Taip apa-apa pekerjaan anda mahu.</small>
       </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Gaji Bulanan (RM)</label>
+          <input type="number" id="inputSalary" min="0" value="2500" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Jenis Kerja</label>
+          <select id="inputJobType">
+            <option value="penuh">Penuh Masa (45 jam/minggu)</option>
+            <option value="separuh">Separuh Masa (20 jam/minggu)</option>
+            <option value="bebas">Bebas / Gig (fleksibel)</option>
+            <option value="perniagaan">Perniagaan Sendiri</option>
+            <option value="tiada">Tiada Kerja / Menganggur</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Potongan / Cukai Bulanan (RM)</label>
+        <input type="number" id="inputTax" min="0" value="0" placeholder="0">
+        <small style="font-size:11px;color:var(--kelabu);">Kalau ada potongan KWSP/SOCSO/cukai yang ditolak dari gaji.</small>
+      </div>
+    </div>
+
+    <!-- KAD 4: PERBELANJAAN BULANAN -->
+    <div class="card">
+      <h3>💸 Perbelanjaan Bulanan</h3>
+
       <div class="form-group">
         <label>Status Tempat Tinggal</label>
-        <select id="inputHousing">
-          <option value="IbuBapa">Tinggal bersama ibu bapa (RM0/bulan)</option>
-          <option value="SewaBilik">Menyewa bilik (RM450/bulan)</option>
-          <option value="SewaRumah">Menyewa rumah (RM1,200/bulan)</option>
+        <select id="inputHousingType">
+          <option value="IbuBapa">Tinggal bersama ibu bapa (RM0)</option>
+          <option value="Sewa">Menyewa</option>
+          <option value="Milik">Rumah sendiri / sedang bayar pinjaman</option>
         </select>
+      </div>
+
+      <div class="form-group">
+        <label>Sewa / Bayaran Rumah Sebulan (RM)</label>
+        <input type="number" id="inputRent" min="0" value="0" placeholder="0">
+      </div>
+
+      <div class="form-group">
+        <label>Hutang Bulanan (RM)</label>
+        <input type="number" id="inputMonthlyDebt" min="0" value="0" placeholder="0">
+        <small style="font-size:11px;color:var(--kelabu);">Pinjaman kereta, PTPTN, kad kredit, dll. (jumlah bayaran bulanan)</small>
+      </div>
+
+      <div class="form-group">
+        <label>Jumlah Baki Hutang Keseluruhan (RM)</label>
+        <input type="number" id="inputTotalDebt" min="0" value="0" placeholder="0">
+        <small style="font-size:11px;color:var(--kelabu);">Berapa lagi hutang yang belum dibayar.</small>
+      </div>
+
+      <div class="form-group">
+        <label>Perbelanjaan Harian Lain (RM/bulan)</label>
+        <input type="number" id="inputLivingCost" min="0" value="800" placeholder="800">
+        <small style="font-size:11px;color:var(--kelabu);">Makanan, pengangkutan, utiliti, dll.</small>
       </div>
     </div>
 
+    <!-- KAD 5: TANGGUNGAN -->
+    <div class="card">
+      <h3>👨‍👩‍👧 Tanggungan Keluarga</h3>
+      <p style="font-size:12px;color:var(--kelabu);margin-bottom:12px;">
+        Tambah ahli keluarga yang bergantung pada anda (anak, isteri/suami, ibu bapa).
+      </p>
+
+      <div id="tanggunganList" class="tanggungan-list"></div>
+
+      <button type="button" class="btn-add-tanggungan" id="btnAddTanggungan">
+        ➕ Tambah Tanggungan
+      </button>
+    </div>
+
+    <!-- KAD 6: MATLAMAT -->
     <div class="card">
       <h3>🎯 Matlamat Hidup</h3>
       <div class="form-group">
@@ -165,7 +256,15 @@
       </div>
     </div>
 
-    <button class="btn-primary btn-large" id="btnStartLife">▶️ Mula Kehidupan</button>
+    <!-- RINGKASAN AUTO -->
+    <div class="card summary-card">
+      <h3>📊 Ringkasan Kewangan Awal</h3>
+      <div class="summary-grid" id="summaryGrid">
+        <!-- Diisi oleh JS -->
+      </div>
+    </div>
+
+    <button class="btn-primary btn-large" id="btnStartLife">▶️ Mulakan Simulasi</button>
   </div>
 </div>
 
