@@ -1,6 +1,6 @@
 {
-  "name": "Simulator Parti Politik Malaysia",
-  "short_name": "SPPM",
+  "name": "Simulator Rakyat Malaysia",
+  "short_name": "SRM",
   "description": "Simulasi fiksyen kehidupan, politik dan pilihan raya Malaysia",
   "start_url": "./index.html",
   "display": "standalone",
