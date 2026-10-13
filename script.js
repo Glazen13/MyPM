@@ -3586,4 +3586,740 @@ init = function() {
   setupExtraNav3();
   initV3State();
 };
+/* ============================================================
+   SIMULATOR PARTI POLITIK MALAYSIA — SCRIPT.JS v4.0
+   Modul Akhir: Graf, Audio, Cutscene, Peta SVG, Tema, PWA, Tetapan
+   ============================================================ */
+
+/* ============ THEME MANAGER ============ */
+const THEME_KEY = 'sppm_theme';
+const AVAILABLE_THEMES = ['blue', 'gold', 'green', 'red'];
+
+function applyTheme(themeName) {
+  if (!AVAILABLE_THEMES.includes(themeName)) themeName = 'blue';
+  document.body.classList.remove('theme-blue', 'theme-gold', 'theme-green', 'theme-red');
+  document.body.classList.add('theme-' + themeName);
+  try { localStorage.setItem(THEME_KEY, themeName); } catch(e) {}
+  settings.theme = themeName;
+  saveSettings();
+}
+
+function loadTheme() {
+  try {
+    const saved = localStorage.getItem(THEME_KEY) || 'blue';
+    applyTheme(saved);
+  } catch(e) {
+    applyTheme('blue');
+  }
+}
+
+function openThemePicker() {
+  const current = settings.theme || 'blue';
+  openModal('🎨 Pilih Tema Warna',
+    `<p style="font-size:12px;color:var(--kelabu);margin-bottom:12px;">
+      Pilih warna tema pilihan anda. Perubahan akan digunakan serta-merta.
+    </p>
+    <div class="theme-picker">
+      <div class="theme-swatch ${current === 'blue' ? 'active' : ''}" data-theme="blue" title="Biru Klasik"></div>
+      <div class="theme-swatch ${current === 'gold' ? 'active' : ''}" data-theme="gold" title="Emas Diraja"></div>
+      <div class="theme-swatch ${current === 'green' ? 'active' : ''}" data-theme="green" title="Hijau Zamrud"></div>
+      <div class="theme-swatch ${current === 'red' ? 'active' : ''}" data-theme="red" title="Merah Berani"></div>
+    </div>`,
+    `<button class="btn-secondary" onclick="closeModal()">Tutup</button>`
+  );
+  setTimeout(() => {
+    $$('#modalBody .theme-swatch').forEach(sw => {
+      sw.onclick = () => {
+        const theme = sw.dataset.theme;
+        applyTheme(theme);
+        $$('#modalBody .theme-swatch').forEach(x => x.classList.remove('active'));
+        sw.classList.add('active');
+        showToast(`Tema ditukar ke ${theme}`, 'success');
+      };
+    });
+  }, 50);
+}
+
+/* ============ AUDIO MANAGER (Web Audio API) ============ */
+const AudioManager = {
+  ctx: null,
+  enabled: true,
+  muted: false,
+
+  init() {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) {
+        this.ctx = new AudioContext();
+      }
+    } catch(e) { this.ctx = null; }
+    this.enabled = settings.bunyi !== false;
+    this.muted = settings.muted === true;
+    this.updateIndicator();
+  },
+
+  playTone(freq, duration, type = 'sine', volume = 0.05) {
+    if (!this.ctx || !this.enabled || this.muted) return;
+    try {
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(volume, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + duration);
+    } catch(e) {}
+  },
+
+  click() { this.playTone(800, 0.06, 'sine', 0.03); },
+  success() {
+    this.playTone(523, 0.1, 'sine', 0.05);
+    setTimeout(() => this.playTone(659, 0.1, 'sine', 0.05), 80);
+    setTimeout(() => this.playTone(784, 0.15, 'sine', 0.05), 160);
+  },
+  error() {
+    this.playTone(300, 0.15, 'sawtooth', 0.04);
+    setTimeout(() => this.playTone(200, 0.2, 'sawtooth', 0.04), 100);
+  },
+  warn() {
+    this.playTone(440, 0.1, 'triangle', 0.04);
+    setTimeout(() => this.playTone(440, 0.1, 'triangle', 0.04), 150);
+  },
+  notify() {
+    this.playTone(1000, 0.08, 'sine', 0.03);
+    setTimeout(() => this.playTone(1200, 0.1, 'sine', 0.03), 60);
+  },
+  levelUp() {
+    [523, 659, 784, 1047].forEach((f, i) => {
+      setTimeout(() => this.playTone(f, 0.15, 'sine', 0.06), i * 90);
+    });
+  },
+  victory() {
+    [523, 659, 784, 1047, 1319].forEach((f, i) => {
+      setTimeout(() => this.playTone(f, 0.2, 'triangle', 0.08), i * 120);
+    });
+  },
+
+  updateIndicator() {
+    const ind = $('#audioIndicator');
+    if (!ind) return;
+    if (this.muted) {
+      ind.textContent = '🔇';
+      ind.classList.add('muted');
+    } else {
+      ind.textContent = '🔊';
+      ind.classList.remove('muted');
+    }
+  }
+};
+
+function toggleMute() {
+  AudioManager.muted = !AudioManager.muted;
+  settings.muted = AudioManager.muted;
+  saveSettings();
+  AudioManager.updateIndicator();
+  showToast(AudioManager.muted ? '🔇 Bunyi dimatikan' : '🔊 Bunyi dihidupkan', 'success');
+}
+
+/* ============ GRAF (Canvas API) ============ */
+
+/* Graf Bar */
+function drawBarChart(canvasId, data, options = {}) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+
+  const w = rect.width;
+  const h = rect.height;
+  const padding = { top: 20, right: 10, bottom: 40, left: 40 };
+  const chartW = w - padding.left - padding.right;
+  const chartH = h - padding.top - padding.bottom;
+
+  ctx.clearRect(0, 0, w, h);
+
+  const maxVal = Math.max(...data.map(d => d.value), 1);
+  const barW = chartW / data.length;
+  const barGap = barW * 0.2;
+
+  // Grid
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = padding.top + (chartH / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(padding.left, y);
+    ctx.lineTo(w - padding.right, y);
+    ctx.stroke();
+
+    ctx.fillStyle = '#8892a6';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    const val = Math.round(maxVal - (maxVal / 4) * i);
+    ctx.fillText(val, padding.left - 6, y);
+  }
+
+  // Bars
+  data.forEach((d, i) => {
+    const x = padding.left + i * barW + barGap / 2;
+    const barHeight = (d.value / maxVal) * chartH;
+    const y = padding.top + chartH - barHeight;
+
+    const gradient = ctx.createLinearGradient(0, y, 0, y + barHeight);
+    gradient.addColorStop(0, d.color || '#2c5aa0');
+    gradient.addColorStop(1, d.color2 || '#1a3a6b');
+
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    if (ctx.roundRect) {
+      ctx.roundRect(x, y, barW - barGap, barHeight, 4);
+    } else {
+      ctx.rect(x, y, barW - barGap, barHeight);
+    }
+    ctx.fill();
+
+    // Label
+    ctx.fillStyle = '#4a5568';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(d.label, x + (barW - barGap) / 2, h - padding.bottom + 8);
+
+    // Value on top
+    if (barHeight > 20) {
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textBaseline = 'top';
+      ctx.fillText(d.value, x + (barW - barGap) / 2, y + 4);
+    }
+  });
+}
+
+/* Graf Garis */
+function drawLineChart(canvasId, series, options = {}) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+
+  const w = rect.width;
+  const h = rect.height;
+  const padding = { top: 20, right: 10, bottom: 30, left: 40 };
+  const chartW = w - padding.left - padding.right;
+  const chartH = h - padding.top - padding.bottom;
+
+  ctx.clearRect(0, 0, w, h);
+
+  const allValues = series.flatMap(s => s.data);
+  const maxVal = Math.max(...allValues, 1);
+  const minVal = Math.min(...allValues, 0);
+  const range = maxVal - minVal || 1;
+
+  // Grid
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = padding.top + (chartH / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(padding.left, y);
+    ctx.lineTo(w - padding.right, y);
+    ctx.stroke();
+
+    ctx.fillStyle = '#8892a6';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    const val = Math.round(maxVal - (range / 4) * i);
+    ctx.fillText(val, padding.left - 6, y);
+  }
+
+  // Lines
+  series.forEach(s => {
+    if (s.data.length < 2) return;
+    ctx.strokeStyle = s.color || '#2c5aa0';
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+
+    s.data.forEach((val, i) => {
+      const x = padding.left + (i / (s.data.length - 1)) * chartW;
+      const y = padding.top + chartH - ((val - minVal) / range) * chartH;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Dots
+    ctx.fillStyle = s.color || '#2c5aa0';
+    s.data.forEach((val, i) => {
+      const x = padding.left + (i / (s.data.length - 1)) * chartW;
+      const y = padding.top + chartH - ((val - minVal) / range) * chartH;
+      ctx.beginPath();
+      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  });
+}
+
+/* Graf Pai */
+function drawPieChart(canvasId, data) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+
+  const w = rect.width;
+  const h = rect.height;
+  const cx = w / 2;
+  const cy = h / 2;
+  const radius = Math.min(w, h) / 2 - 20;
+
+  ctx.clearRect(0, 0, w, h);
+
+  const total = data.reduce((s, d) => s + d.value, 0) || 1;
+  let startAngle = -Math.PI / 2;
+
+  data.forEach(d => {
+    const angle = (d.value / total) * Math.PI * 2;
+    ctx.fillStyle = d.color || '#2c5aa0';
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, radius, startAngle, startAngle + angle);
+    ctx.closePath();
+    ctx.fill();
+
+    // Label
+    const midAngle = startAngle + angle / 2;
+    const labelX = cx + Math.cos(midAngle) * (radius * 0.7);
+    const labelY = cy + Math.sin(midAngle) * (radius * 0.7);
+    if (angle > 0.3) {
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const pct = Math.round((d.value / total) * 100);
+      ctx.fillText(pct + '%', labelX, labelY);
+    }
+
+    startAngle += angle;
+  });
+}
+
+/* Buka modal graf */
+function openChartModal() {
+  openModal('📊 Graf Statistik',
+    `<div class="chart-container">
+      <h4>📈 Statistik Utama</h4>
+      <canvas id="chartStats" class="chart-canvas"></canvas>
+    </div>
+    <div class="chart-container">
+      <h4>💼 Kemajuan Kerjaya</h4>
+      <canvas id="chartCareer" class="chart-canvas"></canvas>
+    </div>
+    <div class="chart-container">
+      <h4>🏛️ Pengaruh Politik</h4>
+      <canvas id="chartPolitics" class="chart-canvas"></canvas>
+    </div>`,
+    `<button class="btn-secondary" onclick="closeModal()">Tutup</button>`
+  );
+  setTimeout(() => {
+    const p = state.player;
+    // Graf 1: Statistik
+    drawBarChart('chartStats', [
+      { label: 'Populari', value: Math.round(p.popularity), color: '#2c5aa0', color2: '#1a3a6b' },
+      { label: 'Integriti', value: Math.round(p.integrity), color: '#27ae60', color2: '#1e8449' },
+      { label: 'Karisma', value: Math.round(p.charisma), color: '#d4af37', color2: '#8b6f1f' },
+      { label: 'Kepimpi', value: Math.round(p.leadership), color: '#9b59b6', color2: '#6c3483' },
+      { label: 'Kesihatan', value: Math.round(p.health), color: '#e74c3c', color2: '#922b21' },
+      { label: 'Tekanan', value: Math.round(p.stress), color: '#f39c12', color2: '#b9770e' }
+    ]);
+
+    // Graf 2: Gaji vs Perbelanjaan
+    const f = state.finances;
+    drawBarChart('chartCareer', [
+      { label: 'Pendapatan', value: Math.round(f.pendapatanBulanan / 100), color: '#27ae60', color2: '#1e8449' },
+      { label: 'Perbelanjaan', value: Math.round(f.perbelanjaanBulanan / 100), color: '#e74c3c', color2: '#922b21' },
+      { label: 'Aliran', value: Math.max(0, Math.round(f.cashFlow / 100)), color: '#2c5aa0', color2: '#1a3a6b' }
+    ]);
+
+    // Graf 3: Pengaruh politik
+    drawBarChart('chartPolitics', [
+      { label: 'Parti', value: Math.round(p.partyInfluence), color: '#2c5aa0', color2: '#1a3a6b' },
+      { label: 'Akar U.', value: Math.round(p.grassrootsSupport), color: '#27ae60', color2: '#1e8449' },
+      { label: 'Media', value: Math.round(p.mediaRelations), color: '#9b59b6', color2: '#6c3483' },
+      { label: 'Awam', value: Math.round(p.publicTrust), color: '#d4af37', color2: '#8b6f1f' },
+      { label: 'Kawasan', value: Math.round(p.constituencySupport), color: '#3498db', color2: '#1f6ca0' }
+    ]);
+  }, 100);
+}
+
+/* ============ CUTSCENE ============ */
+let cutsceneTimer = null;
+
+function playCutscene(emoji, title, sub, duration = 3500) {
+  const cut = $('#cutscene');
+  if (!cut) return;
+
+  $('#cutEmoji').textContent = emoji;
+  $('#cutTitle').textContent = title;
+  $('#cutSub').textContent = sub;
+
+  cut.classList.remove('hidden');
+  AudioManager.victory();
+
+  clearTimeout(cutsceneTimer);
+  cutsceneTimer = setTimeout(skipCutscene, duration);
+}
+
+function skipCutscene() {
+  clearTimeout(cutsceneTimer);
+  const cut = $('#cutscene');
+  if (cut) cut.classList.add('hidden');
+}
+
+/* Cutscene khusus */
+function cutsceneAppointment(position) {
+  playCutscene('🏛️', `Dilantik sebagai ${position}`, 'Simulasi fiksyen — bukan pelantikan sebenar', 4000);
+}
+function cutsceneVictory(seatName) {
+  playCutscene('🎉', 'Kemenangan Pilihan Raya', `Anda memenangi kerusi ${seatName} dalam simulasi`, 4000);
+}
+function cutscenePM() {
+  playCutscene('👑', 'Perdana Menteri (Simulasi)', 'Peraturan permainan — bukan proses perlembagaan sebenar', 5000);
+}
+function cutsceneLevelUp(level) {
+  playCutscene('⭐', `Tahap ${level}`, 'Kemajuan kehidupan dalam simulasi', 2500);
+}
+
+/* ============ PETA SVG MALAYSIA (SIMPLIFIED) ============ */
+function renderSVGMap() {
+  const body = $('#svgMapBody');
+  const p = state.player;
+  const wonSeats = [
+    ...(state.dun?.won || []).map(w => ({ ...w, jenis: 'DUN' })),
+    ...(state.parlimen?.won || []).map(w => ({ ...w, jenis: 'Parlimen' }))
+  ];
+
+  body.innerHTML = `
+    <p style="font-size:12px;color:var(--kelabu);margin-bottom:10px;">
+      Peta skematik simulasi (bukan sempadan rasmi). Klik negeri untuk maklumat lanjut.
+    </p>
+    <div class="svg-map-wrap" id="mapWrap">
+      <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+        <!-- Simplified Malaysia regions -->
+        <!-- Perlis -->
+        <polygon class="state-region" data-state="Perlis" points="55,60 75,55 80,75 60,80"/>
+        <!-- Kedah -->
+        <polygon class="state-region" data-state="Kedah" points="60,80 80,75 90,110 70,120 55,100"/>
+        <!-- Penang -->
+        <polygon class="state-region" data-state="Penang" points="48,115 65,120 60,135 45,130"/>
+        <!-- Perak -->
+        <polygon class="state-region" data-state="Perak" points="70,120 110,130 115,175 75,170 60,140"/>
+        <!-- Kelantan -->
+        <polygon class="state-region" data-state="Kelantan" points="115,70 145,65 155,105 120,115"/>
+        <!-- Terengganu -->
+        <polygon class="state-region" data-state="Terengganu" points="145,65 175,75 180,115 155,120 155,105"/>
+        <!-- Pahang -->
+        <polygon class="state-region" data-state="Pahang" points="120,115 180,115 195,180 125,180 115,150"/>
+        <!-- Selangor -->
+        <polygon class="state-region" data-state="Selangor" points="70,175 100,175 105,200 75,205"/>
+        <!-- W.P. Kuala Lumpur -->
+        <polygon class="state-region" data-state="W.P. Kuala Lumpur" points="98,197 108,197 108,207 98,207"/>
+        <!-- Negeri Sembilan -->
+        <polygon class="state-region" data-state="Negeri Sembilan" points="75,205 110,205 115,235 80,235"/>
+        <!-- Melaka -->
+        <polygon class="state-region" data-state="Melaka" points="80,240 105,240 108,260 83,260"/>
+        <!-- Johor -->
+        <polygon class="state-region" data-state="Johor" points="83,260 125,260 145,320 90,320 78,290"/>
+        <!-- Sabah (kiri atas) -->
+        <polygon class="state-region" data-state="Sabah" points="280,80 340,75 355,120 320,140 275,130"/>
+        <!-- Sarawak -->
+        <polygon class="state-region" data-state="Sarawak" points="275,130 320,140 355,120 360,180 300,190 265,170"/>
+        <!-- W.P. Labuan -->
+        <circle class="state-region" data-state="W.P. Labuan" cx="272" cy="128" r="6"/>
+        <!-- W.P. Putrajaya -->
+        <circle class="state-region" data-state="W.P. Putrajaya" cx="110" cy="205" r="4"/>
+      </svg>
+      <div class="map-tooltip" id="mapTooltip"></div>
+    </div>
+    <div class="chart-legend" style="margin-top:12px;justify-content:center;">
+      <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#c8d8e8;"></div>Negeri</div>
+      <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#2c5aa0;"></div>Pemain aktif</div>
+      <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#e74c3c;"></div>Kerusi dimenangi</div>
+    </div>
+
+    ${wonSeats.length > 0 ? `
+      <h4 style="font-size:13px;color:var(--biru-gelap);margin-top:14px;">🎖️ Kerusi Dimenangi</h4>
+      <ul style="font-size:12px;padding-left:18px;color:var(--kelabu-gelap);">
+        ${wonSeats.map(w => `<li>${w.kod} ${w.nama} (${w.jenis}) — ${w.tarikh}</li>`).join('')}
+      </ul>
+    ` : '<p style="font-size:12px;color:var(--kelabu);text-align:center;margin-top:12px;">Belum ada kerusi dimenangi.</p>'}
+  `;
+
+  // Interaksi
+  body.querySelectorAll('.state-region').forEach(region => {
+    region.addEventListener('click', () => {
+      const negeri = region.dataset.state;
+      if (p.negeri === negeri) {
+        showToast(`📍 Anda tinggal di ${negeri}`, 'success');
+      }
+      showStateConstituencies(negeri);
+      $('#svgMapModal').classList.remove('open');
+      setTimeout(() => $('#mapModal').classList.add('open'), 200);
+    });
+
+    region.addEventListener('mouseenter', (e) => {
+      const tooltip = $('#mapTooltip');
+      if (!tooltip) return;
+      tooltip.textContent = region.dataset.state;
+      tooltip.classList.add('show');
+      const wrapRect = $('#mapWrap').getBoundingClientRect();
+      tooltip.style.left = (e.clientX - wrapRect.left + 10) + 'px';
+      tooltip.style.top = (e.clientY - wrapRect.top + 10) + 'px';
+    });
+    region.addEventListener('mouseleave', () => {
+      const tooltip = $('#mapTooltip');
+      if (tooltip) tooltip.classList.remove('show');
+    });
+  });
+}
+
+function openSVGMapModal() {
+  initV3State();
+  renderSVGMap();
+  $('#svgMapModal').classList.add('open');
+}
+
+/* ============ TETAPAN LANJUTAN ============ */
+function openAdvancedSettings() {
+  $('#advSettingsBody').innerHTML = `
+    <div class="settings-row">
+      <div>
+        <label>Auto-Simpan</label>
+        <small>Simpan automatik setiap giliran</small>
+      </div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="setAutoSave" ${settings.autoSave !== false ? 'checked' : ''}>
+        <span class="toggle-slider"></span>
+      </div>
+    </div>
+
+    <div class="settings-row">
+      <div>
+        <label>Kesan Bunyi</label>
+        <small>Bunyi klik, notifikasi, cutscene</small>
+      </div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="setSound" ${settings.bunyi !== false ? 'checked' : ''}>
+        <span class="toggle-slider"></span>
+      </div>
+    </div>
+
+    <div class="settings-row">
+      <div>
+        <label>Muzik Latar</label>
+        <small>Muzik lembut sepanjang permainan</small>
+      </div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="setMusic" ${settings.muzik === true ? 'checked' : ''}>
+        <span class="toggle-slider"></span>
+      </div>
+    </div>
+
+    <div class="settings-row">
+      <div>
+        <label>Cutscene</label>
+        <small>Animasi pelantikan & kemenangan</small>
+      </div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="setCutscene" ${settings.cutscene !== false ? 'checked' : ''}>
+        <span class="toggle-slider"></span>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-top:14px;">
+      <label>Tahap Kesukaran</label>
+      <select id="setDiffAdv">
+        <option value="santai" ${settings.kesukaran==='santai'?'selected':''}>Santai — lebihan wang +50%, krisis jarang</option>
+        <option value="seimbang" ${settings.kesukaran==='seimbang'?'selected':''}>Seimbang — pengalaman standard</option>
+        <option value="mencabar" ${settings.kesukaran==='mencabar'?'selected':''}>Mencabar — kos +30%, krisis kerap</option>
+      </select>
+    </div>
+
+    <div style="font-size:11px;color:var(--kelabu);margin-top:14px;padding:10px;background:var(--kelabu-cerah);border-radius:8px;">
+      <strong>ℹ️ Maklumat:</strong><br>
+      Versi: ${VERSION}<br>
+      Modul: v1.0 + v2.0 + v3.0 + v4.0<br>
+      PWA: ${'serviceWorker' in navigator ? 'Disokong' : 'Tidak disokong'}<br>
+      Penyimpanan: LocalStorage
+    </div>
+  `;
+
+  $('#advSettingsFooter').innerHTML = `
+    <button class="btn-secondary" id="resetSaveBtn" style="color:var(--merah);">🗑️ Padam Semua Simpanan</button>
+    <button class="btn-primary" id="saveAdvBtn" style="width:auto;margin:0;">Simpan</button>
+  `;
+
+  setTimeout(() => {
+    $('#saveAdvBtn').onclick = () => {
+      settings.autoSave = $('#setAutoSave').checked;
+      settings.bunyi = $('#setSound').checked;
+      settings.muzik = $('#setMusic').checked;
+      settings.cutscene = $('#setCutscene').checked;
+      settings.kesukaran = $('#setDiffAdv').value;
+      saveSettings();
+      AudioManager.enabled = settings.bunyi;
+      AudioManager.updateIndicator();
+      showToast('Tetapan disimpan', 'success');
+    };
+    $('#resetSaveBtn').onclick = () => {
+      if (confirm('Padam SEMUA simpanan? Tindakan ini tidak boleh dibatalkan.')) {
+        const keys = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith(SAVE_KEY_PREFIX)) keys.push(k);
+        }
+        keys.forEach(k => localStorage.removeItem(k));
+        localStorage.removeItem(SAVE_AUTO_KEY);
+        showToast('Semua simpanan dipadam', 'warn');
+      }
+    };
+  }, 50);
+
+  $('#advSettingsModal').classList.add('open');
+}
+
+/* ============ SERVICE WORKER (PWA) ============ */
+function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+  if (location.protocol === 'file:') {
+    console.log('Service Worker tidak aktif pada file://');
+    return;
+  }
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(reg => console.log('✅ Service Worker didaftarkan:', reg.scope))
+      .catch(err => console.log('⚠️ Service Worker gagal:', err));
+  });
+}
+
+/* ============ EXTRA NAV 4 ============ */
+function setupExtraNav4() {
+  const nav = $('#extraNav4');
+  if (!nav) return;
+
+  const observer = new MutationObserver(() => {
+    if ($('#game').classList.contains('active')) {
+      nav.classList.remove('hidden');
+      const ind = $('#audioIndicator');
+      if (ind) ind.classList.remove('hidden');
+    } else {
+      nav.classList.add('hidden');
+      const ind = $('#audioIndicator');
+      if (ind) ind.classList.add('hidden');
+    }
+  });
+  observer.observe($('#game'), { attributes: true, attributeFilter: ['class'] });
+
+  nav.querySelectorAll('[data-extra4]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      AudioManager.click();
+      const action = btn.dataset.extra4;
+      switch(action) {
+        case 'chart': openChartModal(); break;
+        case 'svgmap': openSVGMapModal(); break;
+        case 'advset': openAdvancedSettings(); break;
+        case 'theme': openThemePicker(); break;
+      }
+    });
+  });
+}
+
+/* ============ INTEGRASI AUDIO KE AKSI ============ */
+/* Wrap showToast untuk main bunyi */
+const _originalShowToast = showToast;
+showToast = function(msg, type = '') {
+  _originalShowToast(msg, type);
+  if (type === 'success') AudioManager.success();
+  else if (type === 'error') AudioManager.error();
+  else if (type === 'warn') AudioManager.warn();
+  else AudioManager.notify();
+};
+
+/* Wrap addXP / checkLevelUp */
+const _originalCheckLevelUp = checkLevelUp;
+checkLevelUp = function() {
+  const beforeLevel = state.player.level;
+  _originalCheckLevelUp();
+  if (state.player.level > beforeLevel) {
+    AudioManager.levelUp();
+    if (settings.cutscene !== false) {
+      cutsceneLevelUp(state.player.level);
+    }
+  }
+};
+
+/* Hook cutscene untuk kemenangan pilihan raya */
+const _originalResolveCampaign = resolveCampaign;
+resolveCampaign = function() {
+  const beforePos = state.player.position;
+  _originalResolveCampaign();
+  if (settings.cutscene !== false && state.player.position !== beforePos && state.player.position) {
+    setTimeout(() => cutsceneVictory(campaignState ? campaignState.kawasan.nama : ''), 500);
+  }
+};
+
+/* Hook cutscene untuk pelantikan menteri */
+const _originalLobbyMinister = lobbyMinister;
+lobbyMinister = function() {
+  const beforePos = state.player.position;
+  _originalLobbyMinister();
+  if (settings.cutscene !== false && state.player.position !== beforePos && state.player.position) {
+    setTimeout(() => cutsceneAppointment(state.player.position), 500);
+  }
+};
+
+/* ============ PATCH init UNTUK v4 ============ */
+const _v3Init = init;
+init = function() {
+  _v3Init();
+
+  // Load tema
+  loadTheme();
+
+  // Init audio
+  AudioManager.init();
+
+  // Setup extra nav v4
+  setupExtraNav4();
+
+  // Register service worker
+  registerServiceWorker();
+
+  // Simpan settings
+  saveSettings();
+
+  console.log('🎮 Simulator Parti Politik Malaysia v' + VERSION + ' dimuatkan');
+  console.log('📦 Modul: v1.0 + v2.0 + v3.0 + v4.0');
+};
+
+/* ============ JALANKAN ============ */
 document.addEventListener('DOMContentLoaded', init);
