@@ -7,9 +7,9 @@
 
 /* ============ TETAPAN GLOBAL ============ */
 const VERSION = '2.0.0';
-const SAVE_KEY_PREFIX = 'sppm_save_';
-const SAVE_AUTO_KEY = 'sppm_autosave';
-const SETTINGS_KEY = 'sppm_settings';
+const SAVE_KEY_PREFIX = 'srm_save_';
+const SAVE_AUTO_KEY = 'srm_autosave';
+const SETTINGS_KEY = 'srm_settings';
 
 /* ============ PANGKALAN DATA: NEGERI ============ */
 const STATES = [
@@ -4055,7 +4055,7 @@ init = function() {
    ============================================================ */
 
 /* ============ THEME MANAGER ============ */
-const THEME_KEY = 'sppm_theme';
+const THEME_KEY = 'srm_theme';
 const AVAILABLE_THEMES = ['blue', 'gold', 'green', 'red'];
 
 function applyTheme(themeName) {
@@ -4790,7 +4790,7 @@ init = function() {
    ============================================================ */
 
 /* ============ I18N — SISTEM BAHASA ============ */
-const LANG_KEY = 'sppm_lang';
+const LANG_KEY = 'srm_lang';
 let currentLang = 'ms';
 
 const I18N = {
@@ -5103,7 +5103,7 @@ function openNotifModal() {
 }
 
 /* ============ SLOT SIMPANAN ============ */
-const SLOT_PREFIX = 'sppm_slot_';
+const SLOT_PREFIX = 'srm_slot_';
 const MAX_SLOTS = 6;
 
 function getSlotKey(n) { return SLOT_PREFIX + n; }
@@ -5264,7 +5264,7 @@ function openSlotsModal() {
 }
 
 /* ============ LEADERBOARD ============ */
-const LB_KEY = 'sppm_leaderboard';
+const LB_KEY = 'srm_leaderboard';
 
 function recordToLeaderboard() {
   if (!state) return;
