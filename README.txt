@@ -1,4 +1,4 @@
-CARA PASANG SIMULATOR PARTI POLITIK MALAYSIA (PWA)
+CARA PASANG SIMULATOR RAKYAT MALAYSIA (PWA)
 ====================================================
 
 1. Simpan semua fail dalam folder yang sama:
