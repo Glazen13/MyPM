@@ -1923,4 +1923,482 @@ function init() {
 }
 
 /* ============ JALANKAN ============ */
-document.addEventListener('DOMContentLoaded', init);
+/* ============================================================
+   SIMULATOR PARTI POLITIK MALAYSIA — SCRIPT.JS v2.0
+   Modul Lanjutan: Kawasan, Peta, Kempen, Kabinet, Tugas, Projek, Bajet
+   ============================================================ */
+
+/* ============ PANGKALAN DATA: KAWASAN PARLIMEN (SAMPEL SIMULASI) ============ */
+/* Nota: Ini adalah data SIMULASI bagi tujuan permainan. Bukan data rasmi SPR. */
+const PARLIMEN_DB = [
+  { kod: 'P.001', nama: 'Padang Besar', negeri: 'Perlis', pengundi: 52000, penyandang: 'Simulasi', parti: 'BNR' },
+  { kod: 'P.002', nama: 'Kangar', negeri: 'Perlis', pengundi: 48000, penyandang: 'Simulasi', parti: 'PRB' },
+  { kod: 'P.003', nama: 'Arau', negeri: 'Perlis', pengundi: 45000, penyandang: 'Simulasi', parti: 'PIN' },
+  { kod: 'P.010', nama: 'Alor Setar', negeri: 'Kedah', pengundi: 78000, penyandang: 'Simulasi', parti: 'PRB' },
+  { kod: 'P.020', nama: 'Kangar Town', negeri: 'Kedah', pengundi: 65000, penyandang: 'Simulasi', parti: 'BNR' },
+  { kod: 'P.030', nama: 'Kota Bharu', negeri: 'Kelantan', pengundi: 82000, penyandang: 'Simulasi', parti: 'PIN' },
+  { kod: 'P.040', nama: 'Kuala Terengganu', negeri: 'Terengganu', pengundi: 76000, penyandang: 'Simulasi', parti: 'PIN' },
+  { kod: 'P.050', nama: 'Ipoh Timor', negeri: 'Perak', pengundi: 88000, penyandang: 'Simulasi', parti: 'PPP' },
+  { kod: 'P.060', nama: 'Petaling Jaya', negeri: 'Selangor', pengundi: 95000, penyandang: 'Simulasi', parti: 'PPP' },
+  { kod: 'P.070', nama: 'Shah Alam', negeri: 'Selangor', pengundi: 105000, penyandang: 'Simulasi', parti: 'PPP' },
+  { kod: 'P.080', nama: 'Cheras', negeri: 'W.P. Kuala Lumpur', pengundi: 110000, penyandang: 'Simulasi', parti: 'PPP' },
+  { kod: 'P.090', nama: 'Titiwangsa', negeri: 'W.P. Kuala Lumpur', pengundi: 78000, penyandang: 'Simulasi', parti: 'BNR' },
+  { kod: 'P.100', nama: 'Seremban', negeri: 'Negeri Sembilan', pengundi: 85000, penyandang: 'Simulasi', parti: 'PRB' },
+  { kod: 'P.110', nama: 'Melaka Tengah', negeri: 'Melaka', pengundi: 72000, penyandang: 'Simulasi', parti: 'BNR' },
+  { kod: 'P.120', nama: 'Johor Bahru', negeri: 'Johor', pengundi: 98000, penyandang: 'Simulasi', parti: 'BNR' },
+  { kod: 'P.130', nama: 'Kuantan', negeri: 'Pahang', pengundi: 68000, penyandang: 'Simulasi', parti: 'BNR' },
+  { kod: 'P.140', nama: 'Kota Kinabalu', negeri: 'Sabah', pengundi: 72000, penyandang: 'Simulasi', parti: 'PSM' },
+  { kod: 'P.150', nama: 'Kuching', negeri: 'Sarawak', pengundi: 80000, penyandang: 'Simulasi', parti: 'PSB' }
+];
+
+/* ============ PANGKALAN DATA: KAWASAN DUN (SAMPEL SIMULASI) ============ */
+const DUN_DB = [
+  { kod: 'N.01', nama: 'Titi Tinggi', negeri: 'Perlis', parlimenInduk: 'P.001', pengundi: 18000 },
+  { kod: 'N.02', nama: 'Beseri', negeri: 'Perlis', parlimenInduk: 'P.001', pengundi: 15000 },
+  { kod: 'N.03', nama: 'Chuping', negeri: 'Perlis', parlimenInduk: 'P.001', pengundi: 17000 },
+  { kod: 'N.10', nama: 'Bukit Kayu Hitam', negeri: 'Kedah', parlimenInduk: 'P.010', pengundi: 22000 },
+  { kod: 'N.20', nama: 'Kubang Kerian', negeri: 'Kelantan', parlimenInduk: 'P.030', pengundi: 28000 },
+  { kod: 'N.30', nama: 'Batu Buruk', negeri: 'Terengganu', parlimenInduk: 'P.040', pengundi: 25000 },
+  { kod: 'N.40', nama: 'Pasir Pinji', negeri: 'Perak', parlimenInduk: 'P.050', pengundi: 30000 },
+  { kod: 'N.50', nama: 'Bukit Lanjan', negeri: 'Selangor', parlimenInduk: 'P.060', pengundi: 38000 },
+  { kod: 'N.60', nama: 'Bukit Antarabangsa', negeri: 'Selangor', parlimenInduk: 'P.070', pengundi: 42000 },
+  { kod: 'N.70', nama: 'Bukit Bintang', negeri: 'W.P. Kuala Lumpur', parlimenInduk: 'P.080', pengundi: 32000 },
+  { kod: 'N.80', nama: 'Lenggeng', negeri: 'Negeri Sembilan', parlimenInduk: 'P.100', pengundi: 24000 },
+  { kod: 'N.90', nama: 'Ayer Keroh', negeri: 'Melaka', parlimenInduk: 'P.110', pengundi: 26000 },
+  { kod: 'N.100', nama: 'Stulang', negeri: 'Johor', parlimenInduk: 'P.120', pengundi: 34000 },
+  { kod: 'N.110', nama: 'Teruntum', negeri: 'Pahang', parlimenInduk: 'P.130', pengundi: 23000 },
+  { kod: 'N.120', nama: 'Likas', negeri: 'Sabah', parlimenInduk: 'P.140', pengundi: 27000 },
+  { kod: 'N.130', nama: 'Padungan', negeri: 'Sarawak', parlimenInduk: 'P.150', pengundi: 25000 }
+];
+
+/* ============ PANGKALAN DATA: PORTFOLIO KEMENTERIAN (SIMULASI) ============ */
+const MINISTRIES = [
+  { id: 'M01', nama: 'Kewangan', emoji: '💵', kpi: 'Kestabilan fiskal' },
+  { id: 'M02', nama: 'Pendidikan', emoji: '🎓', kpi: 'Kualiti pembelajaran' },
+  { id: 'M03', nama: 'Kesihatan', emoji: '🏥', kpi: 'Akses perkhidmatan' },
+  { id: 'M04', nama: 'Pengangkutan', emoji: '🚆', kpi: 'Kesalinghubungan' },
+  { id: 'M05', nama: 'Kerja Raya', emoji: '🏗️', kpi: 'Infrastruktur' },
+  { id: 'M06', nama: 'Ekonomi', emoji: '📈', kpi: 'Pertumbuhan' },
+  { id: 'M07', nama: 'Dalam Negeri', emoji: '🛡️', kpi: 'Keselamatan' },
+  { id: 'M08', nama: 'Luar', emoji: '🌐', kpi: 'Diplomasi' },
+  { id: 'M09', nama: 'Pertanian', emoji: '🌾', kpi: 'Sekuriti makanan' },
+  { id: 'M10', nama: 'Alam Sekitar', emoji: '🌳', kpi: 'Kelestarian' }
+];
+
+/* ============ PANGKALAN DATA: JENIS PROJEK ============ */
+const PROJECT_TYPES = [
+  { id: 'PRJ01', nama: 'Baik Pulih Jalan', kos: 500000, masa: 3, manfaat: 'Infrastruktur', emoji: '🛣️' },
+  { id: 'PRJ02', nama: 'Naik Taraf Sekolah', kos: 800000, masa: 4, manfaat: 'Pendidikan', emoji: '🏫' },
+  { id: 'PRJ03', nama: 'Klinik Desa', kos: 1200000, masa: 5, manfaat: 'Kesihatan', emoji: '🏥' },
+  { id: 'PRJ04', nama: 'Kawalan Banjir', kos: 2000000, masa: 6, manfaat: 'Alam Sekitar', emoji: '🌊' },
+  { id: 'PRJ05', nama: 'Pasar Awam', kos: 1500000, masa: 4, manfaat: 'Ekonomi', emoji: '🏪' },
+  { id: 'PRJ06', nama: 'Internet Luar Bandar', kos: 1000000, masa: 5, manfaat: 'Digital', emoji: '📡' },
+  { id: 'PRJ07', nama: 'Program Belia', kos: 300000, masa: 2, manfaat: 'Sosial', emoji: '🧑‍🎓' },
+  { id: 'PRJ08', nama: 'Bantuan Banjir', kos: 600000, masa: 2, manfaat: 'Kebajikan', emoji: '🚨' },
+  { id: 'PRJ09', nama: 'Perumahan Rakyat', kos: 5000000, masa: 8, manfaat: 'Perumahan', emoji: '🏘️' },
+  { id: 'PRJ10', nama: 'Pusat Latihan Vokasional', kos: 1800000, masa: 5, manfaat: 'Pekerjaan', emoji: '🔧' }
+];
+
+/* ============ PANGKALAN DATA: TUGAS MENGIKUT JAWATAN ============ */
+const TASK_TEMPLATES = {
+  'Perdana Menteri': [
+    { id: 'T_PM1', tajuk: 'Mesyuarat Kabinet Mingguan', desk: 'Pengerusikan mesyuarat kabinet untuk menyelaras dasar kerajaan.', prioriti: 'high', masa: 1 },
+    { id: 'T_PM2', tajuk: 'Sesi Parlimen', desk: 'Hadiri sesi Parlimen dan jawab soalan ahli.', prioriti: 'high', masa: 1 },
+    { id: 'T_PM3', tajuk: 'Lawatan Rasmi Negeri', desk: 'Lawatan kerja ke negeri untuk semak projek.', prioriti: 'medium', masa: 1 },
+    { id: 'T_PM4', tajuk: 'Hubungan Antarabangsa', desk: 'Mesyuarat diplomatik dengan delegasi asing.', prioriti: 'medium', masa: 1 },
+    { id: 'T_PM5', tajuk: 'Sidang Media Nasional', desk: 'Beri kenyataan media tentang isu semasa.', prioriti: 'low', masa: 1 }
+  ],
+  'Menteri': [
+    { id: 'T_M1', tajuk: 'Semakan KPI Kementerian', desk: 'Nilai prestasi agensi di bawah portfolio.', prioriti: 'high', masa: 1 },
+    { id: 'T_M2', tajuk: 'Mesyuarat Kabinet', desk: 'Hadiri mesyuarat kabinet mingguan.', prioriti: 'high', masa: 1 },
+    { id: 'T_M3', tajuk: 'Lawatan Projek', desk: 'Semak projek pembangunan kementerian.', prioriti: 'medium', masa: 1 },
+    { id: 'T_M4', tajuk: 'Sesi Parlimen', desk: 'Jawab soalan berkaitan portfolio.', prioriti: 'high', masa: 1 },
+    { id: 'T_M5', tajuk: 'Dialog Industri', desk: 'Mesyuarat dengan pemain industri.', prioriti: 'low', masa: 1 }
+  ],
+  'Ahli Parlimen': [
+    { id: 'T_AP1', tajuk: 'Kehadiran Parlimen', desk: 'Hadir dan berbahas di Parlimen.', prioriti: 'high', masa: 1 },
+    { id: 'T_AP2', tajuk: 'Khidmat Kawasan', desk: 'Hadiri program komuniti di kawasan.', prioriti: 'medium', masa: 1 },
+    { id: 'T_AP3', tajuk: 'Aduan Penduduk', desk: 'Uruskan aduan rakyat kawasan.', prioriti: 'high', masa: 1 },
+    { id: 'T_AP4', tajuk: 'Mesyuarat Parti', desk: 'Hadiri mesyuarat bahagian parti.', prioriti: 'medium', masa: 1 },
+    { id: 'T_AP5', tajuk: 'Program Belia', desk: 'Anjur program bersama golongan muda.', prioriti: 'low', masa: 1 }
+  ],
+  'ADUN': [
+    { id: 'T_AD1', tajuk: 'Sidang DUN', desk: 'Hadir dan berbahas di Dewan Undangan Negeri.', prioriti: 'high', masa: 1 },
+    { id: 'T_AD2', tajuk: 'Program Komuniti', desk: 'Hadiri aktiviti masyarakat setempat.', prioriti: 'medium', masa: 1 },
+    { id: 'T_AD3', tajuk: 'Aduan Tempatan', desk: 'Uruskan aduan jalan, air, banjir.', prioriti: 'high', masa: 1 },
+    { id: 'T_AD4', tajuk: 'Semak Projek', desk: 'Pantau projek pembangunan di kawasan.', prioriti: 'medium', masa: 1 }
+  ],
+  'Ahli Biasa': [
+    { id: 'T_AB1', tajuk: 'Hadiri Mesyuarat Cawangan', desk: 'Sertai mesyuarat cawangan parti.', prioriti: 'low', masa: 1 },
+    { id: 'T_AB2', tajuk: 'Sukarelawan Program', desk: 'Bantu program masyarakat.', prioriti: 'low', masa: 1 },
+    { id: 'T_AB3', tajuk: 'Kempen Parti', desk: 'Sertai kempen dan aktiviti parti.', prioriti: 'medium', masa: 1 }
+  ]
+};
+
+/* ============ INIT v2.0 KE DALAM STATE ============ */
+function initV2State() {
+  if (!state) return;
+  if (!state.parlimen) {
+    state.parlimen = { contested: null, won: [] };
+    state.dun = { contested: null, won: [] };
+    state.cabinet = { portfolio: null, menteri: [], kpi: {}, tugasan: [] };
+    state.tasks = { aktif: [], selesai: [], tertunggak: [] };
+    state.projects = [];
+    state.budget = { federal: 0, state: 0, used: 0, committed: 0 };
+    state.newsChains = [];
+    state.eventChains = {};
+  }
+}
+
+/* ============ PETA MALAYSIA ============ */
+function openMapModal() {
+  initV2State();
+  const body = $('#mapBody');
+  const byState = {};
+  STATES.forEach(s => byState[s] = { parlimen: 0, dun: 0 });
+  PARLIMEN_DB.forEach(p => { if (byState[p.negeri]) byState[p.negeri].parlimen++; });
+  DUN_DB.forEach(d => { if (byState[d.negeri]) byState[d.negeri].dun++; });
+
+  body.innerHTML = `
+    <p style="font-size:12px;color:var(--kelabu);margin-bottom:10px;">
+      Peta simulasi — data kawasan adalah contoh permainan, bukan data rasmi SPR.
+    </p>
+    <div class="map-grid">
+      ${STATES.map(s => `
+        <button class="map-state" data-state="${s}">
+          <strong>${s}</strong>
+          <small>${byState[s].parlimen} Parlimen • ${byState[s].dun} DUN</small>
+        </button>
+      `).join('')}
+    </div>
+  `;
+
+  body.querySelectorAll('[data-state]').forEach(btn => {
+    btn.addEventListener('click', () => showStateConstituencies(btn.dataset.state));
+  });
+
+  $('#mapModal').classList.add('open');
+}
+
+function showStateConstituencies(negeri) {
+  const parlimen = PARLIMEN_DB.filter(p => p.negeri === negeri);
+  const dun = DUN_DB.filter(d => d.negeri === negeri);
+
+  const body = $('#mapBody');
+  body.innerHTML = `
+    <button class="btn-back" id="backToMap">← Kembali ke Peta</button>
+    <h4 style="margin:12px 0 8px;color:var(--biru-gelap);">📍 ${negeri}</h4>
+
+    <h5 style="margin-top:14px;font-size:13px;color:var(--biru-muda);">PARLIMEN (${parlimen.length})</h5>
+    ${parlimen.length === 0
+      ? '<p style="font-size:12px;color:var(--kelabu);">Tiada data simulasi.</p>'
+      : `<div class="const-list">
+          ${parlimen.map(p => `
+            <button class="const-item" data-const="${p.kod}">
+              <span class="code">${p.kod}</span>
+              <span class="name">${p.nama}</span>
+              <span class="meta">Pengundi: ${formatNum(p.pengundi)} • Parti simulasi: ${p.parti}</span>
+            </button>
+          `).join('')}
+        </div>`
+    }
+
+    <h5 style="margin-top:18px;font-size:13px;color:var(--biru-muda);">DUN (${dun.length})</h5>
+    ${dun.length === 0
+      ? '<p style="font-size:12px;color:var(--kelabu);">Tiada data simulasi.</p>'
+      : `<div class="const-list">
+          ${dun.map(d => `
+            <button class="const-item" data-const="${d.kod}">
+              <span class="code">${d.kod}</span>
+              <span class="name">${d.nama}</span>
+              <span class="meta">Pengundi: ${formatNum(d.pengundi)} • Parlimen induk: ${d.parlimenInduk}</span>
+            </button>
+          `).join('')}
+        </div>`
+    }
+  `;
+
+  $('#backToMap').onclick = openMapModal;
+  body.querySelectorAll('[data-const]').forEach(btn => {
+    btn.addEventListener('click', () => showConstituencyDetails(btn.dataset.const));
+  });
+}
+
+function showConstituencyDetails(kod) {
+  const p = PARLIMEN_DB.find(x => x.kod === kod);
+  const d = DUN_DB.find(x => x.kod === kod);
+  const info = p || d;
+  if (!info) return;
+
+  const isDun = !!d;
+  $('#constTitle').textContent = `📍 ${info.nama} (${info.kod})`;
+
+  const body = $('#constBody');
+  body.innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-item">
+        <label>Jenis</label>
+        <strong>${isDun ? 'DUN' : 'Parlimen'}</strong>
+      </div>
+      <div class="stat-item">
+        <label>Negeri</label>
+        <strong>${info.negeri}</strong>
+      </div>
+      <div class="stat-item">
+        <label>Pengundi (simulasi)</label>
+        <strong>${formatNum(info.pengundi)}</strong>
+      </div>
+      ${isDun ? `<div class="stat-item"><label>Parlimen Induk</label><strong>${info.parlimenInduk}</strong></div>` : ''}
+      ${p ? `<div class="stat-item"><label>Penyandang Simulasi</label><strong>${p.penyandang}</strong></div>` : ''}
+      ${p ? `<div class="stat-item"><label>Parti Simulasi</label><strong>${p.parti}</strong></div>` : ''}
+    </div>
+
+    <h4 style="margin-top:14px;color:var(--biru-gelap);font-size:13px;">📊 Isu Setempat (Simulasi)</h4>
+    <ul style="font-size:12px;color:var(--kelabu-gelap);padding-left:18px;">
+      <li>Kos sara hidup meningkat</li>
+      <li>Keperluan infrastruktur tempatan</li>
+      <li>Peluang pekerjaan belia</li>
+      <li>Kualiti perkhidmatan awam</li>
+    </ul>
+
+    ${state.player.party && state.player.level >= 5
+      ? `<button class="btn-primary" id="contestBtn" style="margin-top:14px;">🗳️ Bertanding Di Sini</button>`
+      : `<p style="font-size:12px;color:var(--kelabu);margin-top:12px;">
+          Anda perlu menyertai parti dan mencapai Tahap 5 untuk bertanding di kawasan ini.
+        </p>`
+    }
+  `;
+
+  const btn = $('#contestBtn');
+  if (btn) btn.onclick = () => {
+    $('#constituencyModal').classList.remove('open');
+    startCampaign(isDun ? 'DUN' : 'Parlimen', info);
+  };
+
+  $('#constituencyModal').classList.add('open');
+}
+
+/* ============ KEMPEN PILIHAN RAYA (5 FASA) ============ */
+let campaignState = null;
+
+function startCampaign(jenis, kawasan) {
+  initV2State();
+  campaignState = {
+    jenis, kawasan,
+    stage: 0,
+    stages: [
+      { nama: 'Pendaftaran Calon', desk: 'Serahkan borang pencalonan dan deposit.' },
+      { nama: 'Mesyuarat Strategi', desk: 'Rancang strategi kempen bersama pasukan.' },
+      { nama: 'Kempen Pintu ke Pintu', desk: 'Bertemu pengundi secara langsung.' },
+      { nama: 'Debat & Media', desk: 'Hadiri debat dan sesi media.' },
+      { nama: 'Hari Pengundian', desk: 'Proses pengundian dan pengiraan undi.' }
+    ],
+    resources: {
+      kewangan: 5000,
+      sukarelawan: 10,
+      momentum: 50
+    }
+  };
+  renderCampaign();
+  $('#campaignModal').classList.add('open');
+}
+
+function renderCampaign() {
+  const c = campaignState;
+  const body = $('#campaignBody');
+  const footer = $('#campaignFooter');
+
+  const stage = c.stages[c.stage];
+  const progress = ((c.stage) / c.stages.length) * 100;
+
+  body.innerHTML = `
+    <div style="margin-bottom:12px;">
+      <span class="badge">${c.jenis}</span>
+      <strong style="margin-left:8px;color:var(--biru-gelap);">${c.kawasan.nama}</strong>
+    </div>
+
+    <div class="stage-progress">
+      <div class="stage-progress-fill" style="width:${progress}%"></div>
+    </div>
+    <small style="font-size:11px;color:var(--kelabu);">Fasa ${c.stage + 1} / ${c.stages.length}</small>
+
+    <div class="campaign-stage mt-16">
+      <h5>📌 ${stage.nama}</h5>
+      <p>${stage.desk}</p>
+    </div>
+
+    <div class="stat-grid mt-16">
+      <div class="stat-item good">
+        <label>Kewangan Kempen</label>
+        <strong>${formatRM(c.resources.kewangan)}</strong>
+      </div>
+      <div class="stat-item">
+        <label>Sukarelawan</label>
+        <strong>${c.resources.sukarelawan}</strong>
+      </div>
+      <div class="stat-item ${c.resources.momentum > 60 ? 'good' : c.resources.momentum < 30 ? 'bad' : 'warn'}">
+        <label>Momentum</label>
+        <strong>${Math.round(c.resources.momentum)}%</strong>
+      </div>
+    </div>
+
+    <div class="action-list mt-16" id="campaignActions">
+      ${renderCampaignActions()}
+    </div>
+  `;
+
+  footer.innerHTML = `<button class="btn-secondary" onclick="abortCampaign()">Tinggalkan Kempen</button>`;
+
+  body.querySelectorAll('[data-caction]').forEach(btn => {
+    btn.addEventListener('click', () => handleCampaignAction(btn.dataset.caction));
+  });
+}
+
+function renderCampaignActions() {
+  const c = campaignState;
+  const actions = [];
+
+  if (c.stage === 0) {
+    actions.push(`<button class="action-btn" data-caction="register"><span class="a-icon">📝</span><span class="a-text"><strong>Daftar Calon</strong><small>Deposit RM3,000 + dokumen</small></span></button>`);
+  } else if (c.stage === 1) {
+    actions.push(`<button class="action-btn" data-caction="strategy1"><span class="a-icon">📊</span><span class="a-text"><strong>Strategi Menyeluruh</strong><small>Guna RM2,000, +10 momentum</small></span></button>`);
+    actions.push(`<button class="action-btn" data-caction="strategy2"><span class="a-icon">🎯</span><span class="a-text"><strong>Fokus Kawasan Kunci</strong><small>Guna RM1,000, +15 momentum</small></span></button>`);
+  } else if (c.stage === 2) {
+    actions.push(`<button class="action-btn" data-caction="door1"><span class="a-icon">🚪</span><span class="a-text"><strong>Kempen Pintu Agresif</strong><small>Libat 5 sukarelawan, +20 momentum, tekanan+5</small></span></button>`);
+    actions.push(`<button class="action-btn" data-caction="door2"><span class="a-icon">🍵</span><span class="a-text"><strong>Majlis Teh Tarik</strong><small>Guna RM500, +12 momentum</small></span></button>`);
+  } else if (c.stage === 3) {
+    actions.push(`<button class="action-btn" data-caction="debate1"><span class="a-icon">🎤</span><span class="a-text"><strong>Hadiri Debat Penuh</strong><small>Risiko tinggi, ganjaran tinggi</small></span></button>`);
+    actions.push(`<button class="action-btn" data-caction="debate2"><span class="a-icon">📻</span><span class="a-text"><strong>Sesi Media Terkawal</strong><small>Risiko rendah, +8 momentum</small></span></button>`);
+  } else if (c.stage === 4) {
+    actions.push(`<button class="action-btn primary" data-caction="vote"><span class="a-icon">🗳️</span><span class="a-text"><strong>Kira Undi</strong><small>Lihat keputusan akhir</small></span></button>`);
+  }
+
+  return actions.join('');
+}
+
+function handleCampaignAction(action) {
+  const c = campaignState;
+  const p = state.player;
+
+  switch(action) {
+    case 'register':
+      if (p.wang < 3000) { showToast('Wang tidak mencukupi (perlu RM3,000)', 'error'); return; }
+      p.wang -= 3000;
+      addTransaction('Deposit pencalonan', -3000);
+      c.resources.kewangan += 2000;
+      c.stage++;
+      break;
+
+    case 'strategy1':
+      if (c.resources.kewangan < 2000) { showToast('Kewangan kempen tidak cukup', 'error'); return; }
+      c.resources.kewangan -= 2000;
+      c.resources.momentum += 10;
+      c.stage++;
+      break;
+    case 'strategy2':
+      if (c.resources.kewangan < 1000) { showToast('Kewangan kempen tidak cukup', 'error'); return; }
+      c.resources.kewangan -= 1000;
+      c.resources.momentum += 15;
+      c.stage++;
+      break;
+
+    case 'door1':
+      if (c.resources.sukarelawan < 5) { showToast('Sukarelawan tidak cukup', 'error'); return; }
+      c.resources.sukarelawan -= 5;
+      c.resources.momentum += 20;
+      p.stress = clamp(p.stress + 5, 0, 100);
+      c.stage++;
+      break;
+    case 'door2':
+      if (c.resources.kewangan < 500) { showToast('Kewangan kempen tidak cukup', 'error'); return; }
+      c.resources.kewangan -= 500;
+      c.resources.momentum += 12;
+      c.stage++;
+      break;
+
+    case 'debate1':
+      const debateSuccess = Math.random() < (0.4 + p.charisma / 200);
+      if (debateSuccess) {
+        c.resources.momentum += 25;
+        showToast('Debat berjaya! Momentum meningkat', 'success');
+      } else {
+        c.resources.momentum -= 10;
+        showToast('Debat kurang memberangsangkan', 'warn');
+      }
+      c.stage++;
+      break;
+    case 'debate2':
+      c.resources.momentum += 8;
+      c.stage++;
+      break;
+
+    case 'vote':
+      resolveCampaign();
+      return;
+  }
+
+  renderCampaign();
+}
+
+function resolveCampaign() {
+  const c = campaignState;
+  const p = state.player;
+
+  const chance = clamp(
+    15 + c.resources.momentum * 0.5 + p.popularity * 0.2 + p.grassrootsSupport * 0.2 + p.partyInfluence * 0.1,
+    5, 90
+  );
+  const roll = Math.random() * 100;
+  const menang = roll < chance;
+
+  $('#campaignModal').classList.remove('open');
+
+  if (menang) {
+    p.position = c.jenis === 'Parlimen' ? 'Ahli Parlimen' : 'ADUN';
+    p.constituencySupport = clamp(p.constituencySupport + 20, 0, 100);
+    p.popularity = clamp(p.popularity + 10, 0, 100);
+    p.xp += 250;
+    addXP(250);
+    checkLevelUp();
+
+    if (c.jenis === 'Parlimen') {
+      state.parlimen.contested = c.kawasan.kod;
+      state.parlimen.won.push({ kod: c.kawasan.kod, nama: c.kawasan.nama, tarikh: state.date.label });
+    } else {
+      state.dun.contested = c.kawasan.kod;
+      state.dun.won.push({ kod: c.kawasan.kod, nama: c.kawasan.nama, tarikh: state.date.label });
+    }
+
+    addNews(`${p.nama} memenangi ${c.jenis} ${c.kawasan.nama}`, 'Kemenangan dalam simulasi pilihan raya', 'POLITIK');
+
+    // Tambah tugasan untuk jawatan baharu
+    generateTasksForPosition();
+
+    saveGame(true);
+    renderGame();
+
+    openModal('🎉 Kemenangan!',
+      `<p style="font-size:16px;color:var(--hijau);font-weight:700;text-align:center;">TAHNIAH!</p>
+       <p style="text-align:center;">Anda memenangi kerusi <strong>${c.jenis} ${c.kawasan.nama}</strong> dalam simulasi.</p>
+       <div class="stat-grid mt-16">
+         <div class="stat-item"><label>Jawatan</label><strong>${p.position}</strong></div>
+         <div class="stat-item"><label>Momentum</label><strong>${Math.round(c.resources.momentum)}%</strong></div>
+         <div class="stat-item"><label>Peluang</label><strong>${Math.round(chance)}%</strong></div>
+         <div class="stat-item"><label>XP</label><strong>+250</strong></div>
+       </div>`,
+      `<button class="btn-primary" onclick="closeModal()" style="width:auto;margin:0;">Terima</button>`
+    );
+  } else {
+    p.popularity = clamp(p.popularity - 5, 0, 100);
+    p.stress = clamp(p.stress + 8, 0, 100);
+    p.xp += 60;
+    addXP(60);
+    addNews(`${p.nama} tewas di ${c.kawasan.nama}`, 'Keputusan simulasi', 'POLITIK');
+    saveGame(true);
+    renderGame();
+
+    openModal('Keputusan Pilihan Raya',
+      `<p style="color:var(--merah);font-weight:600;text-align:center;">Anda tidak berjaya kali ini</p>
+       <p style="text-align:center;">Jangan putus asa. Bina semula sokongan dan cuba lagi.</p>
+       <p style="font-size:12px;color:var(--kelabu);text-align:center;">Peluang anda: ${Math.round(chance)}%</p>`,
+      `<button class="btn-primary" onclick
