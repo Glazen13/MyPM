@@ -478,7 +478,7 @@ function renderDashboard(el) {
         <button class="action-btn primary" data-action="nextTurn">
           <span class="a-icon">⏭️</span>
           <span class="a-text">
-            <strong>Teruskan 4 Bulan</strong>
+            <strong>Teruskan 1 Bulan</strong>
             <small>Proses pendapatan, perbelanjaan & peristiwa</small>
           </span>
         </button>
