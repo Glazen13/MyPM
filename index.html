@@ -260,7 +260,96 @@
     <div class="event-choices" id="eventChoices"></div>
   </div>
 </div>
+<!-- ============ PANEL LANJUTAN v2.0 ============ -->
 
+<!-- Modal Peta Malaysia -->
+<div id="mapModal" class="modal">
+  <div class="modal-content" style="max-width:640px;">
+    <div class="modal-header">
+      <h3>🗺️ Peta Malaysia (Simulasi)</h3>
+      <button class="icon-btn" onclick="document.getElementById('mapModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="mapBody"></div>
+  </div>
+</div>
+
+<!-- Modal Parlimen / DUN -->
+<div id="constituencyModal" class="modal">
+  <div class="modal-content" style="max-width:640px;">
+    <div class="modal-header">
+      <h3 id="constTitle">📍 Kawasan</h3>
+      <button class="icon-btn" onclick="document.getElementById('constituencyModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="constBody"></div>
+  </div>
+</div>
+
+<!-- Modal Kempen Pilihan Raya -->
+<div id="campaignModal" class="modal">
+  <div class="modal-content" style="max-width:560px;">
+    <div class="modal-header">
+      <h3>🗳️ Kempen Pilihan Raya</h3>
+      <button class="icon-btn" onclick="document.getElementById('campaignModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="campaignBody"></div>
+    <div class="modal-footer" id="campaignFooter"></div>
+  </div>
+</div>
+
+<!-- Modal Kabinet -->
+<div id="cabinetModal" class="modal">
+  <div class="modal-content" style="max-width:640px;">
+    <div class="modal-header">
+      <h3>🏛️ Kabinet & Pelantikan</h3>
+      <button class="icon-btn" onclick="document.getElementById('cabinetModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="cabinetBody"></div>
+  </div>
+</div>
+
+<!-- Modal Pusat Tugas -->
+<div id="taskModal" class="modal">
+  <div class="modal-content" style="max-width:600px;">
+    <div class="modal-header">
+      <h3>📋 Pusat Tugas Rasmi</h3>
+      <button class="icon-btn" onclick="document.getElementById('taskModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="taskBody"></div>
+    <div class="modal-footer" id="taskFooter"></div>
+  </div>
+</div>
+
+<!-- Modal Projek -->
+<div id="projectModal" class="modal">
+  <div class="modal-content" style="max-width:640px;">
+    <div class="modal-header">
+      <h3>🏗️ Projek Pembangunan</h3>
+      <button class="icon-btn" onclick="document.getElementById('projectModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="projectBody"></div>
+    <div class="modal-footer" id="projectFooter"></div>
+  </div>
+</div>
+
+<!-- Modal Bajet -->
+<div id="budgetModal" class="modal">
+  <div class="modal-content" style="max-width:600px;">
+    <div class="modal-header">
+      <h3>💰 Bajet & Peruntukan</h3>
+      <button class="icon-btn" onclick="document.getElementById('budgetModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="budgetBody"></div>
+  </div>
+</div>
+
+<!-- Nav tambahan (di bawah bottom-nav) -->
+<div id="extraNav" class="extra-nav hidden">
+  <button class="extra-nav-btn" data-extra="map">🗺️ Peta</button>
+  <button class="extra-nav-btn" data-extra="tasks">📋 Tugas</button>
+  <button class="extra-nav-btn" data-extra="projects">🏗️ Projek</button>
+  <button class="extra-nav-btn" data-extra="budget">💰 Bajet</button>
+  <button class="extra-nav-btn" data-extra="cabinet">🏛️ Kabinet</button>
+</div>
 <script src="script.js"></script>
 </body>
 </html>
