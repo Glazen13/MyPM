@@ -947,3 +947,252 @@ input[type="range"]::-webkit-slider-thumb {
 .timeline-item small { color: var(--kelabu); display: block; margin-top: 2px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
+/* ============================================
+   MODUL v3.0 — PRU, Krisis, Watak AI, Legasi
+   ============================================ */
+
+/* PRU Grid */
+.pru-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+@media (min-width: 600px) {
+  .pru-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.pru-seat {
+  background: var(--kelabu-cerah);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 11px;
+  border: 2px solid transparent;
+  transition: var(--transition);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+.pru-seat:hover { transform: translateY(-2px); box-shadow: var(--bayang); }
+.pru-seat.win { border-color: var(--hijau); background: #e8f8f0; }
+.pru-seat.lose { border-color: var(--merah); background: #fceceb; }
+.pru-seat.contested { border-color: var(--emas); background: #fff8e1; }
+.pru-seat .seat-code {
+  font-weight: 700; color: var(--biru-muda);
+  display: block; margin-bottom: 3px;
+}
+.pru-seat .seat-name {
+  color: var(--kelabu-gelap); font-size: 12px;
+  display: block; margin-bottom: 4px;
+}
+.pru-seat .seat-party {
+  font-size: 10px; padding: 2px 6px;
+  background: var(--biru-gelap); color: var(--putih);
+  border-radius: 8px; display: inline-block;
+}
+
+/* Result bar */
+.result-bar {
+  display: flex;
+  height: 32px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+.result-seg {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--putih); font-size: 11px; font-weight: 600;
+}
+
+/* Watak AI cards */
+.char-card {
+  background: linear-gradient(135deg, #f8f9fc, #e8ecf4);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+  border-left: 4px solid var(--biru-muda);
+}
+.char-card.high { border-left-color: var(--hijau); }
+.char-card.low { border-left-color: var(--merah); }
+.char-card .c-head {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 8px;
+}
+.char-card .c-emoji {
+  font-size: 32px;
+  background: var(--putih);
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--bayang);
+}
+.char-card .c-name {
+  font-size: 15px; font-weight: 700; color: var(--biru-gelap);
+}
+.char-card .c-role {
+  font-size: 11px; color: var(--kelabu);
+}
+.char-card .c-score {
+  margin-left: auto; font-size: 18px;
+  font-weight: 700; color: var(--biru-muda);
+}
+.char-card .c-memory {
+  font-size: 11px; color: var(--kelabu-gelap);
+  background: var(--putih);
+  padding: 6px 10px; border-radius: 6px;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* Crisis alert */
+.crisis-alert {
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
+  color: var(--putih);
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  animation: pulseRed 2s ease-in-out infinite;
+}
+@keyframes pulseRed {
+  0%,100% { box-shadow: 0 0 0 0 rgba(231,76,60,0.5); }
+  50% { box-shadow: 0 0 0 12px rgba(231,76,60,0); }
+}
+.crisis-alert h4 { font-size: 14px; margin-bottom: 6px; }
+.crisis-alert p { font-size: 12px; opacity: 0.9; }
+
+/* Timeline vertical */
+.tl-wrap { position: relative; padding-left: 24px; }
+.tl-wrap::before {
+  content: '';
+  position: absolute; left: 8px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--emas), var(--biru-muda), var(--kelabu));
+}
+.tl-node {
+  position: relative; padding: 10px 0 18px;
+}
+.tl-node::before {
+  content: '';
+  position: absolute; left: -20px; top: 14px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--putih);
+  border: 3px solid var(--biru-muda);
+}
+.tl-node.gold::before { border-color: var(--emas); }
+.tl-node.red::before { border-color: var(--merah); }
+.tl-node.green::before { border-color: var(--hijau); }
+.tl-node .tl-date {
+  font-size: 10px; color: var(--kelabu);
+  letter-spacing: 1px; font-weight: 600;
+}
+.tl-node .tl-title {
+  font-size: 13px; color: var(--biru-gelap);
+  font-weight: 700; margin: 2px 0;
+}
+.tl-node .tl-desc {
+  font-size: 11px; color: var(--kelabu-gelap);
+  line-height: 1.5;
+}
+
+/* Legacy report */
+.legacy-hero {
+  background: linear-gradient(135deg, #0a1e3f, #1a3a6b, #2c5aa0);
+  color: var(--putih);
+  padding: 24px 20px;
+  border-radius: var(--radius);
+  text-align: center;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.legacy-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(212,175,55,0.25), transparent 60%);
+  pointer-events: none;
+}
+.legacy-hero .lh-emoji {
+  font-size: 52px; margin-bottom: 8px;
+  filter: drop-shadow(0 4px 12px rgba(212,175,55,0.6));
+  position: relative;
+}
+.legacy-hero .lh-title {
+  font-size: 20px; font-weight: 700;
+  background: linear-gradient(90deg, var(--emas), var(--emas-muda));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+.legacy-hero .lh-sub {
+  font-size: 12px; color: rgba(255,255,255,0.7);
+  margin-top: 4px;
+  position: relative;
+}
+.legacy-hero .lh-rank {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 6px 18px;
+  background: rgba(255,255,255,0.15);
+  border: 1.5px solid var(--emas);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  position: relative;
+}
+
+/* Legacy score bar */
+.lscore-row {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  font-size: 12px; margin-bottom: 6px;
+}
+.lscore-bar {
+  height: 8px; background: #e2e8f0;
+  border-radius: 4px; overflow: hidden;
+  margin-bottom: 12px;
+}
+.lscore-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--emas), var(--emas-muda));
+}
+
+/* Achievement cards */
+.ach-card {
+  display: flex; gap: 12px; align-items: center;
+  background: linear-gradient(135deg, #fffbea, #fff4c2);
+  border-left: 4px solid var(--emas);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.ach-card .ach-icon {
+  font-size: 28px;
+}
+.ach-card .ach-info strong {
+  font-size: 13px; color: var(--biru-gelap);
+  display: block;
+}
+.ach-card .ach-info small {
+  font-size: 11px; color: var(--kelabu-gelap);
+}
+.ach-card.locked {
+  opacity: 0.4;
+  filter: grayscale(1);
+  background: var(--kelabu-cerah);
+  border-left-color: var(--kelabu);
+}
+
+/* By-election pulse */
+.by-el-badge {
+  display: inline-block;
+  font-size: 10px;
+  background: var(--merah);
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  animation: pulseRed 1.5s infinite;
+}
