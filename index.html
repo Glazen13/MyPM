@@ -58,6 +58,18 @@
       <button class="btn-menu" id="btnCredits">
         <span class="btn-icon">ℹ️</span>
         <span class="btn-text"><strong>Kredit</strong><small>Maklumat projek</small></span>
+        <button class="btn-menu" id="btnLanguage">
+  <span class="btn-icon">🌐</span>
+  <span class="btn-text"><strong id="btnLangLabel">Bahasa</strong><small id="btnLangSub">Melayu / English</small></span>
+</button>
+<button class="btn-menu" id="btnStoryMode">
+  <span class="btn-icon">🎭</span>
+  <span class="btn-text"><strong id="btnStoryLabel">Mod Cerita</strong><small id="btnStorySub">3 senario khas</small></span>
+</button>
+<button class="btn-menu" id="btnLeaderboard">
+  <span class="btn-icon">🏅</span>
+  <span class="btn-text"><strong id="btnLeaderLabel">Leaderboard</strong><small id="btnLeaderSub">Ranking tempatan</small></span>
+</button>
       </button>
     </div>
   </div>
@@ -486,6 +498,101 @@
 <div id="audioIndicator" class="audio-indicator hidden" onclick="toggleMute()">
   🔊
 </div>
+  <!-- ============ MODUL v5.0 ============ -->
+
+<!-- Modal Bahasa -->
+<div id="langModal" class="modal">
+  <div class="modal-content" style="max-width:460px;">
+    <div class="modal-header">
+      <h3 id="langTitle">🌐 Bahasa / Language</h3>
+      <button class="icon-btn" onclick="document.getElementById('langModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="langBody"></div>
+  </div>
+</div>
+
+<!-- Modal Berbilang Slot Simpanan -->
+<div id="slotsModal" class="modal">
+  <div class="modal-content" style="max-width:620px;">
+    <div class="modal-header">
+      <h3>🕹️ Slot Simpanan</h3>
+      <button class="icon-btn" onclick="document.getElementById('slotsModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="slotsBody"></div>
+    <div class="modal-footer" id="slotsFooter"></div>
+  </div>
+</div>
+
+<!-- Modal Leaderboard -->
+<div id="leaderboardModal" class="modal">
+  <div class="modal-content" style="max-width:640px;">
+    <div class="modal-header">
+      <h3>🏅 Leaderboard Tempatan</h3>
+      <button class="icon-btn" onclick="document.getElementById('leaderboardModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="leaderboardBody"></div>
+  </div>
+</div>
+
+<!-- Modal Mod Cerita -->
+<div id="storyModal" class="modal">
+  <div class="modal-content" style="max-width:640px;">
+    <div class="modal-header">
+      <h3>🎭 Mod Cerita</h3>
+      <button class="icon-btn" onclick="document.getElementById('storyModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="storyBody"></div>
+  </div>
+</div>
+
+<!-- Modal Analitik Peribadi -->
+<div id="analyticsModal" class="modal">
+  <div class="modal-content" style="max-width:700px;">
+    <div class="modal-header">
+      <h3>📊 Analitik Peribadi</h3>
+      <button class="icon-btn" onclick="document.getElementById('analyticsModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="analyticsBody"></div>
+  </div>
+</div>
+
+<!-- Modal Notifikasi -->
+<div id="notifModal" class="modal">
+  <div class="modal-content" style="max-width:560px;">
+    <div class="modal-header">
+      <h3>🔔 Notifikasi</h3>
+      <button class="icon-btn" onclick="document.getElementById('notifModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="notifBody"></div>
+    <div class="modal-footer" id="notifFooter"></div>
+  </div>
+</div>
+
+<!-- Modal PDF Preview (Laporan cetak) -->
+<div id="pdfModal" class="modal">
+  <div class="modal-content" style="max-width:700px;">
+    <div class="modal-header">
+      <h3>📤 Laporan Boleh Cetak</h3>
+      <button class="icon-btn" onclick="document.getElementById('pdfModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="pdfBody"></div>
+    <div class="modal-footer" id="pdfFooter"></div>
+  </div>
+</div>
+
+<!-- Nav tambahan v5 -->
+<div id="extraNav5" class="extra-nav hidden" style="bottom:218px;">
+  <button class="extra-nav-btn" data-extra5="slots">🕹️ Slot</button>
+  <button class="extra-nav-btn" data-extra5="leader">🏅 Ranking</button>
+  <button class="extra-nav-btn" data-extra5="story">🎭 Cerita</button>
+  <button class="extra-nav-btn" data-extra5="analytics">📊 Analitik</button>
+  <button class="extra-nav-btn" data-extra5="notif">🔔 Notif</button>
+  <button class="extra-nav-btn" data-extra5="pdf">📤 PDF</button>
+  <button class="extra-nav-btn" data-extra5="lang">🌐 Bahasa</button>
+</div>
+
+<!-- Notifikasi badge (di topbar) -->
+<div id="notifBadge" class="notif-badge hidden">0</div>
 <script src="script.js"></script>
 </body>
 </html>
