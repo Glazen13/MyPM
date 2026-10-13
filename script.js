@@ -2216,33 +2216,255 @@ function modalAchievements() {
   );
 }
 
+/* ============ TETAPAN BERSATU (v6.2) ============ */
 function modalSettings() {
+  const currentTheme = settings.theme || 'blue';
+  const currentLang = settings.language || 'ms';
+
   openModal('⚙️ Tetapan',
-    `<div class="form-group">
-      <label>Tahap Kesukaran</label>
-      <select id="setDiff">
-        <option value="santai" ${settings.kesukaran==='santai'?'selected':''}>Santai</option>
-        <option value="seimbang" ${settings.kesukaran==='seimbang'?'selected':''}>Seimbang</option>
-        <option value="mencabar" ${settings.kesukaran==='mencabar'?'selected':''}>Mencabar</option>
-      </select>
+    `
+    <!-- BAHAGIAN 1: PAPARAN -->
+    <div class="settings-section">
+      <h4>🎨 Paparan & Bahasa</h4>
+
+      <div class="form-group">
+        <label>Tema Warna</label>
+        <div class="theme-picker">
+          <div class="theme-swatch ${currentTheme === 'blue' ? 'active' : ''}" data-theme="blue" title="Biru Klasik"></div>
+          <div class="theme-swatch ${currentTheme === 'gold' ? 'active' : ''}" data-theme="gold" title="Emas Diraja"></div>
+          <div class="theme-swatch ${currentTheme === 'green' ? 'active' : ''}" data-theme="green" title="Hijau Zamrud"></div>
+          <div class="theme-swatch ${currentTheme === 'red' ? 'active' : ''}" data-theme="red" title="Merah Berani"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Bahasa Antara Muka</label>
+        <select id="setLang">
+          <option value="ms" ${currentLang === 'ms' ? 'selected' : ''}>🇲🇾 Bahasa Melayu</option>
+          <option value="en" ${currentLang === 'en' ? 'selected' : ''}>🇬🇧 English</option>
+        </select>
+      </div>
     </div>
-    <div class="form-group">
-      <label><input type="checkbox" id="setSound" ${settings.bunyi?'checked':''}> Bunyi</label>
-    </div>`,
+
+    <!-- BAHAGIAN 2: AUDIO -->
+    <div class="settings-section">
+      <h4>🔊 Audio</h4>
+
+      <div class="settings-row">
+        <div>
+          <label>Kesan Bunyi</label>
+          <small>Bunyi klik, notifikasi & cutscene</small>
+        </div>
+        <div class="toggle-switch">
+          <input type="checkbox" id="setSound" ${settings.bunyi !== false ? 'checked' : ''}>
+          <span class="toggle-slider"></span>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <div>
+          <label>Muzik Latar</label>
+          <small>Muzik lembut sepanjang permainan</small>
+        </div>
+        <div class="toggle-switch">
+          <input type="checkbox" id="setMusic" ${settings.muzik === true ? 'checked' : ''}>
+          <span class="toggle-slider"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BAHAGIAN 3: PERMAINAN -->
+    <div class="settings-section">
+      <h4>🎮 Permainan</h4>
+
+      <div class="form-group">
+        <label>Tahap Kesukaran</label>
+        <select id="setDiff">
+          <option value="santai" ${settings.kesukaran === 'santai' ? 'selected' : ''}>🟢 Santai — Lebihan wang +50%</option>
+          <option value="seimbang" ${settings.kesukaran === 'seimbang' ? 'selected' : ''}>🟡 Seimbang — Standard</option>
+          <option value="mencabar" ${settings.kesukaran === 'mencabar' ? 'selected' : ''}>🔴 Mencabar — Kos +30%, krisis kerap</option>
+        </select>
+      </div>
+
+      <div class="settings-row">
+        <div>
+          <label>Auto-Simpan</label>
+          <small>Simpan automatik setiap giliran</small>
+        </div>
+        <div class="toggle-switch">
+          <input type="checkbox" id="setAutoSave" ${settings.autoSave !== false ? 'checked' : ''}>
+          <span class="toggle-slider"></span>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <div>
+          <label>Cutscene</label>
+          <small>Animasi pelantikan & kemenangan</small>
+        </div>
+        <div class="toggle-switch">
+          <input type="checkbox" id="setCutscene" ${settings.cutscene !== false ? 'checked' : ''}>
+          <span class="toggle-slider"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BAHAGIAN 4: DATA -->
+    <div class="settings-section">
+      <h4>💾 Data & Simpanan</h4>
+      <button class="btn-secondary" id="resetSaveBtn"
+        style="width:100%;color:var(--merah);border:1.5px solid rgba(231,76,60,0.3);background:rgba(231,76,60,0.05);">
+        🗑️ Padam Semua Simpanan
+      </button>
+      <small style="display:block;color:var(--kelabu);font-size:11px;margin-top:6px;text-align:center;">
+        Tindakan ini tidak boleh dibatalkan
+      </small>
+    </div>
+
+    <!-- BAHAGIAN 5: MAKLUMAT -->
+    <div class="settings-section">
+      <h4>ℹ️ Maklumat</h4>
+      <div class="settings-info-box">
+        <div class="info-row">
+          <span class="info-label">Versi</span>
+          <span class="info-value">${VERSION}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Modul</span>
+          <span class="info-value">v1 – v6.2</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">PWA</span>
+          <span class="info-value">${'serviceWorker' in navigator ? '✅ Disokong' : '❌ Tidak disokong'}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Penyimpanan</span>
+          <span class="info-value">LocalStorage</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Rangka Kerja</span>
+          <span class="info-value">Vanilla JS</span>
+        </div>
+      </div>
+    </div>
+    `,
     `<button class="btn-secondary" onclick="closeModal()">Tutup</button>
-     <button class="btn-primary" id="saveSettingsBtn" style="width:auto;margin:0;">Simpan</button>`
+     <button class="btn-primary" id="saveSettingsBtn" style="width:auto;margin:0;">💾 Simpan Tetapan</button>`
   );
+
   setTimeout(() => {
-    const btn = $('#saveSettingsBtn');
-    if (btn) btn.onclick = () => {
-      settings.kesukaran = $('#setDiff').value;
-      settings.bunyi = $('#setSound').checked;
-      saveSettings();
-      closeModal();
-      showToast('Tetapan disimpan', 'success');
-    };
-  }, 50);
+    // === Bind theme swatches ===
+    document.querySelectorAll('#modalBody .theme-swatch').forEach(sw => {
+      sw.onclick = () => {
+        const theme = sw.dataset.theme;
+        if (typeof applyTheme === 'function') applyTheme(theme);
+        settings.theme = theme;
+        saveSettings();
+        document.querySelectorAll('#modalBody .theme-swatch').forEach(x => x.classList.remove('active'));
+        sw.classList.add('active');
+        if (typeof AudioManager !== 'undefined') AudioManager.click();
+      };
+    });
+
+    // === Bind dropdown bahasa — tukar serta-merta ===
+    const langSel = document.getElementById('setLang');
+    if (langSel) {
+      langSel.onchange = () => {
+        const lang = langSel.value;
+        if (typeof setLanguage === 'function') setLanguage(lang);
+        settings.language = lang;
+        saveSettings();
+      };
+    }
+
+    // === Bind toggle bunyi — kesan serta-merta ===
+    const soundToggle = document.getElementById('setSound');
+    if (soundToggle) {
+      soundToggle.onchange = () => {
+        settings.bunyi = soundToggle.checked;
+        saveSettings();
+        if (typeof AudioManager !== 'undefined') {
+          AudioManager.enabled = settings.bunyi;
+          AudioManager.updateIndicator();
+        }
+      };
+    }
+
+    // === Bind toggle muzik ===
+    const musicToggle = document.getElementById('setMusic');
+    if (musicToggle) {
+      musicToggle.onchange = () => {
+        settings.muzik = musicToggle.checked;
+        saveSettings();
+        if (settings.muzik && typeof MusicSynth !== 'undefined' && MusicSynth.start) {
+          MusicSynth.start();
+        } else if (typeof MusicSynth !== 'undefined' && MusicSynth.stop) {
+          MusicSynth.stop();
+        }
+      };
+    }
+
+    // === Bind butang padam simpanan ===
+    const resetBtn = document.getElementById('resetSaveBtn');
+    if (resetBtn) {
+      resetBtn.onclick = () => {
+        if (confirm('⚠️ Padam SEMUA simpanan?\n\nTindakan ini tidak boleh dibatalkan.')) {
+          // Padam semua slot
+          const keys = [];
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && (k.startsWith('sppm_') || k.startsWith('srm_'))) keys.push(k);
+          }
+          keys.forEach(k => localStorage.removeItem(k));
+          showToast('🗑️ Semua simpanan dipadam', 'warn');
+          if (typeof AudioManager !== 'undefined') AudioManager.warn();
+        }
+      };
+    }
+
+    // === Butang Simpan ===
+    const btn = document.getElementById('saveSettingsBtn');
+    if (btn) {
+      btn.onclick = () => {
+        // Kumpul semua nilai
+        settings.kesukaran = document.getElementById('setDiff').value;
+        settings.autoSave = document.getElementById('setAutoSave').checked;
+        settings.cutscene = document.getElementById('setCutscene').checked;
+        settings.bunyi = document.getElementById('setSound').checked;
+        settings.muzik = document.getElementById('setMusic').checked;
+        settings.language = document.getElementById('setLang').value;
+        // Theme sudah disimpan bila diklik
+
+        saveSettings();
+
+        // Apply kesan
+        if (typeof AudioManager !== 'undefined') {
+          AudioManager.enabled = settings.bunyi;
+          AudioManager.updateIndicator();
+        }
+
+        closeModal();
+        showToast('✅ Tetapan disimpan', 'success');
+      };
+    }
+  }, 80);
 }
+
+/* ============ Alih fungsi advSettings lama ke sini ============ */
+/* Kalau anda masih ada openAdvancedSettings() — boleh kekal,
+   tetapi sekarang butang Menu Lanjutan → akan panggil modalSettings()
+   yang baharu (bersatu). */
+
+/* Patch handleSideAction untuk 'advset' panggil modalSettings */
+const _v62_handleSideAction = handleSideAction;
+handleSideAction = function(action) {
+  if (action === 'advset') {
+    closeSidePanel();
+    modalSettings();
+    return;
+  }
+  _v62_handleSideAction(action);
+};
 
 function confirmRetire() {
   openModal('Bersara & Laporan Akhir',
