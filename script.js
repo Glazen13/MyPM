@@ -2875,4 +2875,716 @@ init = function() {
 /* ... tampal SEMUA kod v2.0 di sini ... */
 
 /* ============ JALANKAN ============ */
+/* ============================================================
+   SIMULATOR PARTI POLITIK MALAYSIA — SCRIPT.JS v3.0
+   Modul Akhir: PRU, Krisis, Watak AI, Legasi, Timeline, Pencapaian
+   ============================================================ */
+
+/* ============ PANGKALAN DATA: 222 PARLIMEN SIMULASI (GEN) ============ */
+/* Nota: Ini penjana simulasi, bukan data rasmi SPR. */
+const PRU_SEATS = (() => {
+  const seats = [];
+  const negeriPengundi = {
+    'Perlis': 3, 'Kedah': 15, 'Kelantan': 14, 'Terengganu': 8,
+    'Penang': 13, 'Perak': 24, 'Pahang': 14, 'Selangor': 22,
+    'W.P. Kuala Lumpur': 11, 'W.P. Putrajaya': 1, 'W.P. Labuan': 1,
+    'Negeri Sembilan': 8, 'Melaka': 6, 'Johor': 26,
+    'Sabah': 25, 'Sarawak': 31
+  };
+  let counter = 1;
+  const partyCycle = ['PRB', 'BNR', 'PPP', 'PIN', 'GAM', 'PSM', 'PSB'];
+  Object.entries(negeriPengundi).forEach(([negeri, jml]) => {
+    for (let i = 0; i < jml; i++) {
+      seats.push({
+        kod: `P.${String(counter).padStart(3, '0')}`,
+        nama: `${negeri} ${i + 1}`,
+        negeri,
+        parti: partyCycle[(counter + i) % partyCycle.length],
+        pengundi: 30000 + Math.floor(Math.random() * 90000),
+        majoriti: 1000 + Math.floor(Math.random() * 20000)
+      });
+      counter++;
+    }
+  });
+  return seats;
+})();
+
+/* ============ PANGKALAN DATA: PENCAPAIAN ============ */
+const ACHIEVEMENTS = [
+  { id: 'A01', nama: 'Langkah Pertama', emoji: '👣', desk: 'Selesaikan giliran pertama', check: s => s.date.turn >= 2 },
+  { id: 'A02', nama: 'Ahli Aktif', emoji: '📢', desk: 'Sertai parti politik', check: s => !!s.player.party },
+  { id: 'A03', nama: 'Wakil Rakyat', emoji: '🎖️', desk: 'Menang kerusi DUN atau Parlimen', check: s => s.player.level >= 10 },
+  { id: 'A04', nama: 'Bebas Hutang', emoji: '💳', desk: 'Kurangkan hutang kepada RM0', check: s => s.player.hutang <= 0 && s.date.turn > 3 },
+  { id: 'A05', nama: 'Jutawan', emoji: '💎', desk: 'Kumpul RM100,000', check: s => s.player.wang >= 100000 },
+  { id: 'A06', nama: 'Integriti Tinggi', emoji: '🛡️', desk: 'Integriti 80+', check: s => s.player.integrity >= 80 },
+  { id: 'A07', nama: 'Populariti Melonjak', emoji: '⭐', desk: 'Populariti 80+', check: s => s.player.popularity >= 80 },
+  { id: 'A08', nama: 'Menteri', emoji: '🏛️', desk: 'Dilantik sebagai Menteri', check: s => (s.player.position || '').includes('Menteri') },
+  { id: 'A09', nama: 'Pemimpin Tertinggi', emoji: '👑', desk: 'Dilantik sebagai Perdana Menteri', check: s => (s.player.position || '').includes('Perdana Menteri') },
+  { id: 'A10', nama: 'Legasi Kukuh', emoji: '🏆', desk: 'Skor legasi melebihi 70', check: s => calculateLegacyScore(s).total >= 70 },
+  { id: 'A11', nama: 'Keluarga Bahagia', emoji: '👨‍👩‍👧', desk: 'Berumah tangga dan berkeluarga', check: s => !!s.player.pasangan },
+  { id: 'A12', nama: 'Veteran', emoji: '🎗️', desk: 'Main 20 giliran', check: s => s.date.turn >= 20 }
+];
+
+/* ============ WATAK AI: AGENDA ============ */
+const CHAR_AGENDAS = [
+  'ingin naik jawatan dalam parti',
+  'mahu membina rangkaian pengaruh',
+  'bercita-cita menjadi calon pilihan raya',
+  'ingin menyekat dominasi pemain',
+  'mencari sekutu untuk gabungan',
+  'mahu memperbaiki dasar kerajaan',
+  'menyiasat potensi skandal',
+  'mencari mentor politik',
+  'mahu memperluas pengaruh di peringkat negeri',
+  'bersedia berkhidmat kepada masyarakat'
+];
+
+/* ============ INIT v3 STATE ============ */
+function initV3State() {
+  if (!state) return;
+  if (!state.pru) {
+    state.pru = { lastResult: null, tahun: 0, kerusi: [] };
+    state.crisis = { aktif: null, sejarah: [] };
+    state.achievements = state.achievements || [];
+    state.legacy = null;
+    state.charAgenda = {};
+    state.timeline = [];
+    state.newsChains = [];
+    state.pendingConsequences = state.pendingConsequences || [];
+    state.byElections = [];
+  }
+}
+
+/* ============ SISTEM TIMELINE ============ */
+function addTimeline(emoji, title, desc, jenis = 'normal') {
+  if (!state.timeline) state.timeline = [];
+  state.timeline.unshift({
+    id: uid(),
+    tarikh: state.date.label,
+    emoji, title, desc, jenis
+  });
+  if (state.timeline.length > 200) state.timeline = state.timeline.slice(0, 200);
+}
+
+function openTimelineModal() {
+  initV3State();
+  const body = $('#modalBody');
+  const events = state.timeline || [];
+
+  if (events.length === 0) {
+    openModal('📅 Timeline Kehidupan',
+      '<p style="color:var(--kelabu);font-size:13px;">Belum ada peristiwa direkod.</p>',
+      `<button class="btn-secondary" onclick="closeModal()">Tutup</button>`
+    );
+    return;
+  }
+
+  const html = `
+    <div class="tl-wrap">
+      ${events.slice(0, 50).map(ev => `
+        <div class="tl-node ${ev.jenis}">
+          <div class="tl-date">${ev.tarikh} • ${ev.emoji}</div>
+          <div class="tl-title">${ev.title}</div>
+          <div class="tl-desc">${ev.desc}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  openModal('📅 Timeline Kehidupan', html, `<button class="btn-secondary" onclick="closeModal()">Tutup</button>`);
+}
+
+/* ============ SISTEM PRU ============ */
+function openPRUModal() {
+  initV3State();
+  const p = state.player;
+
+  if (!p.party) {
+    showToast('Sertai parti dahulu untuk bertanding PRU', 'warn');
+    return;
+  }
+  if (p.level < 5) {
+    showToast('Perlu Tahap 5+ untuk bertanding PRU', 'warn');
+    return;
+  }
+
+  const body = $('#pruBody');
+  const footer = $('#pruFooter');
+  const pru = state.pru;
+
+  body.innerHTML = `
+    <p style="font-size:12px;color:var(--kelabu);margin-bottom:12px;">
+      Pilih kerusi untuk ditandingi. Semua kerusi adalah <strong>simulasi fiksyen</strong> — bukan data rasmi SPR.
+    </p>
+
+    <div class="stat-grid">
+      <div class="stat-item">
+        <label>Jumlah Kerusi</label>
+        <strong>${PRU_SEATS.length}</strong>
+      </div>
+      <div class="stat-item">
+        <label>Parti Anda</label>
+        <strong>${p.party.singkatan}</strong>
+      </div>
+      <div class="stat-item">
+        <label>Tahap</label>
+        <strong>${p.level}</strong>
+      </div>
+      <div class="stat-item ${p.popularity > 50 ? 'good' : 'warn'}">
+        <label>Populariti</label>
+        <strong>${Math.round(p.popularity)}</strong>
+      </div>
+    </div>
+
+    <h4 style="margin-top:16px;font-size:13px;color:var(--biru-gelap);">🗳️ Pilih Kerusi (${PRU_SEATS.length})</h4>
+    <div class="pru-grid">
+      ${PRU_SEATS.slice(0, 60).map(s => {
+        const won = (pru.kerusi || []).find(k => k.kod === s.kod && k.hasil === 'menang');
+        const lost = (pru.kerusi || []).find(k => k.kod === s.kod && k.hasil === 'kalah');
+        const cls = won ? 'win' : lost ? 'lose' : '';
+        return `
+          <button class="pru-seat ${cls}" data-seat="${s.kod}">
+            <span class="seat-code">${s.kod}</span>
+            <span class="seat-name">${s.nama}</span>
+            <span class="seat-party">${s.parti}</span>
+          </button>
+        `;
+      }).join('')}
+    </div>
+    <p style="font-size:11px;color:var(--kelabu);text-align:center;margin-top:8px;">
+      (Menunjukkan 60 kerusi pertama dari ${PRU_SEATS.length} kerusi simulasi)
+    </p>
+
+    ${pru.lastResult ? `
+      <h4 style="margin-top:18px;font-size:13px;color:var(--biru-gelap);">📊 Keputusan PRU Terakhir</h4>
+      <div class="result-bar">
+        ${Object.entries(pru.lastResult.partyVotes || {}).map(([party, votes]) => {
+          const pct = (votes / pru.lastResult.totalVotes) * 100;
+          const color = PARTIES.find(x => x.singkatan === party)?.warna || '#888';
+          return `<div class="result-seg" style="width:${pct}%;background:${color};">${party} ${Math.round(pct)}%</div>`;
+        }).join('')}
+      </div>
+      <p style="font-size:12px;color:var(--kelabu);text-align:center;">
+        Jumlah undi: ${formatNum(pru.lastResult.totalVotes)} • Kerusi anda menang: ${pru.lastResult.kerusiMenang || 0}
+      </p>
+    ` : ''}
+  `;
+
+  footer.innerHTML = `
+    <button class="btn-secondary" onclick="document.getElementById('pruModal').classList.remove('open')">Tutup</button>
+    <button class="btn-primary" id="startPRUBtn" style="width:auto;margin:0;">▶️ Lancar PRU</button>
+  `;
+
+  body.querySelectorAll('[data-seat]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const kod = btn.dataset.seat;
+      const seat = PRU_SEATS.find(s => s.kod === kod);
+      startPRUCampaign(seat);
+    });
+  });
+
+  setTimeout(() => {
+    const btn = $('#startPRUBtn');
+    if (btn) btn.onclick = runFullPRU;
+  }, 50);
+
+  $('#pruModal').classList.add('open');
+}
+
+function startPRUCampaign(seat) {
+  $('#pruModal').classList.remove('open');
+  startCampaign('Parlimen', seat);
+}
+
+function runFullPRU() {
+  const p = state.player;
+  const pru = state.pru;
+
+  // Simulasi seluruh negara
+  const hasil = {};
+  const partyVotes = {};
+  PRU_SEATS.forEach(s => { partyVotes[s.parti] = (partyVotes[s.parti] || 0) + s.pengundi; });
+
+  // Kesan kepada pengaruh parti pemain
+  const myParty = p.party.singkatan;
+  const myInfluence = p.partyInfluence / 100;
+
+  let kerusiMenang = 0;
+  const updatedSeats = PRU_SEATS.map(s => {
+    let pengaruh = 0.5;
+    if (s.parti === myParty) pengaruh += myInfluence * 0.3;
+    pengaruh += (p.popularity / 100) * 0.1;
+    pengaruh = clamp(pengaruh, 0.1, 0.9);
+
+    const menang = Math.random() < pengaruh;
+    const pemenang = menang ? myParty : s.parti;
+    if (menang) kerusiMenang++;
+
+    return { ...s, hasil: menang ? 'menang' : 'kalah', pemenang };
+  });
+
+  pru.kerusi = updatedSeats;
+  pru.lastResult = {
+    tahun: state.date.year,
+    totalVotes: Object.values(partyVotes).reduce((a, b) => a + b, 0),
+    partyVotes,
+    kerusiMenang
+  };
+  pru.tahun = state.date.year;
+
+  addNews(`PRU ${state.date.year} selesai — ${p.party.singkatan} menang ${kerusiMenang} kerusi`,
+    'Keputusan pilihan raya umum simulasi', 'POLITIK');
+
+  addTimeline('🗳️', `PRU ${state.date.year}`,
+    `Parti ${p.party.singkatan} memenangi ${kerusiMenang} kerusi dalam simulasi.`,
+    kerusiMenang > PRU_SEATS.length / 2 ? 'gold' : 'normal');
+
+  saveGame(true);
+  renderGame();
+
+  openModal('📊 Keputusan PRU Selesai',
+    `<div style="text-align:center;font-size:44px;margin-bottom:10px;">🗳️</div>
+     <h4 style="text-align:center;color:var(--biru-gelap);">PRU ${state.date.year}</h4>
+     <div class="stat-grid mt-16">
+       <div class="stat-item"><label>Jumlah Kerusi</label><strong>${PRU_SEATS.length}</strong></div>
+       <div class="stat-item good"><label>Parti Anda Menang</label><strong>${kerusiMenang}</strong></div>
+       <div class="stat-item"><label>Jumlah Undi</label><strong>${formatNum(pru.lastResult.totalVotes)}</strong></div>
+       <div class="stat-item"><label>Parti</label><strong>${p.party.singkatan}</strong></div>
+     </div>
+     <p style="text-align:center;font-size:12px;color:var(--kelabu);margin-top:12px;">
+       ${kerusiMenang > PRU_SEATS.length / 2
+         ? '🎉 Parti anda memperoleh majoriti!'
+         : 'Parti anda tidak memperoleh majoriti. Gabungan mungkin diperlukan.'}
+     </p>`,
+    `<button class="btn-primary" onclick="closeModal()" style="width:auto;margin:0;">Terima</button>`
+  );
+}
+
+/* ============ KRISIS KABINET & UNDI TIDAK PERCAYA ============ */
+function maybeTriggerCrisis() {
+  if (!state.player.party) return;
+  if (Math.random() > 0.15) return; // 15% peluang
+  if (state.crisis.aktif) return; // sudah ada krisis
+
+  const jenis = pickRandom([
+    { id: 'CA1', tajuk: 'Konflik Kabinet', desk: 'Dua menteri berselisih pendapat tentang dasar ekonomi. Perhatian media meningkat.', risiko: 20 },
+    { id: 'CA2', tajuk: 'Kenyataan Kontroversi', desk: 'Seorang pemimpin parti mengeluarkan kenyataan yang mencetuskan kemarahan awam.', risiko: 25 },
+    { id: 'CA3', tajuk: 'Desakan Undi Tidak Percaya', desk: 'Pembangkang mengemukakan usul undi tidak percaya terhadap kepimpinan.', risiko: 35 },
+    { id: 'CA4', tajuk: 'Ketegangan Gabungan', desk: 'Rakan gabungan mengancam menarik diri jika tuntutan mereka tidak dipenuhi.', risiko: 30 }
+  ]);
+
+  state.crisis.aktif = { ...jenis, tarikh: state.date.label, giliran: state.date.turn };
+  showCrisisModal();
+}
+
+function showCrisisModal() {
+  const c = state.crisis.aktif;
+  if (!c) return;
+
+  $('#crisisBody').innerHTML = `
+    <div class="crisis-alert">
+      <h4>⚠️ ${c.tajuk}</h4>
+      <p>${c.desk}</p>
+    </div>
+    <p style="font-size:12px;color:var(--kelabu);">
+      Kestabilan gabungan: <strong>${Math.round(state.player.coalitionStability)}%</strong> •
+      Risiko jawatan: <strong>${c.risiko}%</strong>
+    </p>
+  `;
+
+  $('#crisisFooter').innerHTML = `
+    <button class="btn-secondary" data-caction="ignore">😶 Abaikan</button>
+    <button class="btn-secondary" data-caction="dialogue">🤝 Dialog</button>
+    <button class="btn-primary" data-caction="address" style="width:auto;margin:0;">📢 Tangani</button>
+  `;
+
+  $('#crisisModal').classList.add('open');
+
+  $('#crisisFooter').querySelectorAll('[data-caction]').forEach(btn => {
+    btn.onclick = () => resolveCrisis(btn.dataset.caction);
+  });
+}
+
+function resolveCrisis(action) {
+  const c = state.crisis.aktif;
+  const p = state.player;
+  if (!c) return;
+
+  let hasil = '';
+  switch(action) {
+    case 'ignore':
+      p.coalitionStability = clamp(p.coalitionStability - 15, 0, 100);
+      p.popularity = clamp(p.popularity - 5, 0, 100);
+      if (Math.random() * 100 < c.risiko) {
+        p.position = null;
+        hasil = '❌ Krisis memuncak — anda kehilangan jawatan.';
+        addTimeline('🚨', 'Kehilangan Jawatan', c.tajuk, 'red');
+      } else {
+        hasil = 'Krisis reda sedikit tetapi reputasi terjejas.';
+      }
+      break;
+    case 'dialogue':
+      if (p.negotiation >= 50 || Math.random() < 0.6) {
+        p.coalitionStability = clamp(p.coalitionStability + 5, 0, 100);
+        hasil = '✅ Dialog berjaya — kestabilan pulih.';
+        addTimeline('🤝', 'Dialog Krisis', c.tajuk, 'green');
+      } else {
+        p.coalitionStability = clamp(p.coalitionStability - 8, 0, 100);
+        hasil = '⚠️ Dialog gagal.';
+      }
+      break;
+    case 'address':
+      p.popularity = clamp(p.popularity + 5, 0, 100);
+      p.integrity = clamp(p.integrity + 3, 0, 100);
+      p.coalitionStability = clamp(p.coalitionStability + 8, 0, 100);
+      hasil = '✅ Anda menangani krisis dengan kenyataan tegas.';
+      addTimeline('📢', 'Kenyataan Awam', c.tajuk, 'green');
+      break;
+  }
+
+  state.crisis.sejarah.push({ ...c, hasil, tindakan: action });
+  state.crisis.aktif = null;
+
+  addNews(`Krisis: ${c.tajuk}`, hasil, 'POLITIK');
+  saveGame(true);
+  $('#crisisModal').classList.remove('open');
+  renderGame();
+
+  showToast(hasil, action === 'ignore' && p.position === null ? 'error' : 'success');
+}
+
+/* ============ WATAK AI: TINDAKAN OTONOM ============ */
+function processCharacterActions() {
+  if (!state.charAgenda) state.charAgenda = {};
+
+  // Set agenda untuk watak yang belum ada
+  CHARACTERS.forEach(c => {
+    if (!state.charAgenda[c.id]) {
+      state.charAgenda[c.id] = pickRandom(CHAR_AGENDAS);
+    }
+  });
+
+  // 25% peluang setiap giliran ada tindakan watak
+  if (Math.random() > 0.25) return;
+
+  const char = pickRandom(CHARACTERS);
+  const rel = state.relationships[char.id];
+  const agenda = state.charAgenda[char.id];
+
+  const actions = [
+    { id: 'A1', desk: `${char.nama} menghantar mesej untuk bertanya khabar.`, efek: { score: +3, memory: 'Menghubungi anda pada ' + state.date.label } },
+    { id: 'A2', desk: `${char.nama} mencadangkan kerjasama projek komuniti.`, efek: { score: +5, memory: 'Cadang projek bersama' } },
+    { id: 'A3', desk: `${char.nama} mengkritik keputusan anda secara terbuka.`, efek: { score: -5, memory: 'Kritik terbuka' } },
+    { id: 'A4', desk: `${char.nama} meminta bantuan kewangan.`, efek: { score: +2, memory: 'Minta bantuan' } },
+    { id: 'A5', desk: `${char.nama} menyebarkan berita positif tentang anda.`, efek: { score: +7, memory: 'Sokong di media' } },
+    { id: 'A6', desk: `${char.nama} menyertai parti politik lain.`, efek: { score: -3, memory: 'Tukar parti' } }
+  ];
+
+  const aksi = pickRandom(actions);
+  rel.score = clamp(rel.score + aksi.efek.score, -100, 100);
+  if (rel.memory.length < 20) rel.memory.push(aksi.efek.memory + ` (${state.date.label})`);
+
+  addNews(`Watak: ${char.nama}`, aksi.desk, 'WATAK');
+
+  if (Math.random() < 0.3) {
+    showToast(`💬 ${char.nama}: ${aksi.desk}`, aksi.efek.score > 0 ? 'success' : 'warn');
+  }
+}
+
+/* ============ BERITA BERPANTAI (CHAIN NEWS) ============ */
+function scheduleNewsChain(rootNews) {
+  if (!state.newsChains) state.newsChains = [];
+  state.newsChains.push({
+    id: uid(),
+    root: rootNews,
+    giliranMula: state.date.turn,
+    fasa: 0,
+    jadual: [
+      { tunggu: 1, tajuk: `Kesinambungan: ${rootNews}`, kategori: 'SUSULAN' },
+      { tunggu: 3, tajuk: `Analisis mendalam: ${rootNews}`, kategori: 'ANALISIS' },
+      { tunggu: 5, tajuk: `Kesan jangka panjang: ${rootNews}`, kategori: 'IMPAK' }
+    ]
+  });
+}
+
+function processNewsChains() {
+  if (!state.newsChains) return;
+  state.newsChains.forEach(chain => {
+    const lepas = state.date.turn - chain.giliranMula;
+    chain.jadual.forEach((jad, i) => {
+      if (chain.fasa === i && lepas >= jad.tunggu) {
+        addNews(jad.tajuk, `Laporan simulasi berkaitan: ${chain.root}`, jad.kategori);
+        chain.fasa++;
+      }
+    });
+  });
+  state.newsChains = state.newsChains.filter(c => c.fasa < c.jadual.length);
+}
+
+/* ============ WATAK DETAIL MODAL ============ */
+function openCharacterModal(charId) {
+  initV3State();
+  const char = CHARACTERS.find(c => c.id === charId);
+  if (!char) return;
+
+  const rel = state.relationships[char.id];
+  const agenda = state.charAgenda[char.id] || 'tidak diketahui';
+
+  $('#charTitle').textContent = `${char.emoji} ${char.nama}`;
+  $('#charBody').innerHTML = `
+    <div class="char-card ${rel.score > 40 ? 'high' : rel.score < -20 ? 'low' : ''}">
+      <div class="c-head">
+        <div class="c-emoji">${char.emoji}</div>
+        <div>
+          <div class="c-name">${char.nama}</div>
+          <div class="c-role">${char.peranan}</div>
+        </div>
+        <div class="c-score">${rel.score > 0 ? '+' : ''}${rel.score}</div>
+      </div>
+      <p style="font-size:12px;color:var(--kelabu-gelap);margin-bottom:8px;">${char.desk}</p>
+      <div style="font-size:11px;color:var(--kelabu);">
+        <strong>Agenda:</strong> ${agenda}
+      </div>
+    </div>
+
+    <h4 style="font-size:13px;color:var(--biru-gelap);margin-top:14px;">📊 Dimensi Hubungan</h4>
+    <div class="stat-grid">
+      <div class="stat-item"><label>Kepercayaan</label><strong>${rel.trust}</strong></div>
+      <div class="stat-item"><label>Kesetiaan</label><strong>${rel.loyalty}</strong></div>
+      <div class="stat-item"><label>Rasa Hormat</label><strong>${rel.respect}</strong></div>
+      <div class="stat-item"><label>Skor Keseluruhan</label><strong>${rel.score}</strong></div>
+    </div>
+
+    ${rel.memory.length > 0
+      ? `<h4 style="font-size:13px;color:var(--biru-gelap);margin-top:14px;">🧠 Memori</h4>
+         <ul style="font-size:12px;color:var(--kelabu-gelap);padding-left:18px;">
+           ${rel.memory.slice(-8).map(m => `<li>${m}</li>`).join('')}
+         </ul>`
+      : ''
+    }
+  `;
+
+  $('#charModal').classList.add('open');
+}
+
+function openAllCharactersModal() {
+  initV3State();
+  openModal('👥 Semua Watak AI',
+    `<div style="font-size:12px;">
+      ${CHARACTERS.map(c => {
+        const r = state.relationships[c.id];
+        const cls = r.score > 40 ? 'high' : r.score < -20 ? 'low' : '';
+        return `
+          <div class="char-card ${cls}" data-charid="${c.id}" style="cursor:pointer;">
+            <div class="c-head">
+              <div class="c-emoji">${c.emoji}</div>
+              <div>
+                <div class="c-name">${c.nama}</div>
+                <div class="c-role">${c.peranan}</div>
+              </div>
+              <div class="c-score">${r.score > 0 ? '+' : ''}${r.score}</div>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>`,
+    `<button class="btn-secondary" onclick="closeModal()">Tutup</button>`
+  );
+  setTimeout(() => {
+    $$('#modalBody [data-charid]').forEach(el => {
+      el.onclick = () => {
+        closeModal();
+        setTimeout(() => openCharacterModal(el.dataset.charid), 200);
+      };
+    });
+  }, 50);
+}
+
+/* ============ SISTEM PENCAPAIAN ============ */
+function checkAchievements() {
+  if (!state.achievements) state.achievements = [];
+  ACHIEVEMENTS.forEach(a => {
+    if (!state.achievements.find(x => x.id === a.id)) {
+      try {
+        if (a.check(state)) {
+          state.achievements.push({ id: a.id, tarikh: state.date.label, nama: a.nama });
+          showToast(`🏆 Pencapaian: ${a.nama}`, 'success');
+          addTimeline('🏆', `Pencapaian: ${a.nama}`, a.desk, 'gold');
+        }
+      } catch(e) {}
+    }
+  });
+}
+
+function openAchievementsModal() {
+  initV3State();
+  openModal('🏆 Pencapaian',
+    `<div style="font-size:12px;">
+      ${ACHIEVEMENTS.map(a => {
+        const unlocked = state.achievements.find(x => x.id === a.id);
+        return `
+          <div class="ach-card ${unlocked ? '' : 'locked'}">
+            <div class="ach-icon">${a.emoji}</div>
+            <div class="ach-info">
+              <strong>${a.nama}</strong>
+              <small>${a.desk}</small>
+              ${unlocked ? `<small style="color:var(--hijau);font-weight:600;">✓ ${unlocked.tarikh}</small>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>`,
+    `<button class="btn-secondary" onclick="closeModal()">Tutup</button>`
+  );
+}
+
+/* ============ SKOR LEGASI ============ */
+function calculateLegacyScore(s) {
+  const p = s.player;
+  const f = s.finances;
+
+  const kekayaan = clamp(p.wang + p.tabungan, 0, 500000) / 5000;
+  const pengaruh = (p.popularity + p.partyInfluence + p.publicTrust) / 3;
+  const integriti = p.integrity;
+  const jawatan = (p.position ? 20 : 0) + p.level * 3;
+  const projek = (s.projects || []).filter(x => x.status === 'Siap').length * 5;
+  const keluarga = p.pasangan ? 10 : 0;
+  const pencapaian = (s.achievements || []).length * 2;
+
+  const total = clamp(
+    kekayaan * 0.15 + pengaruh * 0.3 + integriti * 0.2 + jawatan * 0.15 + projek + keluarga + pencapaian,
+    0, 100
+  );
+
+  return { total, kekayaan, pengaruh, integriti, jawatan, projek, keluarga, pencapaian };
+}
+
+function openLegacyModal() {
+  initV3State();
+  const p = state.player;
+  const s = calculateLegacyScore(state);
+  const rank = s.total >= 85 ? 'LEGENDA' :
+               s.total >= 70 ? 'NEGARAWAN' :
+               s.total >= 55 ? 'PEMIMPIN' :
+               s.total >= 40 ? 'AKTIVIS' : 'RAKYAT';
+
+  const body = $('#legacyBody');
+  body.innerHTML = `
+    <div class="legacy-hero">
+      <div class="lh-emoji">${s.total >= 70 ? '🏆' : s.total >= 40 ? '🎖️' : '👤'}</div>
+      <div class="lh-title">${p.nama}</div>
+      <div class="lh-sub">${p.position || 'Rakyat Biasa'} • ${p.party ? p.party.nama : 'Tanpa Parti'}</div>
+      <div class="lh-rank">${rank}</div>
+    </div>
+
+    <h4 style="font-size:13px;color:var(--biru-gelap);">📊 Skor Legasi: ${Math.round(s.total)}/100</h4>
+
+    <div class="lscore-row"><span>Pengaruh Politik</span><strong>${Math.round(s.pengaruh)}</strong></div>
+    <div class="lscore-bar"><div class="lscore-fill" style="width:${s.pengaruh}%"></div></div>
+
+    <div class="lscore-row"><span>Integriti</span><strong>${Math.round(s.integriti)}</strong></div>
+    <div class="lscore-bar"><div class="lscore-fill" style="width:${s.integriti}%"></div></div>
+
+    <div class="lscore-row"><span>Kekayaan</span><strong>${formatRM(p.wang + p.tabungan)}</strong></div>
+    <div class="lscore-bar"><div class="lscore-fill" style="width:${clamp(s.kekayaan * 20, 0, 100)}%"></div></div>
+
+    <h4 style="font-size:13px;color:var(--biru-gelap);margin-top:14px;">📜 Ringkasan Kehidupan</h4>
+    <div class="stat-grid">
+      <div class="stat-item"><label>Umur</label><strong>${p.umur}</strong></div>
+      <div class="stat-item"><label>Tahap</label><strong>${p.level}</strong></div>
+      <div class="stat-item"><label>Giliran</label><strong>${state.date.turn}</strong></div>
+      <div class="stat-item"><label>Projek Siap</label><strong>${(state.projects || []).filter(x => x.status === 'Siap').length}</strong></div>
+      <div class="stat-item"><label>Pencapaian</label><strong>${(state.achievements || []).length}/${ACHIEVEMENTS.length}</strong></div>
+      <div class="stat-item"><label>Nilai Bersih</label><strong>${formatRM(state.finances.netWorth)}</strong></div>
+    </div>
+
+    ${(state.parlimen?.won?.length > 0 || state.dun?.won?.length > 0) ? `
+      <h4 style="font-size:13px;color:var(--biru-gelap);margin-top:14px;">🎖️ Kerusi Dimenangi</h4>
+      <ul style="font-size:12px;padding-left:18px;color:var(--kelabu-gelap);">
+        ${(state.dun?.won || []).map(w => `<li>${w.kod} ${w.nama} (DUN) — ${w.tarikh}</li>`).join('')}
+        ${(state.parlimen?.won || []).map(w => `<li>${w.kod} ${w.nama} (Parlimen) — ${w.tarikh}</li>`).join('')}
+      </ul>
+    ` : ''}
+  `;
+
+  $('#legacyFooter').innerHTML = `
+    <button class="btn-secondary" onclick="document.getElementById('legacyModal').classList.remove('open')">Tutup</button>
+    <button class="btn-primary" id="endLifeBtn" style="width:auto;margin:0;">🚪 Bersara Sekarang</button>
+  `;
+
+  setTimeout(() => {
+    const btn = $('#endLifeBtn');
+    if (btn) btn.onclick = () => {
+      $('#legacyModal').classList.remove('open');
+      showFinalReport();
+    };
+  }, 50);
+
+  $('#legacyModal').classList.add('open');
+}
+
+/* ============ PILIHAN RAYA KECIL (AUTO) ============ */
+function maybeTriggerByElection() {
+  if (Math.random() > 0.1) return; // 10% peluang
+  if (!state.player.party) return;
+
+  const seat = pickRandom(PRU_SEATS);
+  state.byElections.push({
+    kod: seat.kod,
+    nama: seat.nama,
+    negeri: seat.negeri,
+    giliran: state.date.turn,
+    status: 'aktif'
+  });
+
+  addNews(`Pilihan raya kecil di ${seat.nama}`, 'Kerusi kosong mencetuskan PRK simulasi', 'POLITIK');
+  showToast(`📮 PRK di ${seat.nama}! Sertai di Peta`, 'warn');
+}
+
+/* ============ EXTRA NAV 3 ============ */
+function setupExtraNav3() {
+  const nav = $('#extraNav3');
+  if (!nav) return;
+
+  const observer = new MutationObserver(() => {
+    if ($('#game').classList.contains('active')) {
+      nav.classList.remove('hidden');
+    } else {
+      nav.classList.add('hidden');
+    }
+  });
+  observer.observe($('#game'), { attributes: true, attributeFilter: ['class'] });
+
+  nav.querySelectorAll('[data-extra3]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.extra3;
+      switch(action) {
+        case 'pru': openPRUModal(); break;
+        case 'chars': openAllCharactersModal(); break;
+        case 'legacy': openLegacyModal(); break;
+        case 'timeline': openTimelineModal(); break;
+      }
+    });
+  });
+}
+
+/* ============ PATCH nextTurn UNTUK v3 ============ */
+const _v2NextTurn = nextTurn;
+nextTurn = function() {
+  _v2NextTurn();
+  // Proses modul v3
+  processCharacterActions();
+  processNewsChains();
+  maybeTriggerCrisis();
+  maybeTriggerByElection();
+  checkAchievements();
+  saveGame(true);
+};
+
+/* ============ PATCH init UNTUK v3 ============ */
+const _v2Init = init;
+init = function() {
+  _v2Init();
+  setupExtraNav3();
+  initV3State();
+};
 document.addEventListener('DOMContentLoaded', init);
