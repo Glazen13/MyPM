@@ -1,5 +1,5 @@
 /* ============================================================
-   SIMULATOR PARTI POLITIK MALAYSIA — SCRIPT.JS
+   Simulator Rakyat Malaysia — SCRIPT.JS
    Bahagian 1: Data, State, Utiliti, Splash, Menu, Cipta Watak
    ============================================================ */
 
@@ -1382,7 +1382,7 @@ function modalChangeCareer() {
   }, 50);
 }
 /* ============================================================
-   SIMULATOR PARTI POLITIK MALAYSIA — SCRIPT.JS
+   Simulator Rakyat Malaysia — SCRIPT.JS
    Bahagian 2: Politik, Berita, Giliran, Peristiwa, Simpan/Muat, Init
    ============================================================ */
 
@@ -2296,7 +2296,7 @@ function showGuide() {
 
 function showCredits() {
   openModal('ℹ️ Kredit',
-    `<p><strong>Simulator Parti Politik Malaysia</strong><br>Versi ${VERSION}</p>
+    `<p><strong>Simulator Rakyat Malaysia</strong><br>Versi ${VERSION}</p>
     <p>Sebuah permainan simulasi fiksyen.</p>
     <h4>Penafian</h4>
     <p style="font-size:12px;color:var(--kelabu);">
@@ -2384,7 +2384,7 @@ function init() {
   window.closeModal = closeModal;
 }
 /* ============================================================
-   SIMULATOR PARTI POLITIK MALAYSIA — SCRIPT.JS v2.0
+   Simulator Rakyat Malaysia — SCRIPT.JS v2.0
    Modul Lanjutan: Kawasan, Peta, Kempen, Kabinet, Tugas, Projek, Bajet
    ============================================================ */
 
@@ -3338,7 +3338,7 @@ init = function() {
 
 /* ============ JALANKAN ============ */
 /* ============================================================
-   SIMULATOR PARTI POLITIK MALAYSIA — SCRIPT.JS v3.0
+   Simulator Rakyat Malaysia — SCRIPT.JS v3.0
    Modul Akhir: PRU, Krisis, Watak AI, Legasi, Timeline, Pencapaian
    ============================================================ */
 
@@ -4050,7 +4050,7 @@ init = function() {
   initV3State();
 };
 /* ============================================================
-   SIMULATOR PARTI POLITIK MALAYSIA — SCRIPT.JS v4.0
+   Simulator Rakyat Malaysia — SCRIPT.JS v4.0
    Modul Akhir: Graf, Audio, Cutscene, Peta SVG, Tema, PWA, Tetapan
    ============================================================ */
 
@@ -4780,12 +4780,12 @@ init = function() {
   // Simpan settings
   saveSettings();
 
-  console.log('🎮 Simulator Parti Politik Malaysia v' + VERSION + ' dimuatkan');
+  console.log('🎮 Simulator Rakyat Malaysia v' + VERSION + ' dimuatkan');
   console.log('📦 Modul: v1.0 + v2.0 + v3.0 + v4.0');
 };
 
 /* ============================================================
-   SIMULATOR PARTI POLITIK MALAYSIA — SCRIPT.JS v5.0
+   Simulator Rakyat Malaysia — SCRIPT.JS v5.0
    Modul Akhir: I18N, Slot, Leaderboard, Story, Analitik, Notif, PDF
    ============================================================ */
 
@@ -5674,7 +5674,7 @@ function openPDFReport() {
   const html = `
     <div class="pdf-preview" id="pdfPreview">
       <h1>LAPORAN LEGASI</h1>
-      <div class="pdf-subtitle">Simulator Parti Politik Malaysia — Laporan Rasmi Simulasi</div>
+      <div class="pdf-subtitle">Simulator Rakyat Malaysia — Laporan Rasmi Simulasi</div>
 
       <h2>Maklumat Pemain</h2>
       <table>
@@ -5773,7 +5773,7 @@ function openPDFReport() {
       </p>
 
       <div class="pdf-signature">
-        <em>Dijana oleh Simulator Parti Politik Malaysia v${VERSION}</em>
+        <em>Dijana oleh Simulator Rakyat Malaysia v${VERSION}</em>
       </div>
 
       <div class="pdf-meta">
