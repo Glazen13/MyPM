@@ -2600,12 +2600,177 @@ body.theme-red {
   }
 }
 /* ============================================
-   SIDE PANEL DROPDOWN — Menu Lanjutan
-   ============================================ */
+/* ============================================================
+   PEMBAIKAN SIDE PANEL — v6.3
+   Betulkan: panel tidak patut terbuka, warna teks, susunan menu
+   ============================================================ */
 
+/* ============ 1. SIDE PANEL TERTUTUP SECARA DEFAULT ============ */
+.side-panel {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 30, 63, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;   /* PENTING: tak boleh klik bila tertutup */
+  transition: opacity 0.3s ease;
+}
+
+.side-panel.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.side-panel-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 320px;
+  max-width: 88vw;
+  background: #ffffff;
+  transform: translateX(-100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.side-panel.open .side-panel-content {
+  transform: translateX(0);
+}
+
+/* ============ 2. HEADER SIDE PANEL ============ */
+.side-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, #0a1e3f, #1a3a6b);
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.side-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.side-header .icon-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.side-header .icon-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* ============ 3. PROFIL DALAM SIDE PANEL ============ */
+.side-profile {
+  padding: 20px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: center;
+  background: #f8fafc;
+  flex-shrink: 0;
+}
+
+.side-profile .big-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4af37, #f0d97a);
+  color: #0a1e3f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 auto 10px;
+  overflow: hidden;
+}
+
+.side-profile h4 {
+  font-size: 16px;
+  color: #0a1e3f;
+  margin: 0 0 4px;
+  font-weight: 700;
+}
+
+.side-profile p {
+  font-size: 12px;
+  color: #8892a6;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ============ 4. SENARAI LINK (SATU-SATU BERTINDIH) ============ */
+.side-links {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 8px 24px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* SEMUA LINK — warna teks JELAS */
+.side-link {
+  display: block;
+  width: 100%;
+  background: #ffffff;
+  border: none;
+  padding: 13px 14px;
+  text-align: left;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2d3748;             /* warna gelap, jelas */
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+  line-height: 1.4;
+}
+
+.side-link:hover {
+  background: #f0f4fa;
+  color: #2c5aa0;
+}
+
+.side-link.danger {
+  color: #e74c3c;
+}
+
+.side-link.danger:hover {
+  background: #fceceb;
+}
+
+/* ============ 5. PEMISAH ============ */
+.side-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+  margin: 10px 8px;
+  flex-shrink: 0;
+}
+
+/* ============ 6. DROP-DOWN MENU LANJUTAN ============ */
 .side-dropdown {
   display: block;
   width: 100%;
+  margin: 2px 0;
 }
 
 .side-dropdown-toggle {
@@ -2613,35 +2778,41 @@ body.theme-red {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  background: linear-gradient(135deg, rgba(44, 90, 160, 0.08), rgba(212, 175, 55, 0.05));
-  border: 1.5px solid rgba(44, 90, 160, 0.15);
-  border-radius: 8px;
-  font-weight: 600;
-  color: var(--biru-gelap);
-  margin: 4px 0;
-  transition: var(--transition);
+  background: linear-gradient(135deg, #eef4fb, #e8f0fa) !important;
+  border: 1.5px solid #c8d8e8 !important;
+  border-radius: 8px !important;
+  padding: 13px 14px !important;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0a1e3f !important;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.25s;
+  margin: 0;
+  text-align: left;
 }
 
 .side-dropdown-toggle:hover {
-  background: linear-gradient(135deg, rgba(44, 90, 160, 0.15), rgba(212, 175, 55, 0.1));
-  border-color: var(--biru-muda);
+  background: linear-gradient(135deg, #dbe8f8, #cfe0f2) !important;
+  border-color: #2c5aa0 !important;
 }
 
 .side-dropdown-toggle.open {
-  background: linear-gradient(135deg, var(--biru-muda), var(--biru-sederhana));
-  color: var(--putih);
-  border-color: var(--emas);
+  background: linear-gradient(135deg, #2c5aa0, #1a3a6b) !important;
+  color: #ffffff !important;
+  border-color: #d4af37 !important;
 }
 
 .side-dropdown-toggle.open .dropdown-arrow {
   transform: rotate(180deg);
-  color: var(--emas-muda);
+  color: #f0d97a;
 }
 
 .dropdown-arrow {
-  font-size: 10px;
-  color: var(--kelabu);
-  transition: transform 0.3s ease, color 0.3s ease;
+  font-size: 11px;
+  color: #8892a6;
+  transition: transform 0.3s, color 0.3s;
+  margin-left: 8px;
 }
 
 .side-dropdown-menu {
@@ -2651,67 +2822,65 @@ body.theme-red {
   opacity: 0;
   padding: 0;
   margin: 0;
+  background: #f8fafc;
+  border-radius: 8px;
 }
 
 .side-dropdown-menu.open {
-  max-height: 800px;
+  max-height: 500px;
+  overflow-y: auto;
   opacity: 1;
-  padding: 4px 0 8px;
-  margin: 4px 0;
+  padding: 6px;
+  margin: 4px 0 8px;
 }
 
 .side-sub-link {
   display: block;
   width: 100%;
-  background: transparent;
+  background: #ffffff;
   border: none;
-  padding: 10px 14px 10px 28px;
+  padding: 11px 14px 11px 26px;
   text-align: left;
   font-family: inherit;
   font-size: 13px;
-  color: var(--kelabu-gelap);
+  font-weight: 500;
+  color: #2d3748;
   cursor: pointer;
   border-radius: 6px;
-  transition: var(--transition);
+  transition: all 0.2s;
   position: relative;
+  margin-bottom: 2px;
 }
 
 .side-sub-link::before {
   content: '';
   position: absolute;
-  left: 16px;
+  left: 13px;
   top: 50%;
   transform: translateY(-50%);
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--kelabu);
-  transition: var(--transition);
+  background: #8892a6;
+  transition: all 0.2s;
 }
 
 .side-sub-link:hover {
-  background: var(--kelabu-cerah);
-  color: var(--biru-muda);
-  padding-left: 32px;
+  background: #eef4fb;
+  color: #2c5aa0;
+  padding-left: 30px;
 }
 
 .side-sub-link:hover::before {
-  background: var(--emas);
+  background: #d4af37;
   width: 6px;
   height: 6px;
 }
 
-.side-divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
-  margin: 10px 8px;
-}
-
-/* Badge notifikasi kecil dalam sub-link */
 .side-sub-link .notif-count {
   display: inline-block;
-  background: var(--merah);
-  color: var(--putih);
+  background: #e74c3c;
+  color: #ffffff;
   font-size: 10px;
   font-weight: 700;
   padding: 1px 6px;
@@ -2720,232 +2889,41 @@ body.theme-red {
   min-width: 18px;
   text-align: center;
 }
+
 .side-sub-link .notif-count.hidden {
   display: none;
 }
 
-/* Scroll dalam dropdown kalau terlalu panjang */
-.side-dropdown-menu.open {
-  overflow-y: auto;
-  max-height: 400px;
-  scrollbar-width: thin;
-}
-
+/* ============ 7. SCROLLBAR ============ */
+.side-links::-webkit-scrollbar,
 .side-dropdown-menu::-webkit-scrollbar {
-  width: 4px;
+  width: 5px;
 }
 
+.side-links::-webkit-scrollbar-track,
+.side-dropdown-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.side-links::-webkit-scrollbar-thumb,
 .side-dropdown-menu::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 2px;
-}
-/* ============================================
-   TETAPAN BERSATU (v6.2)
-   ============================================ */
-
-.settings-section {
-  background: var(--kelabu-cerah);
-  border-radius: 10px;
-  padding: 14px;
-  margin-bottom: 12px;
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 3px;
 }
 
-.settings-section h4 {
-  font-size: 13px;
-  color: var(--biru-gelap);
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 700;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #d8e0ea;
-}
-
-.settings-section .settings-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  font-size: 13px;
-  gap: 12px;
-}
-
-.settings-section .settings-row:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.settings-section .settings-row label {
-  flex: 1;
-  color: var(--kelabu-gelap);
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.settings-section .settings-row small {
-  display: block;
-  color: var(--kelabu);
-  font-size: 11px;
-  margin-top: 2px;
-  font-weight: 400;
-}
-
-/* Dropdown dalam tetapan */
-.settings-section .form-group {
-  margin-bottom: 12px;
-}
-
-.settings-section .form-group:last-child {
-  margin-bottom: 0;
-}
-
-.settings-section .form-group label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--kelabu-gelap);
-  margin-bottom: 6px;
-}
-
-.settings-section select,
-.settings-section input[type="text"],
-.settings-section input[type="number"] {
-  width: 100%;
-  padding: 9px 12px;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 13px;
-  font-family: inherit;
-  color: var(--kelabu-gelap);
-  background: var(--putih);
-}
-
-.settings-section select:focus,
-.settings-section input:focus {
-  outline: none;
-  border-color: var(--biru-muda);
-  box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
-}
-
-/* Toggle Switch (guna semula gaya v4) */
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 44px;
-  height: 24px;
-  flex-shrink: 0;
-}
-.toggle-switch input { display: none; }
-.toggle-slider {
-  position: absolute;
-  inset: 0;
-  background: #cbd5e0;
-  border-radius: 24px;
-  cursor: pointer;
-  transition: var(--transition);
-}
-.toggle-slider::before {
-  content: '';
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  background: var(--putih);
-  border-radius: 50%;
-  left: 3px;
-  top: 3px;
-  transition: var(--transition);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-.toggle-switch input:checked + .toggle-slider {
-  background: var(--biru-muda);
-}
-.toggle-switch input:checked + .toggle-slider::before {
-  transform: translateX(20px);
-}
-
-/* Theme picker dalam tetapan */
-.settings-section .theme-picker {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.settings-section .theme-swatch {
-  aspect-ratio: 1;
-  border-radius: 10px;
-  cursor: pointer;
-  border: 3px solid transparent;
-  transition: var(--transition);
-  position: relative;
-  box-shadow: var(--bayang);
-}
-
-.settings-section .theme-swatch:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--bayang-besar);
-}
-
-.settings-section .theme-swatch.active {
-  border-color: var(--biru-muda);
-  box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.3);
-}
-
-.settings-section .theme-swatch.active::after {
-  content: '✓';
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--putih);
-  font-size: 20px;
-  font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.settings-section .theme-swatch[data-theme="blue"] {
-  background: linear-gradient(135deg, #0a1e3f, #2c5aa0, #d4af37);
-}
-.settings-section .theme-swatch[data-theme="gold"] {
-  background: linear-gradient(135deg, #3a2c0a, #8b6f1f, #f0d97a);
-}
-.settings-section .theme-swatch[data-theme="green"] {
-  background: linear-gradient(135deg, #0a2f1e, #1e8a5c, #f0d97a);
-}
-.settings-section .theme-swatch[data-theme="red"] {
-  background: linear-gradient(135deg, #3f0a0a, #a02c2c, #f0d97a);
-}
-
-/* Info versi */
-.settings-info-box {
-  background: linear-gradient(135deg, #0a1e3f, #1a3a6b);
-  color: var(--putih);
-  border-radius: 10px;
-  padding: 14px;
-  font-size: 12px;
-  line-height: 1.7;
-}
-.settings-info-box .info-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 3px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-.settings-info-box .info-row:last-child { border-bottom: none; }
-.settings-info-box .info-label {
-  color: rgba(255, 255, 255, 0.6);
-}
-.settings-info-box .info-value {
-  color: var(--emas-muda);
-  font-weight: 600;
-}
-
-/* Responsif */
+/* ============ 8. RESPONSIF ============ */
 @media (max-width: 480px) {
-  .settings-section .theme-picker {
-    grid-template-columns: repeat(2, 1fr);
+  .side-panel-content {
+    width: 290px;
+  }
+  .side-link,
+  .side-dropdown-toggle {
+    font-size: 13px;
+    padding: 11px 12px !important;
+  }
+  .side-sub-link {
+    font-size: 12px;
+    padding: 9px 12px 9px 22px;
   }
 }
+/*========Fix: side panel CSS=================*/
