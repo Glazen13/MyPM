@@ -308,6 +308,15 @@ button.sekunder:hover {
   color: #b91c1c;
 }
 
+#butangAuto {
+  margin-left: 10px;
+}
+
+#statusAuto {
+  margin-top: 8px;
+  color: #475569;
+}
+
 /* =====================================
    Peristiwa mingguan (dalam hasil)
    ===================================== */
@@ -565,5 +574,9 @@ footer {
 
   .stat p {
     font-size: 24px;
+  }
+
+  #butangAuto {
+    margin-left: 0;
   }
 }
