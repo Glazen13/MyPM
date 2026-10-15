@@ -430,3 +430,46 @@ footer {
   padding: 15px 18px;
   border-left: 5px solid #2563eb;
 }
+/* Dasar & projek */
+.stat.dasar {
+  background: #f8fafc;
+  text-align: left;
+  padding: 15px 18px;
+  margin: 10px 0;
+  border-left: 4px solid #cbd5e1;
+}
+
+.stat.dasar.aktif {
+  border-left-color: #d97706;
+  background: #fef3c7;
+}
+
+.stat.dasar.selesai {
+  border-left-color: #047857;
+  background: #d1fae5;
+}
+
+.stat.dasar.gagal {
+  border-left-color: #b91c1c;
+  background: #fee2e2;
+}
+
+.stat.dasar h3 { font-size: 16px; margin: 0 0 6px; }
+.stat.dasar p { font-size: 14px; margin: 4px 0; font-weight: normal; }
+
+.bar-kemajuan {
+  background: #e2e8f0;
+  border-radius: 10px;
+  height: 12px;
+  margin: 8px 0;
+  overflow: hidden;
+}
+
+.bar-kemajuan-dalam {
+  background: #1769aa;
+  height: 100%;
+  transition: width 0.3s;
+}
+
+.bar-kemajuan-dalam.selesai { background: #047857; }
+.bar-kemajuan-dalam.gagal { background: #b91c1c; }
