@@ -258,6 +258,101 @@ function tamatkanMinggu() {
   }
 }
 // =====================================
+// 3i. MEDIA & PENDAPAT AWAM
+// =====================================
+
+const pendapatKumpulan = {
+  bandar: 50,
+  luarBandar: 50,
+  belia: 50,
+  wargaEmas: 50,
+  pekerja: 50
+};
+
+const media = [
+  { id: "nasional", nama: "Media Nasional", sikap: "pro-kerajaan", pengaruh: 1.2 },
+  { id: "bebas", nama: "Media Bebas", sikap: "neutral", pengaruh: 1.0 },
+  { id: "kritis", nama: "Media Kritis", sikap: "pembangkang", pengaruh: 0.8 },
+  { id: "sosial", nama: "Media Sosial", sikap: "rakyat", pengaruh: 1.5 }
+];
+
+function kiraPopularitiKumpulan() {
+  const nilai = Object.values(pendapatKumpulan);
+  return Math.round(nilai.reduce((a, b) => a + b, 0) / nilai.length);
+}
+
+function paparPendapat() {
+  const bandar = document.getElementById("pendapatBandar");
+  const luarBandar = document.getElementById("pendapatLuarBandar");
+  const belia = document.getElementById("pendapatBelia");
+  const wargaEmas = document.getElementById("pendapatWargaEmas");
+  const pekerja = document.getElementById("pendapatPekerja");
+
+  if (bandar) bandar.textContent = pendapatKumpulan.bandar + "%";
+  if (luarBandar) luarBandar.textContent = pendapatKumpulan.luarBandar + "%";
+  if (belia) belia.textContent = pendapatKumpulan.belia + "%";
+  if (wargaEmas) wargaEmas.textContent = pendapatKumpulan.wargaEmas + "%";
+  if (pekerja) pekerja.textContent = pendapatKumpulan.pekerja + "%";
+}
+
+function komunikasiPM(jenis) {
+  const hasil = document.getElementById("hasilKomunikasi");
+  let teks = "";
+  let pengaruhMedia = 1.0;
+
+  if (jenis === "sidangMedia") {
+    pendapatKumpulan.bandar = hadkan(pendapatKumpulan.bandar + 4);
+    pendapatKumpulan.belia = hadkan(pendapatKumpulan.belia + 2);
+    pendapatKumpulan.wargaEmas = hadkan(pendapatKumpulan.wargaEmas + 3);
+    kestabilan = hadkan(kestabilan + 1);
+    teks = "Sidang media diadakan. Bandar +4, Warga Emas +3, Belia +2, Kestabilan +1.";
+  } else if (jenis === "lawatan") {
+    pendapatKumpulan.luarBandar = hadkan(pendapatKumpulan.luarBandar + 6);
+    pendapatKumpulan.pekerja = hadkan(pendapatKumpulan.pekerja + 4);
+    populariti = hadkan(populariti + 2);
+    teks = "Lawatan ke kawasan. Luar Bandar +6, Pekerja +4, Populariti +2.";
+  } else if (jenis === "pengakuan") {
+    pendapatKumpulan.bandar = hadkan(pendapatKumpulan.bandar + 3);
+    pendapatKumpulan.belia = hadkan(pendapatKumpulan.belia + 5);
+    kestabilan = hadkan(kestabilan - 2);
+    populariti = hadkan(populariti + 3);
+    teks = "PM akui kesilapan. Bandar +3, Belia +5, Kestabilan −2, Populariti +3.";
+  } else if (jenis === "diam") {
+    pendapatKumpulan.bandar = hadkan(pendapatKumpulan.bandar - 2);
+    pendapatKumpulan.belia = hadkan(pendapatKumpulan.belia - 3);
+    pendapatKumpulan.pekerja = hadkan(pendapatKumpulan.pekerja + 2);
+    ekonomi = hadkan(ekonomi + 2);
+    teks = "PM diam & fokus kerja. Ekonomi +2, tetapi Bandar −2, Belia −3, Pekerja +2.";
+  }
+
+  // Kesan media sosial
+  const mediaSosial = media.find(m => m.id === "sosial");
+  pengaruhMedia = mediaSosial.pengaruh;
+
+  // Media sosial menggandakan kesan
+  const kesanMedia = jenis === "diam" ? -1 : 1;
+  pendapatKumpulan.belia = hadkan(
+    pendapatKumpulan.belia + Math.round(kesanMedia * pengaruhMedia)
+  );
+
+  // Populariti keseluruhan = purata kumpulan
+  populariti = kiraPopularitiKumpulan();
+
+  paparPendapat();
+  kemasKiniPaparan();
+
+  if (hasil) {
+    hasil.innerHTML = `
+      <div class="stat hasil">
+        <h3>Kesan Komunikasi PM</h3>
+        <p>${escapeHTML(teks)}</p>
+        <p><strong>Populariti keseluruhan:</strong> ${populariti}%</p>
+        <p class="nota">Kesan media sosial: Belia ${kesanMedia > 0 ? "+" : ""}${Math.round(kesanMedia * pengaruhMedia)}</p>
+      </div>
+    `;
+  }
+}
+// =====================================
 // 3g. PARTI POLITIK & GABUNGAN
 // =====================================
 
