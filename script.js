@@ -1584,6 +1584,7 @@ function jalankanPilihanRaya() {
   const keputusan = tentukanKeputusanKerusi(kerusi);
 
   paparPanelPilihanRaya();
+    paparLaporanAkhir();
 
   if (keputusan.status.startsWith("menang")) {
     setTimeout(() => {
@@ -1800,4 +1801,5 @@ document.addEventListener("DOMContentLoaded", () => {
   paparPendapat();
   paparDasar();
   paparPanelPilihanRaya();
+    paparLaporanAkhir();
 });
