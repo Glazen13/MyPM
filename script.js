@@ -235,7 +235,7 @@ function tamatkanMinggu() {
   if (masa.minggu % 4 === 0) {
     kiraEkonomiBulanan();
     laporanEkonomi = "Laporan ekonomi bulanan telah dikira.";
-  }
+    cetusPeristiwa();}
 
   // Majukan minggu
   masa.minggu++;
