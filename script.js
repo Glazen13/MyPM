@@ -2,7 +2,7 @@
 
 // =====================================
 // MyPM SIMULASI - SISTEM NEGARA
-// Fasa 5.1: Sistem Masa Harian (7 hari/minggu)
+// Fasa 5.2: Sistem Masa Harian + Auto Mode
 // =====================================
 
 // =====================================
@@ -234,13 +234,61 @@ function kiraEkonomiBulanan() {
 }
 
 // =====================================
+// AUTO MODE (Fasa 5.2)
+// =====================================
+
+let autoMode = false;
+let autoInterval = null;
+const KADAR_AUTO = 5000;
+
+function toggleAuto() {
+  autoMode = !autoMode;
+
+  const elButang = document.getElementById("butangAuto");
+  const elStatusAuto = document.getElementById("statusAuto");
+
+  if (autoMode) {
+    autoInterval = setInterval(() => {
+      tamatkanHari();
+    }, KADAR_AUTO);
+
+    if (elButang) {
+      elButang.textContent = "⏸ Auto: ON";
+      elButang.className = "utama";
+    }
+    if (elStatusAuto) {
+      elStatusAuto.textContent = "Masa berjalan secara automatik (5 saat / hari).";
+    }
+  } else {
+    hentikanAuto();
+
+    if (elStatusAuto) {
+      elStatusAuto.textContent = "Masa berjalan secara manual. Tekan 'Tamatkan Hari' untuk maju sehari.";
+    }
+  }
+}
+
+function hentikanAuto() {
+  if (autoInterval) {
+    clearInterval(autoInterval);
+    autoInterval = null;
+  }
+  autoMode = false;
+
+  const elButang = document.getElementById("butangAuto");
+  if (elButang) {
+    elButang.textContent = "▶ Auto: OFF";
+    elButang.className = "sekunder";
+  }
+}
+
+// =====================================
 // TAMATKAN HARI (Fasa 5.1)
 // =====================================
 
 function tamatkanHari() {
   masa.hari++;
 
-  // Jika lebih dari 7 hari, tamatkan minggu
   if (masa.hari > masa.maksHari) {
     masa.hari = 1;
     masa.tindakanMinggu = 0;
@@ -269,6 +317,7 @@ function tamatkanMinggu() {
   if (masa.minggu > masa.maksMinggu) {
     alert("Penggal 5 tahun tamat. Hantar ke pilihan raya.");
     masa.minggu = masa.maksMinggu;
+    hentikanAuto();
     paparPanelPilihanRaya();
     return;
   }
@@ -1528,6 +1577,8 @@ function paparPanelPilihanRaya() {
 }
 
 function jalankanPilihanRaya() {
+  hentikanAuto();
+
   const markah = kiraMarkahPilihanRaya();
   const kerusi = kiraKerusiPilihanRaya(markah.markah);
   const keputusan = tentukanKeputusanKerusi(kerusi);
@@ -1561,6 +1612,7 @@ function mulaPenggalBaharu() {
   ahliBebas.forEach(a => { a.dirunding = false; });
   senaraiParti.forEach(p => { p.dirunding = false; });
 
+  hentikanAuto();
   kemasKiniKalendar();
   kemasKiniPaparan();
   kemasKiniParlimen();
