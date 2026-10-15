@@ -392,3 +392,30 @@ footer {
   background: #f8fafc;
   border-left: 4px solid #cbd5e1;
 }
+/* Parti politik */
+.stat.parti {
+  background: #f8fafc;
+  text-align: left;
+  padding: 15px 18px;
+  margin: 10px 0;
+  border-left: 4px solid #cbd5e1;
+}
+
+.stat.parti.gabungan { border-left-color: #047857; }
+.stat.parti.pembangkang { border-left-color: #b91c1c; }
+
+.stat.parti h3 { font-size: 16px; margin: 0 0 6px; }
+.stat.parti p { font-size: 14px; margin: 4px 0; font-weight: normal; }
+
+.hubungan-baik { color: #047857; font-weight: bold; }
+.hubungan-sederhana { color: #d97706; font-weight: bold; }
+.hubungan-teruk { color: #b91c1c; font-weight: bold; }
+
+.tuntutan-parti {
+  background: #eff6ff;
+  border-left: 3px solid #2563eb;
+  padding: 8px 12px;
+  margin: 8px 0;
+  border-radius: 6px;
+  font-size: 13px;
+}
