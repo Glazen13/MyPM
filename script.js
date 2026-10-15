@@ -3,6 +3,9 @@
 // MyPM Simulasi - Sistem Negara
 // =====================================
 
+alert("JavaScript MyPM berjaya dimuatkan!");
+console.log("MyPM: JavaScript aktif");
+
 let populariti = 50;
 let ekonomi = 50;
 let kestabilan = 50;
