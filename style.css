@@ -333,3 +333,62 @@ footer {
 }
   }
 }
+/* Peristiwa */
+.peristiwa {
+  background: #fef2f2;
+  border-left: 5px solid #dc2626;
+  padding: 15px 18px;
+  margin: 12px 0;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.peristiwa.biasa {
+  background: #eff6ff;
+  border-left-color: #2563eb;
+}
+
+.peristiwa.sederhana {
+  background: #fef3c7;
+  border-left-color: #d97706;
+}
+
+.peristiwa.teruk {
+  background: #fef2f2;
+  border-left-color: #dc2626;
+}
+
+.peristiwa h4 {
+  margin: 0 0 8px;
+  color: #1e293b;
+  font-size: 16px;
+}
+
+.peristiwa p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #334155;
+}
+
+.peristiwa .pilihan {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.peristiwa .pilihan button {
+  background: #1769aa;
+  color: white;
+  font-size: 13px;
+  padding: 10px 14px;
+}
+
+.peristiwa .pilihan button:hover {
+  background: #0d4778;
+}
+
+#sejarahPeristiwa .stat.sejarah {
+  background: #f8fafc;
+  border-left: 4px solid #cbd5e1;
+}
