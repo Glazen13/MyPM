@@ -2,7 +2,7 @@
 
 // =====================================
 // MyPM SIMULASI - SISTEM NEGARA
-// Fasa 2.3: Undian individu MP & AP Bebas
+// Fasa 2.4: Undian individu + Penjelasan
 // =====================================
 
 // 1. STATISTIK NEGARA
@@ -43,7 +43,7 @@ const paramMP = {
   hadirPembangkang: 0.90,
   disiplinKerajaan: 0.95,
   disiplinPembangkang: 0.95,
-  kesanKecenderungan: 0.10,   // dikuatkan dari 0.05
+  kesanKecenderungan: 0.10,
   maksKecenderungan: 3
 };
 
@@ -128,7 +128,6 @@ const tawaran = {
   }
 };
 
-// Parameter undian AP Bebas
 const paramUndian = {
   peluangSokongSepadan: 0.70,
   peluangSokongTakSepadan: 0.30,
@@ -145,6 +144,89 @@ let sejarahUndian = [];
 let nomborUndian = 0;
 const hadSejarahUndian = 20;
 
+// =====================================
+// 2d. FUNGSI PENJELASAN UNDIAN
+// =====================================
+
+function jelaskanUndian(keputusan, butiran) {
+  const b = butiran;
+  const sebab = [];
+
+  if (keputusan.lulus) {
+    sebab.push("Usul diluluskan kerana sokongan melebihi penentangan dan mencapai majoriti.");
+  } else {
+    if (b.jumlahSokong <= b.jumlahTolak) {
+      sebab.push("Usul ditolak kerana undi menentang melebihi atau menyamai undi menyokong.");
+    } else {
+      sebab.push("Usul ditolak kerana sokongan tidak mencapai majoriti yang diperlukan.");
+    }
+  }
+
+  sebab.push(
+    "MP kerajaan: " + b.sokongKerajaan + " sokong, " +
+    b.tolakKerajaan + " menentang, " +
+    b.absenKerajaan + " absen (dari 120)."
+  );
+
+  if (b.tolakKerajaan > 5) {
+    sebab.push(
+      "Pemberontakan dalaman: " + b.tolakKerajaan +
+      " MP kerajaan mengundi menentang usul kerajaan sendiri."
+    );
+  }
+
+  sebab.push(
+    "MP pembangkang: " + b.tolakPembangkang + " menentang, " +
+    b.sokongPembangkang + " menyokong, " +
+    b.absenPembangkang + " absen (dari 92)."
+  );
+
+  if (b.sokongPembangkang > 5) {
+    sebab.push(
+      "Pecah pembangkang: " + b.sokongPembangkang +
+      " MP pembangkang menyokong usul kerajaan."
+    );
+  }
+
+  sebab.push(
+    "AP Bebas: " + b.undiBebas.menyokong + " sokong, " +
+    b.undiBebas.menentang + " menentang, " +
+    b.undiBebas.berkecuali + " berkecuali, " +
+    b.undiBebas.absen + " absen (dari 10)."
+  );
+
+  sebab.push(
+    "Majoriti diperlukan: " + b.majoritiHadir +
+    " (dari " + (b.jumlahSokong + b.jumlahTolak) + " undi sokong/tolak)."
+  );
+
+  const margin = Math.abs(b.jumlahSokong - b.jumlahTolak);
+  if (b.lulus) {
+    sebab.push("Margin kemenangan: " + margin + " undi.");
+    if (margin <= 5) {
+      sebab.push("Kemenangan tipis — kerajaan perlu berhati-hati.");
+    }
+  } else {
+    sebab.push("Margin kekalahan: " + margin + " undi.");
+    if (margin <= 5) {
+      sebab.push("Kekalahan tipis — undi tidak percaya mungkin dipertimbangkan.");
+    }
+  }
+
+  const kesan = [];
+  if (keputusan.lulus) {
+    kesan.push("Kestabilan +2, Populariti +1");
+  } else {
+    kesan.push("Kestabilan −4, Populariti −2");
+    if (b.tolakKerajaan > 20) {
+      kesan.push("AMARAN: Pemberontakan besar dalam kerajaan.");
+    }
+  }
+  sebab.push("Kesan: " + kesan.join(". "));
+
+  return sebab;
+}
+
 // Label status (paparan sahaja)
 function labelStatus(ahli) {
   if (ahli.kecenderungan >= 2) {
@@ -160,7 +242,6 @@ function labelStatus(ahli) {
 }
 
 function undiAhliBebas(ahli, jenisUsul) {
-  // Semak kehadiran
   const hadir = Math.random() < paramUndian.hadirBebas;
   if (!hadir) {
     return { undi: "absen", sebab: "Tidak hadir" };
@@ -260,7 +341,6 @@ function jalankanUndian() {
     mp => !mp.hadir
   ).length;
 
-  // Jumlah undi sebenar
   const jumlahSokong =
     sokongKerajaan + sokongPembangkang + undiBebas.menyokong;
   const jumlahTolak =
@@ -271,10 +351,7 @@ function jalankanUndian() {
   const jumlahHadir =
     jumlahSokong + jumlahTolak + jumlahBerkecuali;
 
-  // Majoriti dari sokong + tolak sahaja (tidak kira berkecuali)
   const majoritiHadir = Math.floor((jumlahSokong + jumlahTolak) / 2) + 1;
-
-  // Lulus jika sokong > tolak DAN sokong >= majoriti
   const lulus = jumlahSokong > jumlahTolak && jumlahSokong >= majoritiHadir;
 
   nomborUndian++;
@@ -292,6 +369,25 @@ function jalankanUndian() {
     masa: new Date().toLocaleString("ms-MY")
   };
 
+  // Butiran untuk penjelasan
+  const butiran = {
+    sokongKerajaan: sokongKerajaan,
+    tolakKerajaan: tolakKerajaan,
+    absenKerajaan: absenKerajaan,
+    sokongPembangkang: sokongPembangkang,
+    tolakPembangkang: tolakPembangkang,
+    absenPembangkang: absenPembangkang,
+    undiBebas: undiBebas,
+    jumlahSokong: jumlahSokong,
+    jumlahTolak: jumlahTolak,
+    jumlahBerkecuali: jumlahBerkecuali,
+    jumlahAbsen: jumlahAbsen,
+    majoritiHadir: majoritiHadir,
+    lulus: lulus
+  };
+
+  keputusan.penjelasan = jelaskanUndian(keputusan, butiran);
+
   sejarahUndian.unshift(keputusan);
   if (sejarahUndian.length > hadSejarahUndian) {
     sejarahUndian = sejarahUndian.slice(0, hadSejarahUndian);
@@ -305,7 +401,6 @@ function jalankanUndian() {
     populariti = hadkan(populariti - 2);
   }
 
-  // Kesan kepada AP bebas
   sebabBebas.forEach(item => {
     const ahli = ahliBebas.find(a => a.id === item.id);
     if (!ahli) return;
@@ -343,6 +438,12 @@ function jalankanUndian() {
       <p>${lulus
         ? "Kerajaan berjaya meluluskan usul."
         : "Kerajaan gagal mendapatkan sokongan mencukupi."}</p>
+      <details style="margin-top:10px">
+        <summary>Penjelasan keputusan</summary>
+        <ul>
+          ${keputusan.penjelasan.map(s => `<li>${escapeHTML(s)}</li>`).join("")}
+        </ul>
+      </details>
       <details style="margin-top:10px">
         <summary>Lihat pecahan undi AP bebas</summary>
         <ul>
@@ -385,6 +486,14 @@ function kemasKiniSejarahUndian() {
         ${item.lulus ? "Diluluskan" : "Ditolak"}
       </p>
       <p>Sokong: ${item.sokong} | Tolak: ${item.tolak} | Berkecuali: ${item.berkecuali} | Absen: ${item.absen}</p>
+      ${item.penjelasan ? `
+        <details style="margin-top:8px">
+          <summary>Penjelasan</summary>
+          <ul>
+            ${item.penjelasan.map(s => `<li>${escapeHTML(s)}</li>`).join("")}
+          </ul>
+        </details>
+      ` : ""}
       <small>${escapeHTML(item.masa)}</small>
     </div>
   `).join("");
@@ -543,7 +652,6 @@ function pusinganRundinganBaharu() {
 
 // 9. PAPARAN PARLIMEN DAN RUNDINGAN
 function kemasKiniParlimen() {
-  // Anggaran sokongan politik (bukan keputusan undian semasa)
   const menyokong = ahliBebas.filter(a => a.kecenderungan >= 2).length;
   const sokonganAnggaran = kerusiKerajaan + menyokong;
 
