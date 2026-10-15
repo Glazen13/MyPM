@@ -232,6 +232,7 @@ function jalankanUndian() {
     return;
   }
 
+  // Undi AP Bebas
   const undiBebas = { menyokong: 0, menentang: 0, berkecuali: 0 };
   const sebabBebas = [];
 
@@ -239,19 +240,52 @@ function jalankanUndian() {
     const hasil = undiAhliBebas(ahli, jenis);
     undiBebas[hasil.undi]++;
     sebabBebas.push({
-      id: ahli.id,          // <-- simpan id supaya tidak rapuh
+      id: ahli.id,
       nama: ahli.nama,
       undi: hasil.undi,
       sebab: hasil.sebab
     });
   });
 
-  const jumlahSokong = kerusiKerajaan + undiBebas.menyokong;
-  const jumlahTolak = kerusiPembangkang + undiBebas.menentang;
-  const jumlahBerkecuali = undiBebas.berkecuali;
+  // Undi MP kerajaan & pembangkang secara individu
+  undiSemuaMPParti();
 
-  // Seri dianggap ditolak
-  const lulus = jumlahSokong > jumlahTolak && jumlahSokong >= majoritiMudah;
+  const sokongKerajaan = mpKerajaan.filter(
+    mp => mp.hadir && mp.undi === "menyokong"
+  ).length;
+  const tolakKerajaan = mpKerajaan.filter(
+    mp => mp.hadir && mp.undi === "menentang"
+  ).length;
+  const absenKerajaan = mpKerajaan.filter(
+    mp => !mp.hadir
+  ).length;
+
+  const sokongPembangkang = mpPembangkang.filter(
+    mp => mp.hadir && mp.undi === "menyokong"
+  ).length;
+  const tolakPembangkang = mpPembangkang.filter(
+    mp => mp.hadir && mp.undi === "menentang"
+  ).length;
+  const absenPembangkang = mpPembangkang.filter(
+    mp => !mp.hadir
+  ).length;
+
+  // Jumlah undi sebenar
+  const jumlahSokong =
+    sokongKerajaan + sokongPembangkang + undiBebas.menyokong;
+  const jumlahTolak =
+    tolakKerajaan + tolakPembangkang + undiBebas.menentang;
+  const jumlahBerkecuali = undiBebas.berkecuali;
+  const jumlahHadir =
+    jumlahSokong + jumlahTolak + jumlahBerkecuali;
+  const jumlahAbsen =
+    absenKerajaan + absenPembangkang;
+
+  // Majoriti dikira daripada yang hadir
+  const majoritiHadir = Math.floor(jumlahHadir / 2) + 1;
+
+  // Lulus jika sokong > tolak DAN sokong >= majoriti hadir
+  const lulus = jumlahSokong > jumlahTolak && jumlahSokong >= majoritiHadir;
 
   nomborUndian++;
 
