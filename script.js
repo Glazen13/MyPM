@@ -46,6 +46,64 @@ const paramMP = {
   disiplinPembangkang: 0.95,
   maksKecenderungan: 3
 };
+// =====================================
+// 2c. FUNGSI UNDI MP INDIVIDU
+// =====================================
+
+// Tentukan undi satu MP kerajaan atau pembangkang
+// berdasarkan afiliasi, disiplin parti, dan kecenderungan peribadi
+function undiMPParti(mp) {
+  // Tentukan hadir atau tidak
+  const peluangHadir = mp.afiliasi === "kerajaan"
+    ? paramMP.hadirKerajaan
+    : paramMP.hadirPembangkang;
+
+  mp.hadir = Math.random() < peluangHadir;
+
+  if (!mp.hadir) {
+    mp.undi = "absen";
+    return mp;
+  }
+
+  // Tentukan undi ikut afiliasi
+  // Kerajaan: sokong melainkan kecenderungan peribadi menolak
+  // Pembangkang: tolak melainkan kecenderungan peribadi menyokong
+  const disiplin = mp.afiliasi === "kerajaan"
+    ? paramMP.disiplinKerajaan
+    : paramMP.disiplinPembangkang;
+
+  // Kesan kecenderungan peribadi
+  // kecenderungan positif → lebih cenderung sokong
+  // kecenderungan negatif → lebih cenderung tolak
+  let peluangSokong;
+
+  if (mp.afiliasi === "kerajaan") {
+    peluangSokong = disiplin
+      + (mp.kecenderungan * 0.05);
+  } else {
+    // Pembangkang: asas 1 - disiplin
+    peluangSokong = (1 - disiplin)
+      + (mp.kecenderungan * 0.05);
+  }
+
+  peluangSokong = Math.max(0, Math.min(1, peluangSokong));
+
+  const rawak = Math.random();
+
+  if (rawak < peluangSokong) {
+    mp.undi = "menyokong";
+  } else {
+    mp.undi = "menentang";
+  }
+
+  return mp;
+}
+
+// Undi semua MP kerajaan & pembangkang
+function undiSemuaMPParti() {
+  mpKerajaan.forEach(mp => undiMPParti(mp));
+  mpPembangkang.forEach(mp => undiMPParti(mp));
+}
 
 // Jana satu MP individu
 function janaMP(afiliasi, id) {
