@@ -65,11 +65,19 @@ let sejarahUndian = [];
 let nomborUndian = 0;
 const hadSejarahUndian = 20;
 
-// Kira label status dari kecenderungan + dirunding (paparan sahaja)
+// Label status (paparan sahaja)
 function labelStatus(ahli) {
-  if (ahli.kecenderungan >= 2) return { teks: "Menyokong kerajaan", kelas: "status-sokong" };
-  if (ahli.kecenderungan <= -2) return { teks: "Menentang kerajaan", kelas: "status-tolak" };
-  if (ahli.dirunding) return { teks: "Sudah dirunding", kelas: "status-neutral" };
+  // Berdasarkan kecenderungan
+  if (ahli.kecenderungan >= 2) {
+    return { teks: "Menyokong kerajaan", kelas: "status-sokong" };
+  }
+  if (ahli.kecenderungan <= -2) {
+    return { teks: "Menentang kerajaan", kelas: "status-tolak" };
+  }
+  // Kecenderungan neutral
+  if (ahli.dirunding) {
+    return { teks: "Sudah dirunding", kelas: "status-neutral" };
+  }
   return { teks: "Belum dirunding", kelas: "status-neutral" };
 }
 
@@ -137,6 +145,7 @@ function jalankanUndian() {
     const hasil = undiAhliBebas(ahli, jenis);
     undiBebas[hasil.undi]++;
     sebabBebas.push({
+      id: ahli.id,          // <-- simpan id supaya tidak rapuh
       nama: ahli.nama,
       undi: hasil.undi,
       sebab: hasil.sebab
@@ -177,16 +186,17 @@ function jalankanUndian() {
     populariti = hadkan(populariti - 2);
   }
 
-  // Kesan kepada AP bebas: kecenderungan berubah ikut cara mereka undi
-  ahliBebas.forEach((ahli, i) => {
-    const u = sebabBebas[i].undi;
+  // Kesan kepada AP bebas: guna id, bukan indeks
+  sebabBebas.forEach(item => {
+    const ahli = ahliBebas.find(a => a.id === item.id);
+    if (!ahli) return;
 
-    if (u === "menyokong") {
+    if (item.undi === "menyokong") {
       ahli.kecenderungan = Math.min(
         paramUndian.maksKecenderungan,
         ahli.kecenderungan + 1
       );
-    } else if (u === "menentang") {
+    } else if (item.undi === "menentang") {
       ahli.kecenderungan = Math.max(
         -paramUndian.maksKecenderungan,
         ahli.kecenderungan - 1
@@ -363,7 +373,6 @@ function rundingAhli(id, jenisTawaran) {
 
   const berjaya = Math.random() < peluang;
 
-  // Kesan kepada kecenderungan
   if (berjaya) {
     ahli.kecenderungan = Math.min(
       paramUndian.maksKecenderungan,
@@ -380,7 +389,6 @@ function rundingAhli(id, jenisTawaran) {
     populariti = hadkan(populariti - 1);
   }
 
-  // Tanda sudah dirunding pusingan ini
   ahli.dirunding = true;
 
   const hasil = document.getElementById("statusRundingan");
@@ -398,7 +406,7 @@ function rundingAhli(id, jenisTawaran) {
   kemasKiniParlimen();
 }
 
-// 8. PUSINGAN RUNDINGAN BAHARU (reset dirunding sahaja, kekalkan kecenderungan)
+// 8. PUSINGAN RUNDINGAN BAHARU (reset dirunding sahaja)
 function pusinganRundinganBaharu() {
   ahliBebas.forEach(ahli => {
     ahli.dirunding = false;
@@ -453,7 +461,12 @@ function kemasKiniParlimen() {
       <button onclick="rundingAhli(${ahli.id}, document.getElementById('tawaran-${ahli.id}').value)">
         Hantar tawaran
       </button>
-    ` : "<p class=\"nota\">Sudah dirunding pusingan ini.</p>";
+    ` : `
+      <p class="nota">
+        Sudah dirunding pusingan ini.
+        Kecenderungan: ${ahli.kecenderungan}.
+      </p>
+    `;
 
     return `
       <div class="stat ahli">
