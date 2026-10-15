@@ -1358,7 +1358,149 @@ function kemasKiniParlimen() {
   butang.onclick = pusinganRundinganBaharu;
   senarai.appendChild(butang);
 }
+// =====================================
+// 7b. PILIHAN RAYA
+// =====================================
 
+function kiraMarkahPilihanRaya() {
+  const hubungan = kiraHubunganParti();
+
+  // Bilangan dasar
+  const dasarSelesai = senaraiDasar.filter(d => d.status === "selesai").length;
+  const dasarGagal = senaraiDasar.filter(d => d.status === "gagal").length;
+
+  // Bilangan undian lulus/tolak
+  const undianLulus = sejarahUndian.filter(u => u.lulus).length;
+  const undianTolak = sejarahUndian.filter(u => !u.lulus).length;
+
+  // Bonus & penalti
+  const bonusDasar = dasarSelesai * 2;
+  const penaltiDasar = dasarGagal * 3;
+  const bonusUndian = (undianLulus - undianTolak) * 0.5;
+
+  // Markah akhir
+  const markah =
+    populariti * 0.30 +
+    ekonomi * 0.25 +
+    kestabilan * 0.20 +
+    hubungan * 0.15 +
+    bonusDasar -
+    penaltiDasar +
+    bonusUndian;
+
+  return {
+    markah: Math.round(markah * 10) / 10,
+    populariti: populariti,
+    ekonomi: ekonomi,
+    kestabilan: kestabilan,
+    hubungan: hubungan,
+    dasarSelesai: dasarSelesai,
+    dasarGagal: dasarGagal,
+    undianLulus: undianLulus,
+    undianTolak: undianTolak,
+    bonusDasar: bonusDasar,
+    penaltiDasar: penaltiDasar,
+    bonusUndian: Math.round(bonusUndian * 10) / 10
+  };
+}
+
+function tentukanKeputusan(markah) {
+  if (markah >= 55) return { status: "menang-selesa", teks: "MENANG SELESA" };
+  if (markah >= 45) return { status: "menang-tipis", teks: "MENANG TIPIS" };
+  if (markah >= 35) return { status: "kalah-tipis", teks: "KALAH TIPIS" };
+  return { status: "kalah-teruk", teks: "KALAH TERUK" };
+}
+
+function paparPanelPilihanRaya() {
+  const panel = document.getElementById("panelPilihanRaya");
+  if (!panel) return;
+
+  // Butang pilihan raya hanya muncul bila minggu ≥ 250 atau selepas habis
+  const bolehPilihanRaya = masa.minggu >= 250;
+
+  if (!bolehPilihanRaya) {
+    panel.innerHTML = `
+      <p class="nota">
+        Pilihan raya hanya boleh diadakan pada minggu 250 dan ke atas.
+        Minggu sekarang: ${masa.minggu} / 260.
+      </p>
+    `;
+    return;
+  }
+
+  const markah = kiraMarkahPilihanRaya();
+  const keputusan = tentukanKeputusan(markah.markah);
+  const kelas = keputusan.status.startsWith("menang") ? "menang" : "kalah";
+
+  panel.innerHTML = `
+    <div class="stat pilihanraya ${kelas}">
+      <h3>Keputusan Pilihan Raya</h3>
+      <div class="markah-besar">${markah.markah}</div>
+      <p><strong>Keputusan:</strong> ${keputusan.teks}</p>
+      <p>Populariti: ${markah.populariti} (× 0.30)</p>
+      <p>Ekonomi: ${markah.ekonomi} (× 0.25)</p>
+      <p>Kestabilan: ${markah.kestabilan} (× 0.20)</p>
+      <p>Hubungan parti: ${markah.hubungan} (× 0.15)</p>
+      <p>Bonus dasar selesai: +${markah.bonusDasar} (${markah.dasarSelesai} dasar)</p>
+      <p>Penalti dasar gagal: −${markah.penaltiDasar} (${markah.dasarGagal} dasar)</p>
+      <p>Bonus undian: ${markah.bonusUndian > 0 ? "+" : ""}${markah.bonusUndian}</p>
+      <p><strong>${keputusan.status.startsWith("menang")
+        ? "Kerajaan berjaya membentuk kerajaan baharu."
+        : "Kerajaan gagal. PM kehilangan jawatan."}</strong></p>
+    </div>
+  `;
+}
+
+function jalankanPilihanRaya() {
+  const markah = kiraMarkahPilihanRaya();
+  const keputusan = tentukanKeputusan(markah.markah);
+
+  paparPanelPilihanRaya();
+
+  if (keputusan.status.startsWith("menang")) {
+    // Menang — reset separa untuk penggal baharu
+    setTimeout(() => {
+      if (confirm("Anda menang! Mahu teruskan penggal ke-2?\n\nTekan OK untuk penggal baharu, Cancel untuk tamat.")) {
+        mulaPenggalBaharu();
+      }
+    }, 100);
+  } else {
+    // Kalah — tamat permainan
+    alert("Anda kalah dalam pilihan raya.\n\nMarkah: " + markah.markah + "\n\nPermainan tamat.");
+  }
+}
+
+function mulaPenggalBaharu() {
+  // Reset masa
+  masa.minggu = 1;
+  masa.bulan = 1;
+  masa.tahun = 1;
+
+  // Reset dasar
+  senaraiDasar.forEach(d => {
+    d.status = "belum";
+    d.mingguBerjalan = 0;
+  });
+  belanjawanDasar = 50;
+
+  // Reset AP bebas dirunding
+  ahliBebas.forEach(a => { a.dirunding = false; });
+
+  // Reset parti dirunding
+  senaraiParti.forEach(p => { p.dirunding = false; });
+
+  kemasKiniKalendar();
+  kemasKiniPaparan();
+  kemasKiniParlimen();
+  paparDasar();
+  paparParti();
+  paparPanelPilihanRaya();
+
+  const elStatus = document.getElementById("statusMinggu");
+  if (elStatus) {
+    elStatus.textContent = "Penggal ke-2 bermula. Minggu 1.";
+  }
+}
 // =====================================
 // 8. MULAKAN APLIKASI
 // =====================================
@@ -1373,4 +1515,5 @@ document.addEventListener("DOMContentLoaded", () => {
   paparParti();
   paparPendapat();
   paparDasar();
+  paparPanelPilihanRaya();
 });
