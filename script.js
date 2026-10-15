@@ -143,7 +143,16 @@ const hadSejarahUndian = 20;
 // 3b. KALENDAR & GILIRAN
 // =====================================
 
-const masa = { minggu: 1, bulan: 1, tahun: 1, maksMinggu: 260 };
+const masa = {
+  minggu: 1,
+  hari: 1,
+  bulan: 1,
+  tahun: 1,
+  maksMinggu: 260,
+  maksHari: 7,
+  tindakanMinggu: 0,
+  hadTindakan: 5
+};
 
 function kiraMasa() {
   masa.bulan = Math.ceil(masa.minggu / 4);
@@ -154,20 +163,38 @@ function kemasKiniKalendar() {
   kiraMasa();
 
   const elMinggu = document.getElementById("mingguSemasa");
+  const elHari = document.getElementById("hariSemasa");
+  const elTindakan = document.getElementById("tindakanBaki");
   const elBulan = document.getElementById("bulanSemasa");
   const elTahun = document.getElementById("tahunSemasa");
   const elStatus = document.getElementById("statusMinggu");
 
+  const baki = masa.hadTindakan - masa.tindakanMinggu;
+
   if (elMinggu) elMinggu.textContent = masa.minggu + " / " + masa.maksMinggu;
+  if (elHari) elHari.textContent = masa.hari + " / " + masa.maksHari;
+  if (elTindakan) elTindakan.textContent = baki;
   if (elBulan) elBulan.textContent = masa.bulan + " / 65";
   if (elTahun) elTahun.textContent = masa.tahun + " / 5";
 
   if (elStatus) {
     elStatus.textContent = "Minggu " + masa.minggu +
-      " (Bulan " + masa.bulan + ", Tahun " + masa.tahun + ").";
+      ", Hari " + masa.hari +
+      ". Tindakan baki: " + baki + ".";
   }
 }
 
+// Guna satu tindakan
+function gunaTindakan() {
+  if (masa.tindakanMinggu >= masa.hadTindakan) {
+    alert("Tindakan minggu ini sudah habis. Tamatkan hari untuk teruskan.");
+    return false;
+  }
+
+  masa.tindakanMinggu++;
+  kemasKiniKalendar();
+  return true;
+}
 function semakPeristiwaMinggu() {
   const peristiwa = [];
 
@@ -203,6 +230,29 @@ function kiraEkonomiBulanan() {
   ekonomi = hadkan(ekonomi + (kestabilanFaktor * 2));
 }
 
+function tamatkanHari() {
+  // Majukan hari
+  masa.hari++;
+
+  // Jika lebih dari 7, tamatkan minggu
+  if (masa.hari > masa.maksHari) {
+    masa.hari = 1;
+    masa.tindakanMinggu = 0;
+    tamatkanMinggu();
+    return;
+  }
+
+  kemasKiniKalendar();
+
+  const elStatus = document.getElementById("statusMinggu");
+  if (elStatus) {
+    const baki = masa.hadTindakan - masa.tindakanMinggu;
+    elStatus.textContent = "Minggu " + masa.minggu +
+      ", Hari " + masa.hari +
+      ". Tindakan baki: " + baki + ".";
+  }
+}
+
 function tamatkanMinggu() {
   const peristiwa = semakPeristiwaMinggu();
 
@@ -223,7 +273,8 @@ function tamatkanMinggu() {
     paparPanelPilihanRaya();
     return;
   }
-
+  
+ masa.tindakanMinggu = 0;
   kiraMasa();
   kemasKiniKalendar();
   kemasKiniPaparan();
