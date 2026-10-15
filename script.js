@@ -346,7 +346,9 @@ function jalankanUndian() {
       <p>Undi menyokong: ${jumlahSokong}</p>
       <p>Undi menentang: ${jumlahTolak}</p>
       <p>Undi berkecuali: ${jumlahBerkecuali}</p>
-      <p>Majoriti diperlukan: ${majoritiMudah}</p>
+      <p>Majoriti diperlukan: ${majoritiHadir}</p>
+      <p>Jumlah hadir: ${jumlahHadir}</p>
+      <p>Jumlah absen: ${jumlahAbsen}</p>
       <p>${lulus
         ? "Kerajaan berjaya meluluskan usul."
         : "Kerajaan gagal mendapatkan sokongan mencukupi."}</p>
