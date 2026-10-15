@@ -17,75 +17,63 @@
       <h2>Dashboard Perdana Menteri</h2>
       <p>Selamat datang ke MyPM Simulasi!</p>
 
-    <div class="stats">
-  <div class="stat">
-    <h3>Populariti PM</h3>
-    <p id="populariti">50%</p>
-  </div>
+      <div class="stats">
+        <div class="stat">
+          <h3>Populariti PM</h3>
+          <p id="populariti">50%</p>
+        </div>
+        <div class="stat">
+          <h3>Indeks Ekonomi</h3>
+          <p id="ekonomi">50</p>
+        </div>
+        <div class="stat">
+          <h3>Kestabilan Kerajaan</h3>
+          <p id="kestabilan">50</p>
+        </div>
+        <div class="stat">
+          <h3>KDNK Negara</h3>
+          <p id="kdnk">RM 1.80T</p>
+        </div>
+        <div class="stat">
+          <h3>Inflasi</h3>
+          <p id="inflasi">2.5%</p>
+        </div>
+        <div class="stat">
+          <h3>Pengangguran</h3>
+          <p id="pengangguran">3.5%</p>
+        </div>
+        <div class="stat">
+          <h3>Hutang Negara</h3>
+          <p id="hutang">RM 1.20T</p>
+        </div>
+        <div class="stat">
+          <h3>Majoriti Parlimen</h3>
+          <p id="majoritiParlimen">120 / 222</p>
+        </div>
+      </div>
 
-  <div class="stat">
-    <h3>Indeks Ekonomi</h3>
-    <p id="ekonomi">50</p>
-  </div>
-
-  <div class="stat">
-    <h3>Kestabilan Kerajaan</h3>
-    <p id="kestabilan">50</p>
-  </div>
-
-  <div class="stat">
-    <h3>KDNK Negara</h3>
-    <p id="kdnk">RM 1.8T</p>
-  </div>
-
-  <div class="stat">
-    <h3>Inflasi</h3>
-    <p id="inflasi">2.5%</p>
-  </div>
-
-  <div class="stat">
-    <h3>Pengangguran</h3>
-    <p id="pengangguran">3.5%</p>
-  </div>
-
-  <div class="stat">
-    <h3>Hutang Negara</h3>
-    <p id="hutang">RM 1.2T</p>
-  </div>
-
-  <div class="stat">
-    <h3>Majoriti Parlimen</h3>
-    <p>120 / 222</p>
-  </div>
-</div>
       <h3>Komposisi Dewan Rakyat</h3>
-
       <div class="stats">
         <div class="stat">
           <h3>Kerusi Kerajaan</h3>
           <p id="kerusiKerajaan">120</p>
         </div>
-
         <div class="stat">
           <h3>Kerusi Pembangkang</h3>
           <p id="kerusiPembangkang">92</p>
         </div>
-
         <div class="stat">
           <h3>Ahli Parlimen Bebas</h3>
           <p id="kerusiBebas">10</p>
         </div>
-
         <div class="stat">
           <h3>Sokongan Kerajaan</h3>
           <p id="sokonganKerajaan">120 / 222</p>
         </div>
-
         <div class="stat">
           <h3>Majoriti Mudah</h3>
           <p>112 kerusi</p>
         </div>
-
         <div class="stat">
           <h3>Status Kerajaan</h3>
           <p id="statusMajoriti">Majoriti</p>
@@ -96,21 +84,38 @@
       <p id="statusRundingan">
         Pilih seorang Ahli Parlimen bebas untuk memulakan rundingan.
       </p>
-
       <div id="senaraiBebas"></div>
 
+      <h3>Undian Dewan Rakyat</h3>
+      <div class="form-undian">
+        <label for="namaUsul">Nama usul:</label>
+        <input
+          type="text"
+          id="namaUsul"
+          placeholder="Contoh: Usul Belanjawan Negara"
+        >
+
+        <label for="jenisUsul">Kategori usul:</label>
+        <select id="jenisUsul">
+          <option value="pembangunan">Pembangunan</option>
+          <option value="dasar">Reformasi dasar</option>
+          <option value="belanjawan">Belanjawan</option>
+        </select>
+
+        <button class="utama" onclick="jalankanUndian()">
+          Jalankan Undian Parlimen
+        </button>
+      </div>
+
+      <div id="hasilUndian" aria-live="polite"></div>
+
+      <h3>Sejarah Undian</h3>
+      <div id="sejarahUndian"></div>
+
       <h3>Tindakan Kerajaan</h3>
-      <button onclick="buatKeputusan('ekonomi')">
-        Umumkan Pelan Ekonomi
-      </button>
-
-      <button onclick="buatKeputusan('rakyat')">
-        Umumkan Bantuan Rakyat
-      </button>
-
-      <button onclick="buatKeputusan('reformasi')">
-        Laksanakan Reformasi
-      </button>
+      <button onclick="buatKeputusan('ekonomi')">Umumkan Pelan Ekonomi</button>
+      <button onclick="buatKeputusan('rakyat')">Umumkan Bantuan Rakyat</button>
+      <button onclick="buatKeputusan('reformasi')">Laksanakan Reformasi</button>
 
       <p id="mesej">Pilih tindakan pertama anda.</p>
     </section>
@@ -123,4 +128,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
