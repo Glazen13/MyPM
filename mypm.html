@@ -1,17 +1,18 @@
-
+```html
 <!doctype html>
 <html lang="ms">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#10243e">
+  <meta name="description" content="MyPM Simulasi — permainan pengurusan kerajaan fiksyen Malaysia.">
   <title>MyPM Simulasi — Perdana Menteri</title>
-  <link rel="stylesheet" href="mypm.css">
-  <script src="mypm.js" defer></script>
+  <link rel="stylesheet" href="./mypm.css">
+  <script src="./mypm.js" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="mypm.html">
+    <a class="brand" href="./mypm.html">
       <span class="brand-mark">PM</span>
       <span>
         <strong>MyPM Simulasi</strong>
@@ -20,7 +21,6 @@
     </a>
     <div class="top-actions">
       <span class="fiction-tag">SIMULASI FIKSYEN</span>
-      <a class="legacy-link" href="index.html">Simulator Rakyat</a>
     </div>
   </header>
 
@@ -30,13 +30,14 @@
         <p class="eyebrow">PEJABAT PERDANA MENTERI</p>
         <h1>Negara menanti keputusan anda.</h1>
         <p>
-          Urus kerajaan minggu demi minggu. Seimbangkan sokongan rakyat,
-          ekonomi, belanjawan dan kestabilan Parlimen.
+          Pimpin kerajaan anda, urus ekonomi, jaga sokongan rakyat
+          dan pastikan kerajaan kekal stabil sepanjang penggal.
         </p>
+
         <div class="intro-stats">
-          <div><strong>222</strong><span>kerusi Parlimen</span></div>
-          <div><strong>260</strong><span>minggu maksimum</span></div>
-          <div><strong>3</strong><span>senario permulaan</span></div>
+          <div><strong>222</strong><span>Kerusi Parlimen</span></div>
+          <div><strong>260</strong><span>Minggu permainan</span></div>
+          <div><strong>3</strong><span>Senario kerajaan</span></div>
         </div>
       </div>
 
@@ -45,14 +46,15 @@
         <h2>Bentuk kerajaan anda</h2>
 
         <label for="pmName">Nama Perdana Menteri</label>
-        <input id="pmName" maxlength="48" value="Perdana Menteri" required>
+        <input id="pmName" name="pmName" maxlength="48"
+          value="Perdana Menteri" required>
 
         <label for="partyName">Nama parti utama</label>
-        <input id="partyName" maxlength="48"
+        <input id="partyName" name="partyName" maxlength="48"
           value="Parti Rakyat Bersatu" required>
 
         <label for="scenario">Senario kerajaan</label>
-        <select id="scenario">
+        <select id="scenario" name="scenario">
           <option value="stable">Kerajaan stabil — 145 kerusi</option>
           <option value="thin">Majoriti tipis — 113 kerusi</option>
           <option value="minority">Kerajaan minoriti — 105 kerusi</option>
@@ -60,16 +62,16 @@
 
         <div id="scenarioInfo" class="scenario-info">
           Kerajaan mempunyai majoriti selesa, tetapi masih perlu
-          menjaga hubungan gabungan.
+          menjaga hubungan dengan rakan gabungan.
         </div>
 
         <button class="button primary full" type="submit">
-          Mulakan pentadbiran <span aria-hidden="true">→</span>
+          Mulakan pentadbiran →
         </button>
 
         <p class="fine-print">
-          Fasa 1: sistem teras. Nilai ekonomi dan politik ialah
-          andaian permainan, bukan data rasmi semasa.
+          Ini ialah simulasi fiksyen. Nilai ekonomi dan politik
+          merupakan andaian permainan, bukan data rasmi semasa.
         </p>
       </form>
     </section>
@@ -82,7 +84,7 @@
           <p id="dateLine" class="muted"></p>
         </div>
         <div class="heading-actions">
-          <button id="newGameBtn" class="button secondary">
+          <button id="newGameBtn" class="button secondary" type="button">
             Permainan baharu
           </button>
         </div>
@@ -146,38 +148,38 @@
 
           <p class="muted">
             Laksanakan sehingga empat tindakan setiap minggu.
-            Kesan tindakan ialah model permainan.
+            Kesan tindakan bergantung pada model permainan.
           </p>
 
           <div id="actionList" class="action-list">
-            <button class="action-card" data-action="cost">
+            <button class="action-card" type="button" data-action="cost">
               <span class="action-emoji">🧺</span>
               <span>
                 <strong>Ringankan kos sara hidup</strong>
-                <small>Bantuan bersasar · Kos fiskal sederhana</small>
+                <small>Bantuan bersasar kepada rakyat</small>
               </span>
               <span class="action-arrow">→</span>
             </button>
 
-            <button class="action-card" data-action="jobs">
+            <button class="action-card" type="button" data-action="jobs">
               <span class="action-emoji">🏗️</span>
               <span>
                 <strong>Rangsang peluang pekerjaan</strong>
-                <small>Projek ekonomi · Kesan beransur-ansur</small>
+                <small>Projek ekonomi dan pekerjaan</small>
               </span>
               <span class="action-arrow">→</span>
             </button>
 
-            <button class="action-card" data-action="reform">
+            <button class="action-card" type="button" data-action="reform">
               <span class="action-emoji">⚖️</span>
               <span>
                 <strong>Mulakan reformasi tadbir urus</strong>
-                <small>Kepercayaan awam · Risiko politik</small>
+                <small>Ketelusan dan kepercayaan awam</small>
               </span>
               <span class="action-arrow">→</span>
             </button>
 
-            <button class="action-card" data-action="coalition">
+            <button class="action-card" type="button" data-action="coalition">
               <span class="action-emoji">🤝</span>
               <span>
                 <strong>Runding dengan rakan gabungan</strong>
@@ -186,7 +188,7 @@
               <span class="action-arrow">→</span>
             </button>
 
-            <button class="action-card" data-action="health">
+            <button class="action-card" type="button" data-action="health">
               <span class="action-emoji">🏥</span>
               <span>
                 <strong>Tambah baik perkhidmatan awam</strong>
@@ -200,7 +202,7 @@
             <span id="actionFeedback" class="feedback" aria-live="polite">
               Pilih tindakan untuk bermula.
             </span>
-            <button id="endWeekBtn" class="button primary">
+            <button id="endWeekBtn" class="button primary" type="button">
               Tamatkan minggu →
             </button>
           </div>
@@ -221,9 +223,10 @@
             </div>
 
             <div class="legend-row">
-              <span><i class="dot gov"></i>Kerajaan <strong id="govSeatsLegend">145</strong></span>
-              <span><i class="dot opp"></i>Pembangkang <strong id="oppSeatsLegend">77</strong></span>
+              <span><i class="dot gov"></i> Kerajaan <strong id="govSeatsLegend">145</strong></span>
+              <span><i class="dot opp"></i> Pembangkang <strong id="oppSeatsLegend">77</strong></span>
             </div>
+
             <p id="majorityNote" class="muted small">
               Majoriti mudah: 112 kerusi.
             </p>
@@ -241,7 +244,9 @@
             <p id="countrySummary" class="summary-text">
               Kerajaan memulakan penggal dengan kedudukan yang stabil.
             </p>
+
             <div class="summary-divider"></div>
+
             <div class="mini-row">
               <span>Kepercayaan awam</span>
               <strong id="trustValue">58 / 100</strong>
@@ -269,11 +274,16 @@
             </select>
 
             <div class="save-buttons">
-              <button id="saveBtn" class="button secondary">Simpan</button>
-              <button id="loadBtn" class="button secondary">Muatkan</button>
+              <button id="saveBtn" class="button secondary" type="button">
+                Simpan
+              </button>
+              <button id="loadBtn" class="button secondary" type="button">
+                Muatkan
+              </button>
             </div>
+
             <p id="saveFeedback" class="muted small" aria-live="polite">
-              Autosimpan diaktifkan pada peranti ini.
+              Simpanan disimpan pada pelayar peranti ini.
             </p>
           </section>
         </aside>
@@ -287,6 +297,7 @@
           </div>
           <span id="logCount">0</span>
         </div>
+
         <ol id="eventLog" class="event-log">
           <li>Pentadbiran baharu menunggu tindakan pertama.</li>
         </ol>
@@ -302,3 +313,4 @@
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
+```
