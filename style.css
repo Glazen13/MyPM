@@ -585,3 +585,15 @@ footer {
   margin: 10px 0;
   text-align: center;
 }
+/* Hari dalam minggu */
+#hariSemasa {
+  color: #1769aa;
+}
+
+#tindakanBaki {
+  color: #047857;
+}
+
+#tindakanBaki.habis {
+  color: #b91c1c;
+}
