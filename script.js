@@ -1268,4 +1268,6 @@ document.addEventListener("DOMContentLoaded", () => {
   kemasKiniParlimen();
   kemasKiniSejarahUndian();
   kemasKiniKalendar();
+  paparPeristiwa();
+  kemasKiniSejarahPeristiwa();
 });
