@@ -637,7 +637,440 @@ function kemasKiniSejarahUndian() {
     </div>
   `).join("");
 }
+// =====================================
+// 3c. SISTEM PERISTIWA BERSYARAT
+// =====================================
 
+let peristiwaAktif = [];
+let sejarahPeristiwa = [];
+let nomborPeristiwa = 0;
+const hadSejarahPeristiwa = 30;
+
+// Katalog peristiwa
+const katalogPeristiwa = [
+  // === KATEGORI: POPULARITI ===
+  {
+    id: "demo_populariti",
+    nama: "Demonstrasi Jalanan",
+    keterukan: "teruk",
+    syarat: (s) => s.populariti < 30,
+    keterangan: "Rakyat tidak puas hati dengan kerajaan. Demonstrasi besar berlaku di Kuala Lumpur.",
+    pilihan: [
+      {
+        teks: "Bertemu wakil rakyat",
+        kesan: (s) => {
+          s.populariti = hadkan(s.populariti + 5);
+          s.kestabilan = hadkan(s.kestabilan - 2);
+        },
+        maklumBalas: "PM bertemu wakil rakyat. Populariti naik sedikit, kestabilan turun."
+      },
+      {
+        teks: "Guna kekuatan polis",
+        kesan: (s) => {
+          s.populariti = hadkan(s.populariti - 3);
+          s.kestabilan = hadkan(s.kestabilan + 3);
+        },
+        maklumBalas: "Polis bertindak. Kestabilan naik, populariti turun."
+      }
+    ]
+  },
+  {
+    id: "sokongan_merosot",
+    nama: "Sokongan Menurun",
+    keterukan: "sederhana",
+    syarat: (s) => s.populariti < 40 && s.populariti >= 30,
+    keterangan: "Tinjauan terkini menunjukkan sokongan kepada kerajaan semakin menurun.",
+    pilihan: [
+      {
+        teks: "Umum bantuan rakyat",
+        kesan: (s) => {
+          s.populariti = hadkan(s.populariti + 6);
+          s.hutang += 0.03;
+        },
+        maklumBalas: "Bantuan diumumkan. Populariti naik, hutang bertambah."
+      },
+      {
+        teks: "Kempen media",
+        kesan: (s) => {
+          s.populariti = hadkan(s.populariti + 3);
+        },
+        maklumBalas: "Kempen media dilancarkan. Populariti naik sedikit."
+      }
+    ]
+  },
+
+  // === KATEGORI: KESTABILAN ===
+  {
+    id: "undi_tidak_percaya",
+    nama: "Ancaman Undi Tidak Percaya",
+    keterukan: "teruk",
+    syarat: (s) => s.kestabilan < 25,
+    keterangan: "Pembangkang mengancam untuk membawa undi tidak percaya terhadap PM.",
+    pilihan: [
+      {
+        teks: "Runding dengan parti",
+        kesan: (s) => {
+          s.kestabilan = hadkan(s.kestabilan + 6);
+        },
+        maklumBalas: "Rundingan berjaya. Kestabilan naik."
+      },
+      {
+        teks: "Cabaran terbuka",
+        kesan: (s) => {
+          s.kestabilan = hadkan(s.kestabilan - 3);
+          s.populariti = hadkan(s.populariti + 2);
+        },
+        maklumBalas: "PM cabar pembangkang. Kestabilan turun, populariti naik."
+      }
+    ]
+  },
+  {
+    id: "gabungan_renggang",
+    nama: "Gabungan Renggang",
+    keterukan: "sederhana",
+    syarat: (s) => s.kestabilan < 40 && s.kestabilan >= 25,
+    keterangan: "Rakan gabungan mula tidak puas hati dengan kepimpinan PM.",
+    pilihan: [
+      {
+        teks: "Beri jawatan menteri",
+        kesan: (s) => {
+          s.kestabilan = hadkan(s.kestabilan + 5);
+          s.populariti = hadkan(s.populariti - 2);
+        },
+        maklumBalas: "Jawatan diberi. Kestabilan naik, populariti turun."
+      },
+      {
+        teks: "Tegakkan pendirian",
+        kesan: (s) => {
+          s.kestabilan = hadkan(s.kestabilan - 2);
+          s.populariti = hadkan(s.populariti + 3);
+        },
+        maklumBalas: "PM tegaskan pendirian. Kestabilan turun, populariti naik."
+      }
+    ]
+  },
+
+  // === KATEGORI: EKONOMI ===
+  {
+    id: "krisis_ekonomi",
+    nama: "Krisis Ekonomi",
+    keterukan: "teruk",
+    syarat: (s) => s.ekonomi < 30,
+    keterangan: "Ekonomi negara merudum. Pelabur mula menarik diri.",
+    pilihan: [
+      {
+        teks: "Rangsangan ekonomi",
+        kesan: (s) => {
+          s.ekonomi = hadkan(s.ekonomi + 10);
+          s.hutang += 0.05;
+        },
+        maklumBalas: "Rangsangan diumumkan. Ekonomi naik, hutang bertambah."
+      },
+      {
+        teks: "Jimat belanja",
+        kesan: (s) => {
+          s.ekonomi = hadkan(s.ekonomi + 3);
+          s.populariti = hadkan(s.populariti - 3);
+        },
+        maklumBalas: "Langkah berjimat. Ekonomi naik sedikit, populariti turun."
+      }
+    ]
+  },
+  {
+    id: "harga_naik",
+    nama: "Harga Barang Naik",
+    keterukan: "sederhana",
+    syarat: (s) => s.inflasi > 4,
+    keterangan: "Inflasi meningkat. Harga barang keperluan naik mendadak.",
+    pilihan: [
+      {
+        teks: "Kawalan harga",
+        kesan: (s) => {
+          s.inflasi = Math.max(0, s.inflasi - 0.8);
+          s.populariti = hadkan(s.populariti + 4);
+        },
+        maklumBalas: "Kawalan harga dilaksana. Inflasi turun, populariti naik."
+      },
+      {
+        teks: "Bantuan tunai",
+        kesan: (s) => {
+          s.populariti = hadkan(s.populariti + 6);
+          s.hutang += 0.04;
+        },
+        maklumBalas: "Bantuan tunai diberi. Populariti naik, hutang bertambah."
+      }
+    ]
+  },
+  {
+    id: "pengangguran_tinggi",
+    nama: "Pengangguran Meningkat",
+    keterukan: "sederhana",
+    syarat: (s) => s.pengangguran > 5,
+    keterangan: "Kadar pengangguran meningkat. Graduan sukar dapat kerja.",
+    pilihan: [
+      {
+        teks: "Program latihan",
+        kesan: (s) => {
+          s.pengangguran = Math.max(0, s.pengangguran - 0.5);
+          s.hutang += 0.02;
+        },
+        maklumBalas: "Program latihan dilancarkan. Pengangguran turun."
+      },
+      {
+        teks: "Galak pelaburan",
+        kesan: (s) => {
+          s.pengangguran = Math.max(0, s.pengangguran - 0.3);
+          s.ekonomi = hadkan(s.ekonomi + 3);
+        },
+        maklumBalas: "Pelaburan digalakkan. Ekonomi naik."
+      }
+    ]
+  },
+  {
+    id: "hutang_tinggi",
+    nama: "Amaran Hutang Negara",
+    keterukan: "teruk",
+    syarat: (s) => s.hutang > 1.6,
+    keterangan: "Hutang negara menghampiri paras bahaya. Agensi penarafan beri amaran.",
+    pilihan: [
+      {
+        teks: "Kurangkan perbelanjaan",
+        kesan: (s) => {
+          s.hutang = Math.max(1.0, s.hutang - 0.05);
+          s.populariti = hadkan(s.populariti - 4);
+          s.ekonomi = hadkan(s.ekonomi - 3);
+        },
+        maklumBalas: "Perbelanjaan dikurangkan. Hutang turun, populariti & ekonomi turun."
+      },
+      {
+        teks: "Cukai baru",
+        kesan: (s) => {
+          s.hutang = Math.max(1.0, s.hutang - 0.08);
+          s.populariti = hadkan(s.populariti - 6);
+        },
+        maklumBalas: "Cukai baru diperkenal. Hutang turun, populariti turun."
+      }
+    ]
+  },
+
+  // === KATEGORI: PARLIMEN ===
+  {
+    id: "majoriti_tipis",
+    nama: "Majoriti Tipis",
+    keterukan: "sederhana",
+    syarat: (s) => s.majoritiTipis === true,
+    keterangan: "Kerajaan baru sahaja menang undian dengan margin tipis. Pembangkang mula mendesak.",
+    pilihan: [
+      {
+        teks: "Kukuhkan gabungan",
+        kesan: (s) => {
+          s.kestabilan = hadkan(s.kestabilan + 4);
+        },
+        maklumBalas: "Gabungan dikukuhkan. Kestabilan naik."
+      },
+      {
+        teks: "Abaikan tekanan",
+        kesan: (s) => {
+          s.kestabilan = hadkan(s.kestabilan - 2);
+        },
+        maklumBalas: "Tekanan diabaikan. Kestabilan turun."
+      }
+    ]
+  },
+  {
+    id: "pemberontakan_mp",
+    nama: "Pemberontakan MP Kerajaan",
+    keterukan: "teruk",
+    syarat: (s) => s.pemberontakanBesar === true,
+    keterangan: "Ramai MP kerajaan mengundi menentang usul. Pemberontakan dalaman berlaku.",
+    pilihan: [
+      {
+        teks: "Disiplin MP",
+        kesan: (s) => {
+          s.kestabilan = hadkan(s.kestabilan + 5);
+          s.populariti = hadkan(s.populariti - 2);
+        },
+        maklumBalas: "MP didisiplin. Kestabilan naik, populariti turun."
+      },
+      {
+        teks: "Dengar keluhan",
+        kesan: (s) => {
+          s.kestabilan = hadkan(s.kestabilan + 3);
+          s.populariti = hadkan(s.populariti + 2);
+        },
+        maklumBalas: "Keluhan didengar. Kestabilan & populariti naik sedikit."
+      }
+    ]
+  }
+];
+
+// Semak peristiwa yang layak dicetuskan
+function semakPeristiwaBaru() {
+  const syarat = {
+    populariti: populariti,
+    kestabilan: kestabilan,
+    ekonomi: ekonomi,
+    inflasi: inflasi,
+    pengangguran: pengangguran,
+    hutang: hutang,
+    majoritiTipis: false,
+    pemberontakanBesar: false
+  };
+
+  // Semak undian terakhir untuk majoriti tipis
+  if (sejarahUndian.length > 0) {
+    const terakhir = sejarahUndian[0];
+    if (terakhir.lulus && Math.abs(terakhir.sokong - terakhir.tolak) <= 5) {
+      syarat.majoritiTipis = true;
+    }
+    // Pemberontakan: dari penjelasan
+    if (terakhir.penjelasan && terakhir.penjelasan.some(p => p.includes("Pemberontakan dalaman"))) {
+      syarat.pemberontakanBesar = true;
+    }
+  }
+
+  const peristiwaBaru = [];
+
+  katalogPeristiwa.forEach(kp => {
+    // Jangan cetus kalau sudah aktif
+    if (peristiwaAktif.some(p => p.id === kp.id)) return;
+
+    // Jangan cetus kalau pernah dicetus 3 kali terakhir
+    const baruBaru = sejarahPeristiwa.slice(0, 5).some(s => s.id === kp.id);
+    if (baruBaru) return;
+
+    // Semak syarat
+    if (kp.syarat(syarat)) {
+      peristiwaBaru.push({
+        id: kp.id,
+        nama: kp.nama,
+        keterukan: kp.keterukan,
+        keterangan: kp.keterangan,
+        pilihan: kp.pilihan,
+        masa: new Date().toLocaleString("ms-MY")
+      });
+    }
+  });
+
+  return peristiwaBaru;
+}
+
+// Cetus peristiwa baru
+function cetusPeristiwa() {
+  const baru = semakPeristiwaBaru();
+  if (baru.length === 0) return;
+
+  baru.forEach(p => {
+    peristiwaAktif.push(p);
+  });
+
+  paparPeristiwa();
+}
+
+// Tindak balas kepada peristiwa
+function tindakBalasPeristiwa(idPeristiwa, indeksPilihan) {
+  const p = peristiwaAktif.find(x => x.id === idPeristiwa);
+  if (!p) return;
+
+  const pilihan = p.pilihan[indeksPilihan];
+  if (!pilihan) return;
+
+  // Guna objek state untuk kesan
+  const state = {
+    populariti: populariti,
+    kestabilan: kestabilan,
+    ekonomi: ekonomi,
+    inflasi: inflasi,
+    pengangguran: pengangguran,
+    hutang: hutang,
+    kdnk: kdnk
+  };
+
+  // Kesan
+  pilihan.kesan(state);
+
+  // Salin balik
+  populariti = state.populariti;
+  kestabilan = state.kestabilan;
+  ekonomi = state.ekonomi;
+  inflasi = state.inflasi;
+  pengangguran = state.pengangguran;
+  hutang = state.hutang;
+
+  // Simpan dalam sejarah
+  nomborPeristiwa++;
+  sejarahPeristiwa.unshift({
+    nombor: nomborPeristiwa,
+    id: p.id,
+    nama: p.nama,
+    keterukan: p.keterukan,
+    pilihan: pilihan.teks,
+    maklumBalas: pilihan.maklumBalas,
+    masa: p.masa
+  });
+
+  if (sejarahPeristiwa.length > hadSejarahPeristiwa) {
+    sejarahPeristiwa = sejarahPeristiwa.slice(0, hadSejarahPeristiwa);
+  }
+
+  // Buang dari aktif
+  peristiwaAktif = peristiwaAktif.filter(x => x.id !== idPeristiwa);
+
+  paparPeristiwa();
+  kemasKiniPaparan();
+  kemasKiniSejarahPeristiwa();
+}
+
+// Papar peristiwa aktif
+function paparPeristiwa() {
+  const panel = document.getElementById("panelPeristiwa");
+  if (!panel) return;
+
+  if (peristiwaAktif.length === 0) {
+    panel.innerHTML = "<p>Tiada peristiwa aktif sekarang.</p>";
+    return;
+  }
+
+  panel.innerHTML = peristiwaAktif.map(p => {
+    const kelas = p.keterukan === "teruk" ? "peristiwa teruk" :
+                  p.keterukan === "sederhana" ? "peristiwa sederhana" :
+                  "peristiwa biasa";
+
+    return `
+      <div class="${kelas}">
+        <h4>${escapeHTML(p.nama)}</h4>
+        <p>${escapeHTML(p.keterangan)}</p>
+        <div class="pilihan">
+          ${p.pilihan.map((pil, i) => `
+            <button onclick="tindakBalasPeristiwa('${p.id}', ${i})">
+              ${escapeHTML(pil.teks)}
+            </button>
+          `).join("")}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+// Papar sejarah peristiwa
+function kemasKiniSejarahPeristiwa() {
+  const paparan = document.getElementById("sejarahPeristiwa");
+  if (!paparan) return;
+
+  if (sejarahPeristiwa.length === 0) {
+    paparan.innerHTML = "<p>Belum ada rekod peristiwa.</p>";
+    return;
+  }
+
+  paparan.innerHTML = sejarahPeristiwa.map(item => `
+    <div class="stat sejarah">
+      <h3>Peristiwa #${item.nombor}: ${escapeHTML(item.nama)}</h3>
+      <p><strong>Pilihan:</strong> ${escapeHTML(item.pilihan)}</p>
+      <p><strong>Kesan:</strong> ${escapeHTML(item.maklumBalas)}</p>
+      <small>${escapeHTML(item.masa)}</small>
+    </div>
+  `).join("");
+}
 // 4. FUNGSI SOKONGAN
 function hadkan(nilai, minimum = 0, maksimum = 100) {
   return Math.max(minimum, Math.min(maksimum, nilai));
