@@ -257,7 +257,154 @@ function tamatkanMinggu() {
     }
   }
 }
+// =====================================
+// 3g. PARTI POLITIK & GABUNGAN
+// =====================================
 
+const senaraiParti = [
+  { id: "partiA", nama: "Parti A (PM)", kerusi: 60, afiliasi: "gabungan", hubungan: 80, dirunding: false,
+    tuntutan: [
+      { jenis: "jawatan", teks: "Menteri Kewangan", selesai: false },
+      { jenis: "dasar", teks: "Dasar ekonomi terbuka", selesai: false },
+      { jenis: "belanjawan", teks: "Peruntukan pembangunan besar", selesai: false }
+    ]
+  },
+  { id: "partiB", nama: "Parti B", kerusi: 30, afiliasi: "gabungan", hubungan: 65, dirunding: false,
+    tuntutan: [
+      { jenis: "jawatan", teks: "Menteri Pendidikan", selesai: false },
+      { jenis: "dasar", teks: "Reformasi pendidikan", selesai: false },
+      { jenis: "belanjawan", teks: "Biasiswa pelajar", selesai: false }
+    ]
+  },
+  { id: "partiC", nama: "Parti C", kerusi: 20, afiliasi: "gabungan", hubungan: 55, dirunding: false,
+    tuntutan: [
+      { jenis: "jawatan", teks: "Timbalan Menteri", selesai: false },
+      { jenis: "dasar", teks: "Dasar pertanian", selesai: false },
+      { jenis: "belanjawan", teks: "Subsidi petani", selesai: false }
+    ]
+  },
+  { id: "partiD", nama: "Parti D", kerusi: 10, afiliasi: "gabungan", hubungan: 45, dirunding: false,
+    tuntutan: [
+      { jenis: "jawatan", teks: "Pengerusi GLC", selesai: false },
+      { jenis: "dasar", teks: "Dasar belia", selesai: false },
+      { jenis: "belanjawan", teks: "Dana belia", selesai: false }
+    ]
+  },
+  { id: "partiX", nama: "Parti X (Pembangkang)", kerusi: 50, afiliasi: "pembangkang", hubungan: 20, dirunding: false,
+    tuntutan: [
+      { jenis: "dasar", teks: "Reformasi institusi", selesai: false },
+      { jenis: "belanjawan", teks: "Ketelusan belanjawan", selesai: false }
+    ]
+  },
+  { id: "partiY", nama: "Parti Y (Pembangkang)", kerusi: 30, afiliasi: "pembangkang", hubungan: 15, dirunding: false,
+    tuntutan: [
+      { jenis: "dasar", teks: "Kebebasan media", selesai: false },
+      { jenis: "belanjawan", teks: "Sokongan pekerja", selesai: false }
+    ]
+  },
+  { id: "partiZ", nama: "Parti Z (Pembangkang)", kerusi: 12, afiliasi: "pembangkang", hubungan: 10, dirunding: false,
+    tuntutan: [
+      { jenis: "dasar", teks: "Dasar alam sekitar", selesai: false }
+    ]
+  }
+];
+
+function kiraHubunganParti() {
+  const gabungan = senaraiParti.filter(p => p.afiliasi === "gabungan");
+  if (gabungan.length === 0) return 0;
+  const jumlah = gabungan.reduce((sum, p) => sum + p.hubungan, 0);
+  return Math.round(jumlah / gabungan.length);
+}
+
+function labelHubungan(nilai) {
+  if (nilai >= 70) return { teks: "Baik", kelas: "hubungan-baik" };
+  if (nilai >= 40) return { teks: "Sederhana", kelas: "hubungan-sederhana" };
+  return { teks: "Teruk", kelas: "hubungan-teruk" };
+}
+
+function paparParti() {
+  const panel = document.getElementById("senaraiParti");
+  if (!panel) return;
+
+  panel.innerHTML = senaraiParti.map(p => {
+    const label = labelHubungan(p.hubungan);
+    const kelasAfiliasi = p.afiliasi === "gabungan" ? "gabungan" : "pembangkang";
+
+    const tuntutanHTML = p.tuntutan.map(t => `
+      <div class="tuntutan-parti">
+        <strong>${t.jenis.toUpperCase()}:</strong> ${escapeHTML(t.teks)}
+        ${t.selesai ? " ✅" : ""}
+      </div>
+    `).join("");
+
+    const kawalan = !p.dirunding && p.afiliasi === "gabungan" ? `
+      <button onclick="rundingParti('${p.id}')">
+        Runding dengan ${escapeHTML(p.nama)}
+      </button>
+    ` : p.dirunding ? `
+      <p class="nota">Sudah dirunding pusingan ini.</p>
+    ` : "";
+
+    return `
+      <div class="stat parti ${kelasAfiliasi}">
+        <h3>${escapeHTML(p.nama)}</h3>
+        <p>Kerusi: ${p.kerusi} | Afiliasi: ${p.afiliasi}</p>
+        <p>Hubungan: <span class="${label.kelas}">${p.hubungan} (${label.teks})</span></p>
+        ${tuntutanHTML}
+        ${kawalan}
+      </div>
+    `;
+  }).join("");
+}
+
+function rundingParti(idParti) {
+  const parti = senaraiParti.find(p => p.id === idParti);
+  if (!parti || parti.dirunding) return;
+  if (parti.afiliasi !== "gabungan") return;
+
+  const peluang = Math.max(0, Math.min(1, parti.hubungan / 100));
+  const tuntutanBelum = parti.tuntutan.find(t => !t.selesai);
+  const berjaya = Math.random() < peluang;
+
+  if (berjaya && tuntutanBelum) {
+    tuntutanBelum.selesai = true;
+    parti.hubungan = Math.min(100, parti.hubungan + 10);
+    kestabilan = hadkan(kestabilan + 2);
+  } else {
+    parti.hubungan = Math.max(0, parti.hubungan - 5);
+    kestabilan = hadkan(kestabilan - 1);
+  }
+
+  parti.dirunding = true;
+
+  const status = document.getElementById("statusRundinganParti");
+  if (status) {
+    if (berjaya && tuntutanBelum) {
+      status.textContent =
+        "Rundingan dengan " + parti.nama + " berjaya. " +
+        "Tuntutan dipenuhi: " + tuntutanBelum.teks + ". " +
+        "Hubungan kini: " + parti.hubungan + ".";
+    } else {
+      status.textContent =
+        "Rundingan dengan " + parti.nama + " gagal. " +
+        "Hubungan kini: " + parti.hubungan + ".";
+    }
+  }
+
+  paparParti();
+  kemasKiniPaparan();
+  kemasKiniParlimen();
+}
+
+function pusinganPartiBaharu() {
+  senaraiParti.forEach(p => { p.dirunding = false; });
+  paparParti();
+
+  const status = document.getElementById("statusRundinganParti");
+  if (status) {
+    status.textContent = "Pusingan rundingan parti baharu bermula.";
+  }
+}
 // =====================================
 // 3c. PERISTIWA BERSYARAT
 // =====================================
