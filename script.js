@@ -123,7 +123,16 @@ function rundingAhli(id, jenisTawaran) {
   const peluang = sepadan ? 0.8 : 0.3;
   const berjaya = Math.random() < peluang;
 
-  ahli.status = berjaya ? "menyokong" : "menolak";
+ahli.status = berjaya ? "menyokong" : "menolak";
+
+// Kesan rundingan terhadap kestabilan kerajaan
+if (berjaya) {
+  kestabilan = hadkan(kestabilan + 2);
+} else {
+  kestabilan = hadkan(kestabilan - 1);
+}
+
+kemasKiniPaparan();
 
   const hasil = document.getElementById("statusRundingan");
 
