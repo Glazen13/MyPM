@@ -126,14 +126,16 @@ function rundingAhli(id, jenisTawaran) {
 ahli.status = berjaya ? "menyokong" : "menolak";
 
 // Kesan rundingan terhadap kestabilan kerajaan
+// dan populariti Perdana Menteri
 if (berjaya) {
   kestabilan = hadkan(kestabilan + 2);
+  populariti = hadkan(populariti + 1);
 } else {
   kestabilan = hadkan(kestabilan - 1);
+  populariti = hadkan(populariti - 1);
 }
 
 kemasKiniPaparan();
-
   const hasil = document.getElementById("statusRundingan");
 
   hasil.textContent =
