@@ -79,12 +79,20 @@
           <p id="statusMajoriti">Majoriti</p>
         </div>
       </div>
-
+      
       <h3>Kalendar & Giliran</h3>
       <div class="stats">
         <div class="stat">
           <h3>Minggu</h3>
           <p id="mingguSemasa">1 / 260</p>
+        </div>
+        <div class="stat">
+          <h3>Hari</h3>
+          <p id="hariSemasa">1 / 7</p>
+        </div>
+        <div class="stat">
+          <h3>Tindakan Baki</h3>
+          <p id="tindakanBaki">5</p>
         </div>
         <div class="stat">
           <h3>Bulan</h3>
@@ -97,10 +105,10 @@
       </div>
 
       <div class="aksi-minggu">
-        <button class="utama" onclick="tamatkanMinggu()">
-          Tamatkan Minggu
+        <button class="utama" id="butangTamatHari" onclick="tamatkanHari()">
+          Tamatkan Hari
         </button>
-        <p id="statusMinggu">Minggu 1 bermula. Pilih tindakan anda.</p>
+        <p id="statusMinggu">Minggu 1, Hari 1. Tindakan baki: 5.</p>
       </div>
 
       <h3>Peristiwa Semasa</h3>
