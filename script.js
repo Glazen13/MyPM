@@ -2,6 +2,7 @@
 
 // =====================================
 // MyPM SIMULASI - SISTEM NEGARA
+// Fasa 2: Sistem Parlimen dan Undian
 // =====================================
 
 // 1. STATISTIK NEGARA
@@ -21,16 +22,16 @@ const jumlahKerusi = 222;
 const majoritiMudah = 112;
 
 const ahliBebas = [
-  { id: 1, nama: "Ahli Parlimen Bebas 1", personaliti: "Mesra pembangunan", keutamaan: "pembangunan", status: "neutral" },
-  { id: 2, nama: "Ahli Parlimen Bebas 2", personaliti: "Mementingkan reformasi", keutamaan: "dasar", status: "neutral" },
-  { id: 3, nama: "Ahli Parlimen Bebas 3", personaliti: "Berhati-hati", keutamaan: "belanjawan", status: "neutral" },
-  { id: 4, nama: "Ahli Parlimen Bebas 4", personaliti: "Mesra rakyat", keutamaan: "pembangunan", status: "neutral" },
-  { id: 5, nama: "Ahli Parlimen Bebas 5", personaliti: "Pencinta reformasi", keutamaan: "dasar", status: "neutral" },
-  { id: 6, nama: "Ahli Parlimen Bebas 6", personaliti: "Mementingkan kewangan", keutamaan: "belanjawan", status: "neutral" },
-  { id: 7, nama: "Ahli Parlimen Bebas 7", personaliti: "Pragmatik", keutamaan: "pembangunan", status: "neutral" },
-  { id: 8, nama: "Ahli Parlimen Bebas 8", personaliti: "Tegas tentang dasar", keutamaan: "dasar", status: "neutral" },
-  { id: 9, nama: "Ahli Parlimen Bebas 9", personaliti: "Sangat berhati-hati", keutamaan: "belanjawan", status: "neutral" },
-  { id: 10, nama: "Ahli Parlimen Bebas 10", personaliti: "Suka berunding", keutamaan: "pembangunan", status: "neutral" }
+  { id: 1, nama: "Ahli Parlimen Bebas 1", personaliti: "Mesra pembangunan", keutamaan: "pembangunan", status: "neutral", kecenderungan: 0 },
+  { id: 2, nama: "Ahli Parlimen Bebas 2", personaliti: "Mementingkan reformasi", keutamaan: "dasar", status: "neutral", kecenderungan: 0 },
+  { id: 3, nama: "Ahli Parlimen Bebas 3", personaliti: "Berhati-hati", keutamaan: "belanjawan", status: "neutral", kecenderungan: 0 },
+  { id: 4, nama: "Ahli Parlimen Bebas 4", personaliti: "Mesra rakyat", keutamaan: "pembangunan", status: "neutral", kecenderungan: 0 },
+  { id: 5, nama: "Ahli Parlimen Bebas 5", personaliti: "Pencinta reformasi", keutamaan: "dasar", status: "neutral", kecenderungan: 0 },
+  { id: 6, nama: "Ahli Parlimen Bebas 6", personaliti: "Mementingkan kewangan", keutamaan: "belanjawan", status: "neutral", kecenderungan: 0 },
+  { id: 7, nama: "Ahli Parlimen Bebas 7", personaliti: "Pragmatik", keutamaan: "pembangunan", status: "neutral", kecenderungan: 0 },
+  { id: 8, nama: "Ahli Parlimen Bebas 8", personaliti: "Tegas tentang dasar", keutamaan: "dasar", status: "neutral", kecenderungan: 0 },
+  { id: 9, nama: "Ahli Parlimen Bebas 9", personaliti: "Sangat berhati-hati", keutamaan: "belanjawan", status: "neutral", kecenderungan: 0 },
+  { id: 10, nama: "Ahli Parlimen Bebas 10", personaliti: "Suka berunding", keutamaan: "pembangunan", status: "neutral", kecenderungan: 0 }
 ];
 
 const tawaran = {
@@ -48,22 +49,61 @@ const tawaran = {
   }
 };
 
+// Parameter undian (boleh dilaras)
+const paramUndian = {
+  peluangSokongSepadan: 0.70,
+  peluangSokongTakSepadan: 0.30,
+  peluangBerkecuali: 0.20,
+  kesanKecenderungan: 0.05,
+  maksKecenderungan: 3
+};
+
 // 3. SISTEM UNDIAN
 let sejarahUndian = [];
 let nomborUndian = 0;
 const hadSejarahUndian = 20;
 
 function undiAhliBebas(ahli, jenisUsul) {
-  if (ahli.status === "menyokong") return "menyokong";
-  if (ahli.status === "menolak") return "menentang";
+  // Ahli yang sudah menyokong/menolak kekal pendirian.
+  if (ahli.status === "menyokong") {
+    return { undi: "menyokong", sebab: "Sudah menyokong kerajaan" };
+  }
 
+  if (ahli.status === "menolak") {
+    return { undi: "menentang", sebab: "Sudah menolak kerajaan" };
+  }
+
+  // Ahli neutral: kira peluang berdasarkan keutamaan & kecenderungan.
   const sepadan = ahli.keutamaan === jenisUsul;
-  const peluangSokong = sepadan ? 0.65 : 0.35;
+
+  let peluangSokong = sepadan
+    ? paramUndian.peluangSokongSepadan
+    : paramUndian.peluangSokongTakSepadan;
+
+  peluangSokong += ahli.kecenderungan * paramUndian.kesanKecenderungan;
+  peluangSokong = Math.max(0, Math.min(1, peluangSokong));
+
   const rawak = Math.random();
 
-  if (rawak < peluangSokong) return "menyokong";
-  if (rawak < peluangSokong + 0.25) return "berkecuali";
-  return "menentang";
+  if (rawak < peluangSokong) {
+    return {
+      undi: "menyokong",
+      sebab: sepadan
+        ? "Usul sepadan dengan keutamaan"
+        : "Bersedia memberi peluang"
+    };
+  }
+
+  if (rawak < peluangSokong + paramUndian.peluangBerkecuali) {
+    return { undi: "berkecuali", sebab: "Belum yakin" };
+  }
+
+  return {
+    undi: "menentang",
+    sebab: sepadan
+      ? "Masih ragu walaupun sepadan"
+      : "Usul tidak sepadan dengan keutamaan"
+  };
 }
 
 function jalankanUndian() {
@@ -91,16 +131,24 @@ function jalankanUndian() {
   }
 
   const undiBebas = { menyokong: 0, menentang: 0, berkecuali: 0 };
+  const sebabBebas = [];
 
   ahliBebas.forEach(ahli => {
-    undiBebas[undiAhliBebas(ahli, jenis)]++;
+    const hasil = undiAhliBebas(ahli, jenis);
+    undiBebas[hasil.undi]++;
+    sebabBebas.push({
+      nama: ahli.nama,
+      undi: hasil.undi,
+      sebab: hasil.sebab
+    });
   });
 
   const jumlahSokong = kerusiKerajaan + undiBebas.menyokong;
   const jumlahTolak = kerusiPembangkang + undiBebas.menentang;
   const jumlahBerkecuali = undiBebas.berkecuali;
 
-  const lulus = jumlahSokong >= majoritiMudah;
+  // Seri dianggap ditolak (lazim dalam Parlimen)
+  const lulus = jumlahSokong > jumlahTolak && jumlahSokong >= majoritiMudah;
 
   nomborUndian++;
 
@@ -121,6 +169,7 @@ function jalankanUndian() {
     sejarahUndian = sejarahUndian.slice(0, hadSejarahUndian);
   }
 
+  // Kesan kepada kestabilan & populariti
   if (lulus) {
     kestabilan = hadkan(kestabilan + 2);
     populariti = hadkan(populariti + 1);
@@ -129,7 +178,26 @@ function jalankanUndian() {
     populariti = hadkan(populariti - 2);
   }
 
+  // Kesan kepada AP bebas (kecenderungan)
+  ahliBebas.forEach(ahli => {
+    if (ahli.status !== "neutral") return;
+
+    const hasil = undiAhliBebas(ahli, jenis);
+    if (hasil.undi === "menyokong") {
+      ahli.kecenderungan = Math.min(
+        paramUndian.maksKecenderungan,
+        ahli.kecenderungan + 1
+      );
+    } else if (hasil.undi === "menentang") {
+      ahli.kecenderungan = Math.max(
+        -paramUndian.maksKecenderungan,
+        ahli.kecenderungan - 1
+      );
+    }
+  });
+
   kemasKiniPaparan();
+  kemasKiniParlimen();
 
   hasilUndian.innerHTML = `
     <div class="stat hasil">
@@ -146,6 +214,14 @@ function jalankanUndian() {
       <p>${lulus
         ? "Kerajaan berjaya meluluskan usul."
         : "Kerajaan gagal mendapatkan sokongan mencukupi."}</p>
+      <details style="margin-top:10px">
+        <summary>Lihat pecahan undi AP bebas</summary>
+        <ul>
+          ${sebabBebas.map(s =>
+            `<li>${escapeHTML(s.nama)}: ${escapeHTML(s.undi)} — ${escapeHTML(s.sebab)}</li>`
+          ).join("")}
+        </ul>
+      </details>
     </div>
   `;
 
@@ -237,6 +313,16 @@ function buatKeputusan(jenis) {
     ekonomi = hadkan(ekonomi + 2);
     pengangguran = Math.max(0, pengangguran - 0.1);
 
+    // Reformasi menaikkan kecenderungan AP bebas keutamaan "dasar"
+    ahliBebas.forEach(ahli => {
+      if (ahli.keutamaan === "dasar") {
+        ahli.kecenderungan = Math.min(
+          paramUndian.maksKecenderungan,
+          ahli.kecenderungan + 1
+        );
+      }
+    });
+
     if (mesej) mesej.textContent =
       "Reformasi dilaksanakan. Kestabilan meningkat.";
   }
@@ -273,16 +359,30 @@ function rundingAhli(id, jenisTawaran) {
   if (!Object.prototype.hasOwnProperty.call(tawaran, jenisTawaran)) return;
 
   const sepadan = ahli.keutamaan === jenisTawaran;
-  const berjaya = Math.random() < (sepadan ? 0.8 : 0.3);
+
+  // Kecenderungan menambah peluang berjaya
+  let peluang = sepadan ? 0.8 : 0.3;
+  peluang += ahli.kecenderungan * paramUndian.kesanKecenderungan;
+  peluang = Math.max(0, Math.min(1, peluang));
+
+  const berjaya = Math.random() < peluang;
 
   ahli.status = berjaya ? "menyokong" : "menolak";
 
   if (berjaya) {
     kestabilan = hadkan(kestabilan + 2);
     populariti = hadkan(populariti + 1);
+    ahli.kecenderungan = Math.min(
+      paramUndian.maksKecenderungan,
+      ahli.kecenderungan + 1
+    );
   } else {
     kestabilan = hadkan(kestabilan - 1);
     populariti = hadkan(populariti - 1);
+    ahli.kecenderungan = Math.max(
+      -paramUndian.maksKecenderungan,
+      ahli.kecenderungan - 1
+    );
   }
 
   const hasil = document.getElementById("statusRundingan");
@@ -354,7 +454,10 @@ function kemasKiniParlimen() {
         <option value="dasar">Komitmen dasar</option>
         <option value="belanjawan">Sokongan belanjawan</option>
       </select>
-      <p class="nota">${ahli.personaliti}. Keutamaan: ${tawaran[ahli.keutamaan].nama}.</p>
+      <p class="nota">
+        ${ahli.personaliti}. Keutamaan: ${tawaran[ahli.keutamaan].nama}.
+        Kecenderungan: ${ahli.kecenderungan}.
+      </p>
       <button onclick="rundingAhli(${ahli.id}, document.getElementById('tawaran-${ahli.id}').value)">
         Hantar tawaran
       </button>
