@@ -2,7 +2,7 @@
 
 // =====================================
 // MyPM SIMULASI - SISTEM NEGARA
-// Fasa 2.4: Undian individu + Penjelasan
+// Fasa 2.5: Krisis Belanjawan
 // =====================================
 
 // 1. STATISTIK NEGARA
@@ -35,7 +35,7 @@ const ahliBebas = [
 ];
 
 // =====================================
-// 2b. MODEL MP INDIVIDU (Kerajaan & Pembangkang)
+// 2b. MODEL MP INDIVIDU
 // =====================================
 
 const paramMP = {
@@ -58,17 +58,13 @@ function janaMP(afiliasi, id) {
 }
 
 const mpKerajaan = [];
-for (let i = 1; i <= 120; i++) {
-  mpKerajaan.push(janaMP("kerajaan", i));
-}
+for (let i = 1; i <= 120; i++) mpKerajaan.push(janaMP("kerajaan", i));
 
 const mpPembangkang = [];
-for (let i = 1; i <= 92; i++) {
-  mpPembangkang.push(janaMP("pembangkang", i));
-}
+for (let i = 1; i <= 92; i++) mpPembangkang.push(janaMP("pembangkang", i));
 
 // =====================================
-// 2c. FUNGSI UNDI MP INDIVIDU
+// 2c. FUNGSI UNDI MP
 // =====================================
 
 function undiMPParti(mp) {
@@ -77,34 +73,21 @@ function undiMPParti(mp) {
     : paramMP.hadirPembangkang;
 
   mp.hadir = Math.random() < peluangHadir;
-
-  if (!mp.hadir) {
-    mp.undi = "absen";
-    return mp;
-  }
+  if (!mp.hadir) { mp.undi = "absen"; return mp; }
 
   const disiplin = mp.afiliasi === "kerajaan"
     ? paramMP.disiplinKerajaan
     : paramMP.disiplinPembangkang;
 
   let peluangSokong;
-
   if (mp.afiliasi === "kerajaan") {
     peluangSokong = disiplin + (mp.kecenderungan * paramMP.kesanKecenderungan);
   } else {
     peluangSokong = (1 - disiplin) + (mp.kecenderungan * paramMP.kesanKecenderungan);
   }
-
   peluangSokong = Math.max(0, Math.min(1, peluangSokong));
 
-  const rawak = Math.random();
-
-  if (rawak < peluangSokong) {
-    mp.undi = "menyokong";
-  } else {
-    mp.undi = "menentang";
-  }
-
+  mp.undi = Math.random() < peluangSokong ? "menyokong" : "menentang";
   return mp;
 }
 
@@ -114,18 +97,9 @@ function undiSemuaMPParti() {
 }
 
 const tawaran = {
-  pembangunan: {
-    nama: "Pembangunan kawasan",
-    penerangan: "Komitmen projek infrastruktur untuk kawasan beliau."
-  },
-  dasar: {
-    nama: "Komitmen dasar",
-    penerangan: "Komitmen untuk meneliti cadangan dasar beliau."
-  },
-  belanjawan: {
-    nama: "Sokongan belanjawan",
-    penerangan: "Komitmen mempertimbangkan keperluan kawasan melalui proses belanjawan."
-  }
+  pembangunan: { nama: "Pembangunan kawasan", penerangan: "Komitmen projek infrastruktur untuk kawasan beliau." },
+  dasar: { nama: "Komitmen dasar", penerangan: "Komitmen untuk meneliti cadangan dasar beliau." },
+  belanjawan: { nama: "Sokongan belanjawan", penerangan: "Komitmen mempertimbangkan keperluan kawasan melalui proses belanjawan." }
 };
 
 const paramUndian = {
@@ -137,6 +111,15 @@ const paramUndian = {
   kesanRundingBerjaya: 2,
   kesanRundingGagal: -1,
   hadirBebas: 0.95
+};
+
+// Kesan khas belanjawan
+const paramBelanjawan = {
+  kesanLulusKestabilan: 3,
+  kesanLulusPopulariti: 2,
+  kesanGagalKestabilan: -8,
+  kesanGagalPopulariti: -4,
+  ambangUndiTidakPercaya: 30
 };
 
 // 3. SISTEM UNDIAN
@@ -169,10 +152,7 @@ function jelaskanUndian(keputusan, butiran) {
   );
 
   if (b.tolakKerajaan > 5) {
-    sebab.push(
-      "Pemberontakan dalaman: " + b.tolakKerajaan +
-      " MP kerajaan mengundi menentang usul kerajaan sendiri."
-    );
+    sebab.push("Pemberontakan dalaman: " + b.tolakKerajaan + " MP kerajaan mengundi menentang usul kerajaan sendiri.");
   }
 
   sebab.push(
@@ -182,10 +162,7 @@ function jelaskanUndian(keputusan, butiran) {
   );
 
   if (b.sokongPembangkang > 5) {
-    sebab.push(
-      "Pecah pembangkang: " + b.sokongPembangkang +
-      " MP pembangkang menyokong usul kerajaan."
-    );
+    sebab.push("Pecah pembangkang: " + b.sokongPembangkang + " MP pembangkang menyokong usul kerajaan.");
   }
 
   sebab.push(
@@ -203,23 +180,28 @@ function jelaskanUndian(keputusan, butiran) {
   const margin = Math.abs(b.jumlahSokong - b.jumlahTolak);
   if (b.lulus) {
     sebab.push("Margin kemenangan: " + margin + " undi.");
-    if (margin <= 5) {
-      sebab.push("Kemenangan tipis — kerajaan perlu berhati-hati.");
-    }
+    if (margin <= 5) sebab.push("Kemenangan tipis — kerajaan perlu berhati-hati.");
   } else {
     sebab.push("Margin kekalahan: " + margin + " undi.");
-    if (margin <= 5) {
-      sebab.push("Kekalahan tipis — undi tidak percaya mungkin dipertimbangkan.");
-    }
+    if (margin <= 5) sebab.push("Kekalahan tipis — undi tidak percaya mungkin dipertimbangkan.");
   }
 
   const kesan = [];
-  if (keputusan.lulus) {
-    kesan.push("Kestabilan +2, Populariti +1");
+  if (keputusan.jenis === "belanjawan") {
+    if (keputusan.lulus) {
+      kesan.push("Kestabilan +" + paramBelanjawan.kesanLulusKestabilan +
+                 ", Populariti +" + paramBelanjawan.kesanLulusPopulariti + " (belanjawan)");
+    } else {
+      kesan.push("Kestabilan " + paramBelanjawan.kesanGagalKestabilan +
+                 ", Populariti " + paramBelanjawan.kesanGagalPopulariti + " (belanjawan gagal)");
+      kesan.push("AMARAN: Kegagalan belanjawan ialah krisis kerajaan.");
+    }
   } else {
-    kesan.push("Kestabilan −4, Populariti −2");
-    if (b.tolakKerajaan > 20) {
-      kesan.push("AMARAN: Pemberontakan besar dalam kerajaan.");
+    if (keputusan.lulus) {
+      kesan.push("Kestabilan +2, Populariti +1");
+    } else {
+      kesan.push("Kestabilan −4, Populariti −2");
+      if (b.tolakKerajaan > 20) kesan.push("AMARAN: Pemberontakan besar dalam kerajaan.");
     }
   }
   sebab.push("Kesan: " + kesan.join(". "));
@@ -227,25 +209,17 @@ function jelaskanUndian(keputusan, butiran) {
   return sebab;
 }
 
-// Label status (paparan sahaja)
+// Label status
 function labelStatus(ahli) {
-  if (ahli.kecenderungan >= 2) {
-    return { teks: "Menyokong kerajaan", kelas: "status-sokong" };
-  }
-  if (ahli.kecenderungan <= -2) {
-    return { teks: "Menentang kerajaan", kelas: "status-tolak" };
-  }
-  if (ahli.dirunding) {
-    return { teks: "Sudah dirunding", kelas: "status-neutral" };
-  }
+  if (ahli.kecenderungan >= 2) return { teks: "Menyokong kerajaan", kelas: "status-sokong" };
+  if (ahli.kecenderungan <= -2) return { teks: "Menentang kerajaan", kelas: "status-tolak" };
+  if (ahli.dirunding) return { teks: "Sudah dirunding", kelas: "status-neutral" };
   return { teks: "Belum dirunding", kelas: "status-neutral" };
 }
 
 function undiAhliBebas(ahli, jenisUsul) {
   const hadir = Math.random() < paramUndian.hadirBebas;
-  if (!hadir) {
-    return { undi: "absen", sebab: "Tidak hadir" };
-  }
+  if (!hadir) return { undi: "absen", sebab: "Tidak hadir" };
 
   const sepadan = ahli.keutamaan === jenisUsul;
 
@@ -261,9 +235,7 @@ function undiAhliBebas(ahli, jenisUsul) {
   if (rawak < peluangSokong) {
     return {
       undi: "menyokong",
-      sebab: sepadan
-        ? "Usul sepadan dengan keutamaan"
-        : "Bersedia memberi peluang"
+      sebab: sepadan ? "Usul sepadan dengan keutamaan" : "Bersedia memberi peluang"
     };
   }
 
@@ -273,9 +245,7 @@ function undiAhliBebas(ahli, jenisUsul) {
 
   return {
     undi: "menentang",
-    sebab: sepadan
-      ? "Masih ragu walaupun sepadan"
-      : "Usul tidak sepadan dengan keutamaan"
+    sebab: sepadan ? "Masih ragu walaupun sepadan" : "Usul tidak sepadan dengan keutamaan"
   };
 }
 
@@ -303,53 +273,30 @@ function jalankanUndian() {
     return;
   }
 
-  // Undi AP Bebas
   const undiBebas = { menyokong: 0, menentang: 0, berkecuali: 0, absen: 0 };
   const sebabBebas = [];
 
   ahliBebas.forEach(ahli => {
     const hasil = undiAhliBebas(ahli, jenis);
     undiBebas[hasil.undi]++;
-    sebabBebas.push({
-      id: ahli.id,
-      nama: ahli.nama,
-      undi: hasil.undi,
-      sebab: hasil.sebab
-    });
+    sebabBebas.push({ id: ahli.id, nama: ahli.nama, undi: hasil.undi, sebab: hasil.sebab });
   });
 
-  // Undi MP kerajaan & pembangkang secara individu
   undiSemuaMPParti();
 
-  const sokongKerajaan = mpKerajaan.filter(
-    mp => mp.hadir && mp.undi === "menyokong"
-  ).length;
-  const tolakKerajaan = mpKerajaan.filter(
-    mp => mp.hadir && mp.undi === "menentang"
-  ).length;
-  const absenKerajaan = mpKerajaan.filter(
-    mp => !mp.hadir
-  ).length;
+  const sokongKerajaan = mpKerajaan.filter(mp => mp.hadir && mp.undi === "menyokong").length;
+  const tolakKerajaan = mpKerajaan.filter(mp => mp.hadir && mp.undi === "menentang").length;
+  const absenKerajaan = mpKerajaan.filter(mp => !mp.hadir).length;
 
-  const sokongPembangkang = mpPembangkang.filter(
-    mp => mp.hadir && mp.undi === "menyokong"
-  ).length;
-  const tolakPembangkang = mpPembangkang.filter(
-    mp => mp.hadir && mp.undi === "menentang"
-  ).length;
-  const absenPembangkang = mpPembangkang.filter(
-    mp => !mp.hadir
-  ).length;
+  const sokongPembangkang = mpPembangkang.filter(mp => mp.hadir && mp.undi === "menyokong").length;
+  const tolakPembangkang = mpPembangkang.filter(mp => mp.hadir && mp.undi === "menentang").length;
+  const absenPembangkang = mpPembangkang.filter(mp => !mp.hadir).length;
 
-  const jumlahSokong =
-    sokongKerajaan + sokongPembangkang + undiBebas.menyokong;
-  const jumlahTolak =
-    tolakKerajaan + tolakPembangkang + undiBebas.menentang;
+  const jumlahSokong = sokongKerajaan + sokongPembangkang + undiBebas.menyokong;
+  const jumlahTolak = tolakKerajaan + tolakPembangkang + undiBebas.menentang;
   const jumlahBerkecuali = undiBebas.berkecuali;
-  const jumlahAbsen =
-    absenKerajaan + absenPembangkang + undiBebas.absen;
-  const jumlahHadir =
-    jumlahSokong + jumlahTolak + jumlahBerkecuali;
+  const jumlahAbsen = absenKerajaan + absenPembangkang + undiBebas.absen;
+  const jumlahHadir = jumlahSokong + jumlahTolak + jumlahBerkecuali;
 
   const majoritiHadir = Math.floor((jumlahSokong + jumlahTolak) / 2) + 1;
   const lulus = jumlahSokong > jumlahTolak && jumlahSokong >= majoritiHadir;
@@ -369,7 +316,6 @@ function jalankanUndian() {
     masa: new Date().toLocaleString("ms-MY")
   };
 
-  // Butiran untuk penjelasan
   const butiran = {
     sokongKerajaan: sokongKerajaan,
     tolakKerajaan: tolakKerajaan,
@@ -393,12 +339,23 @@ function jalankanUndian() {
     sejarahUndian = sejarahUndian.slice(0, hadSejarahUndian);
   }
 
-  if (lulus) {
-    kestabilan = hadkan(kestabilan + 2);
-    populariti = hadkan(populariti + 1);
+  // Kesan kepada kestabilan & populariti (belanjawan berbeza)
+  if (jenis === "belanjawan") {
+    if (lulus) {
+      kestabilan = hadkan(kestabilan + paramBelanjawan.kesanLulusKestabilan);
+      populariti = hadkan(populariti + paramBelanjawan.kesanLulusPopulariti);
+    } else {
+      kestabilan = hadkan(kestabilan + paramBelanjawan.kesanGagalKestabilan);
+      populariti = hadkan(populariti + paramBelanjawan.kesanGagalPopulariti);
+    }
   } else {
-    kestabilan = hadkan(kestabilan - 4);
-    populariti = hadkan(populariti - 2);
+    if (lulus) {
+      kestabilan = hadkan(kestabilan + 2);
+      populariti = hadkan(populariti + 1);
+    } else {
+      kestabilan = hadkan(kestabilan - 4);
+      populariti = hadkan(populariti - 2);
+    }
   }
 
   sebabBebas.forEach(item => {
@@ -406,17 +363,33 @@ function jalankanUndian() {
     if (!ahli) return;
 
     if (item.undi === "menyokong") {
-      ahli.kecenderungan = Math.min(
-        paramUndian.maksKecenderungan,
-        ahli.kecenderungan + 1
-      );
+      ahli.kecenderungan = Math.min(paramUndian.maksKecenderungan, ahli.kecenderungan + 1);
     } else if (item.undi === "menentang") {
-      ahli.kecenderungan = Math.max(
-        -paramUndian.maksKecenderungan,
-        ahli.kecenderungan - 1
-      );
+      ahli.kecenderungan = Math.max(-paramUndian.maksKecenderungan, ahli.kecenderungan - 1);
     }
   });
+
+  // Semak undi tidak percaya
+  let amaranUndiTidakPercaya = "";
+  if (jenis === "belanjawan" && !lulus) {
+    if (kestabilan < paramBelanjawan.ambangUndiTidakPercaya) {
+      amaranUndiTidakPercaya = `
+        <div class="stat amaran-krisis" style="background:#fee2e2;border-left:5px solid #b91c1c;text-align:left;padding:15px;margin-top:10px">
+          <h3 style="color:#b91c1c;margin-top:0">⚠️ AMARAN: KRISIS KERAJAAN</h3>
+          <p>Kegagalan belanjawan dengan kestabilan rendah (${kestabilan}) boleh mencetus undi tidak percaya.</p>
+          <p>Kerajaan berkemungkinan tumbang jika keadaan berterusan.</p>
+        </div>
+      `;
+    } else {
+      amaranUndiTidakPercaya = `
+        <div class="stat amaran-krisis" style="background:#fef3c7;border-left:5px solid #d97706;text-align:left;padding:15px;margin-top:10px">
+          <h3 style="color:#d97706;margin-top:0">⚠️ Belanjawan Gagal</h3>
+          <p>Kegagalan belanjawan menjejaskan kestabilan kerajaan.</p>
+          <p>Kestabilan sekarang: ${kestabilan}. Risiko undi tidak percaya jika jatuh bawah ${paramBelanjawan.ambangUndiTidakPercaya}.</p>
+        </div>
+      `;
+    }
+  }
 
   kemasKiniPaparan();
   kemasKiniParlimen();
@@ -452,6 +425,7 @@ function jalankanUndian() {
           ).join("")}
         </ul>
       </details>
+      ${amaranUndiTidakPercaya}
     </div>
   `;
 
@@ -533,35 +507,25 @@ function buatKeputusan(jenis) {
     inflasi = Math.max(0, inflasi - 0.1);
     pengangguran = Math.max(0, pengangguran - 0.1);
     hutang += 0.02;
-
-    if (mesej) mesej.textContent =
-      "Pelan Ekonomi diumumkan. Ekonomi meningkat.";
+    if (mesej) mesej.textContent = "Pelan Ekonomi diumumkan. Ekonomi meningkat.";
   } else if (jenis === "rakyat") {
     populariti = hadkan(populariti + 8);
     ekonomi = hadkan(ekonomi - 2);
     kestabilan = hadkan(kestabilan + 2);
     inflasi += 0.1;
     hutang += 0.04;
-
-    if (mesej) mesej.textContent =
-      "Bantuan Rakyat diumumkan. Populariti meningkat, hutang bertambah.";
+    if (mesej) mesej.textContent = "Bantuan Rakyat diumumkan. Populariti meningkat, hutang bertambah.";
   } else if (jenis === "reformasi") {
     kestabilan = hadkan(kestabilan + 8);
     populariti = hadkan(populariti + 2);
     ekonomi = hadkan(ekonomi + 2);
     pengangguran = Math.max(0, pengangguran - 0.1);
-
     ahliBebas.forEach(ahli => {
       if (ahli.keutamaan === "dasar") {
-        ahli.kecenderungan = Math.min(
-          paramUndian.maksKecenderungan,
-          ahli.kecenderungan + 1
-        );
+        ahli.kecenderungan = Math.min(paramUndian.maksKecenderungan, ahli.kecenderungan + 1);
       }
     });
-
-    if (mesej) mesej.textContent =
-      "Reformasi dilaksanakan. Kestabilan meningkat.";
+    if (mesej) mesej.textContent = "Reformasi dilaksanakan. Kestabilan meningkat.";
   }
 
   kemasKiniPaparan();
@@ -590,12 +554,10 @@ function dialogRespons(ahli, jenisTawaran, berjaya) {
 // 7. RUNDING AHLI BEBAS
 function rundingAhli(id, jenisTawaran) {
   const ahli = ahliBebas.find(item => item.id === id);
-
   if (!ahli || ahli.dirunding) return;
   if (!Object.prototype.hasOwnProperty.call(tawaran, jenisTawaran)) return;
 
   const sepadan = ahli.keutamaan === jenisTawaran;
-
   let peluang = sepadan ? 0.8 : 0.3;
   peluang += ahli.kecenderungan * paramUndian.kesanKecenderungan;
   peluang = Math.max(0, Math.min(1, peluang));
@@ -603,17 +565,13 @@ function rundingAhli(id, jenisTawaran) {
   const berjaya = Math.random() < peluang;
 
   if (berjaya) {
-    ahli.kecenderungan = Math.min(
-      paramUndian.maksKecenderungan,
-      ahli.kecenderungan + paramUndian.kesanRundingBerjaya
-    );
+    ahli.kecenderungan = Math.min(paramUndian.maksKecenderungan,
+      ahli.kecenderungan + paramUndian.kesanRundingBerjaya);
     kestabilan = hadkan(kestabilan + 2);
     populariti = hadkan(populariti + 1);
   } else {
-    ahli.kecenderungan = Math.max(
-      -paramUndian.maksKecenderungan,
-      ahli.kecenderungan + paramUndian.kesanRundingGagal
-    );
+    ahli.kecenderungan = Math.max(-paramUndian.maksKecenderungan,
+      ahli.kecenderungan + paramUndian.kesanRundingGagal);
     kestabilan = hadkan(kestabilan - 1);
     populariti = hadkan(populariti - 1);
   }
@@ -621,7 +579,6 @@ function rundingAhli(id, jenisTawaran) {
   ahli.dirunding = true;
 
   const hasil = document.getElementById("statusRundingan");
-
   if (hasil) {
     hasil.textContent =
       ahli.nama + " (" + ahli.personaliti + "). " +
@@ -637,20 +594,15 @@ function rundingAhli(id, jenisTawaran) {
 
 // 8. PUSINGAN RUNDINGAN BAHARU
 function pusinganRundinganBaharu() {
-  ahliBebas.forEach(ahli => {
-    ahli.dirunding = false;
-  });
-
+  ahliBebas.forEach(ahli => { ahli.dirunding = false; });
   kemasKiniParlimen();
-
   const hasil = document.getElementById("statusRundingan");
   if (hasil) {
-    hasil.textContent =
-      "Pusingan baharu bermula. Semua Ahli Parlimen Bebas boleh dirunding semula. Kecenderungan mereka kekal dari pusingan lepas.";
+    hasil.textContent = "Pusingan baharu bermula. Semua Ahli Parlimen Bebas boleh dirunding semula. Kecenderungan mereka kekal dari pusingan lepas.";
   }
 }
 
-// 9. PAPARAN PARLIMEN DAN RUNDINGAN
+// 9. PAPARAN PARLIMEN
 function kemasKiniParlimen() {
   const menyokong = ahliBebas.filter(a => a.kecenderungan >= 2).length;
   const sokonganAnggaran = kerusiKerajaan + menyokong;
