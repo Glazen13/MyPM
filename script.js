@@ -128,6 +128,171 @@ let nomborUndian = 0;
 const hadSejarahUndian = 20;
 
 // =====================================
+// 3b. SISTEM KALENDAR & GILIRAN MINGGUAN
+// =====================================
+
+const masa = {
+  minggu: 1,      // 1–260
+  bulan: 1,       // 1–65
+  tahun: 1,       // 1–5
+  maksMinggu: 260
+};
+
+// Kira bulan & tahun dari minggu
+function kiraMasa() {
+  masa.bulan = Math.ceil(masa.minggu / 4);
+  masa.tahun = Math.ceil(masa.minggu / 52);
+}
+
+// Paparkan masa semasa
+function kemasKiniKalendar() {
+  kiraMasa();
+
+  const elMinggu = document.getElementById("mingguSemasa");
+  const elBulan = document.getElementById("bulanSemasa");
+  const elTahun = document.getElementById("tahunSemasa");
+  const elStatus = document.getElementById("statusMinggu");
+
+  if (elMinggu) elMinggu.textContent = masa.minggu + " / " + masa.maksMinggu;
+  if (elBulan) elBulan.textContent = masa.bulan + " / 65";
+  if (elTahun) elTahun.textContent = masa.tahun + " / 5";
+
+  if (elStatus) {
+    elStatus.textContent =
+      "Minggu " + masa.minggu +
+      " (Bulan " + masa.bulan +
+      ", Tahun " + masa.tahun + ").";
+  }
+}
+
+// Semak peristiwa yang berlaku minggu ini
+function semakPeristiwaMinggu() {
+  const peristiwa = [];
+
+  // Sempadan bulan: setiap 4 minggu
+  if (masa.minggu % 4 === 0) {
+    peristiwa.push({
+      jenis: "ekonomi",
+      teks: "Laporan ekonomi bulanan akan dikira pada akhir minggu ini."
+    });
+  }
+
+  // Sempadan tahun
+  if (masa.minggu % 52 === 0) {
+    peristiwa.push({
+      jenis: "tahun",
+      teks: "Tahun penggal baharu bermula."
+    });
+  }
+
+  // Tamat penggal
+  if (masa.minggu >= masa.maksMinggu) {
+    peristiwa.push({
+      jenis: "tamat",
+      teks: "Penggal 5 tahun tamat. Pilihan raya akan dijalankan."
+    });
+  }
+
+  return peristiwa;
+}
+
+// Kira ekonomi bulanan
+function kiraEkonomiBulanan() {
+  // Ekonomi berubah berdasarkan kestabilan & populariti
+  const kestabilanFaktor = (kestabilan - 50) / 100;   // −0.5 … +0.5
+  const popularitiFaktor = (populariti - 50) / 200;    // −0.25 … +0.25
+
+  // KDNK tumbuh
+  const tumbesaran = 0.005 + (kestabilanFaktor * 0.01);
+  kdnk += kdnk * tumbesaran;
+
+  // Inflasi
+  inflasi += (popularitiFaktor * 0.05);
+
+  // Pengangguran
+  pengangguran -= (kestabilanFaktor * 0.05);
+
+  // Hutang
+  hutang += 0.005;
+
+  // Hadkan nilai
+  if (inflasi < 0) inflasi = 0;
+  if (pengangguran < 0) pengangguran = 0;
+  if (inflasi > 10) inflasi = 10;
+  if (pengangguran > 10) pengangguran = 10;
+
+  // Kesan kepada ekonomi indeks
+  ekonomi = hadkan(ekonomi + (kestabilanFaktor * 2));
+}
+
+// Tamatkan minggu: majukan masa
+function tamatkanMinggu() {
+  // Semak peristiwa minggu ini
+  const peristiwa = semakPeristiwaMinggu();
+
+  // Kira ekonomi bulanan jika perlu
+  let laporanEkonomi = "";
+  if (masa.minggu % 4 === 0) {
+    kiraEkonomiBulanan();
+    laporanEkonomi = "Laporan ekonomi bulanan telah dikira.";
+  }
+
+  // Majukan minggu
+  masa.minggu++;
+
+  // Sahkan tamat penggal
+  if (masa.minggu > masa.maksMinggu) {
+    alert("Penggal 5 tahun tamat. Permainan akan berakhir dengan pilihan raya.");
+    masa.minggu = masa.maksMinggu;
+    return;
+  }
+
+  kiraMasa();
+  kemasKiniKalendar();
+  kemasKiniPaparan();
+  kemasKiniParlimen();
+
+  // Bina mesej status
+  const elStatus = document.getElementById("statusMinggu");
+  if (elStatus) {
+    let teks = "Minggu " + masa.minggu +
+      " (Bulan " + masa.bulan +
+      ", Tahun " + masa.tahun + ").";
+
+    if (laporanEkonomi) {
+      teks += " " + laporanEkonomi;
+    }
+
+    if (peristiwa.length > 0) {
+      teks += " " + peristiwa.map(p => p.teks).join(" ");
+    }
+
+    elStatus.textContent = teks;
+  }
+
+  // Papar peristiwa jika ada
+  if (peristiwa.length > 0) {
+    const hasil = document.getElementById("hasilUndian");
+    if (hasil) {
+      hasil.innerHTML = `
+        <div class="stat hasil">
+          <h3>Peristiwa Minggu ${masa.minggu - 1}</h3>
+          ${peristiwa.map(p => `
+            <div class="peristiwa-minggu">
+              <h4>${escapeHTML(p.jenis.toUpperCase())}</h4>
+              <p>${escapeHTML(p.teks)}</p>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+  }
+}
+
+// Mula: kemas kini kalendar apabila halaman dimuatkan
+// (ditambah dalam DOMContentLoaded)
+
+// =====================================
 // 2d. FUNGSI PENJELASAN UNDIAN
 // =====================================
 
@@ -669,4 +834,5 @@ document.addEventListener("DOMContentLoaded", () => {
   kemasKiniPaparan();
   kemasKiniParlimen();
   kemasKiniSejarahUndian();
+  kemasKiniKalendar();
 });
