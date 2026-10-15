@@ -902,7 +902,204 @@ const katalogPeristiwa = [
       }
     ]
   }
-];
+],
+    ,
+
+  // === KATEGORI: MEDIA ===
+  {
+    id: "skandal_media",
+    nama: "Skandal Media",
+    keterukan: "teruk",
+    syarat: (s) => s.populariti < 35 && s.kestabilan < 45,
+    keterangan: "Media mendedahkan skandal dalam kerajaan. Rakyat mula hilang kepercayaan.",
+    pilihan: [
+      {
+        teks: "Siasatan terbuka",
+        kesan: (s) => {
+          s.populariti = hadkan(s.populariti + 5);
+          s.kestabilan = hadkan(s.kestabilan - 3);
+        },
+        maklumBalas: "Siasatan diumumkan. Populariti naik, kestabilan turun."
+      },
+      {
+        teks: "Nafikan tuduhan",
+        kesan: (s) => {
+          s.populariti = hadkan(s.populariti - 4);
+          s.kestabilan = hadkan(s.kestabilan + 2);
+        },
+        maklumBalas: "Tuduhan dinafikan. Populariti turun, kestabilan naik sedikit."
+      },
+      {
+        teks: "Saman media",
+        kesan: (s) => {
+          s.populariti = hadkan(s.populariti - 6);
+          s.kestabilan = hadkan(s.kestabilan + 3);
+        },
+        maklumBalas: "Media disaman. Populariti turun, kestabilan naik."
+      }
+    ]
+  },
+  {
+    id: "kempen_media_positif",
+    nama: "Peluang Media",
+    keterukan: "biasa",
+    syarat: (s) => s.populariti > 60 && s.ekonomi > 55,
+    keterangan: "Media memberi liputan positif terhadap kerajaan. Peluang untuk tingkatkan sokongan.",
+    pilihan: [
+      {
+        teks: "Kempen besar",
+        kesan: (s) => {
+          s.populariti = hadkan(s.populariti + 5);
+          s.hutang += 0.02;
+        },
+        maklumBalas: "Kempen dilancarkan. Populariti naik, hutang naik."
+      },
+      {
+        teks: "Biar semula jadi",
+        kesan: (s) => {
+          s.populariti = hadkan(s.populariti + 2);
+        },
+        maklumBalas: "Liputan positif berterusan. Populariti naik sedikit."
+      }
+    ]
+  },
+
+  // === KATEGORI: DASAR ===
+  {
+    id: "tuntutan_reformasi",
+    nama: "Tuntutan Reformasi",
+    keterukan: "sederhana",
+    syarat: (s) => s.populariti < 45 && s.kestabilan > 40,
+    keterangan: "Rakyat menuntut reformasi dasar. Kerajaan perlu respons.",
+    pilihan: [
+      {
+        teks: "Laksana reformasi",
+        kesan: (s) => {
+          s.populariti = hadkan(s.populariti + 8);
+          s.ekonomi = hadkan(s.ekonomi - 3);
+        },
+        maklumBalas: "Reformasi dilaksana. Populariti naik, ekonomi turun sedikit."
+      },
+      {
+        teks: "Tangguh dahulu",
+        kesan: (s) => {
+          s.populariti = hadkan(s.populariti - 4);
+        },
+        maklumBalas: "Reformasi ditangguh. Populariti turun."
+      }
+    ]
+  },
+  {
+    id: "tuntutan_pembangunan",
+    nama: "Tuntutan Pembangunan",
+    keterukan: "biasa",
+    syarat: (s) => s.ekonomi > 45 && s.populariti < 55,
+    keterangan: "Rakyat minta projek pembangunan di kawasan mereka.",
+    pilihan: [
+      {
+        teks: "Luluskan projek",
+        kesan: (s) => {
+          s.populariti = hadkan(s.populariti + 6);
+          s.hutang += 0.03;
+        },
+        maklumBalas: "Projek diluluskan. Populariti naik, hutang naik."
+      },
+      {
+        teks: "Kaji dahulu",
+        kesan: (s) => {
+          s.populariti = hadkan(s.populariti - 2);
+          s.ekonomi = hadkan(s.ekonomi + 2);
+        },
+        maklumBalas: "Projek dikaji. Populariti turun sedikit, ekonomi naik."
+      }
+    ]
+  },
+
+  // === KATEGORI: KRISIS LANJUTAN ===
+  {
+    id: "krisis_kabinet",
+    nama: "Krisis Kabinet",
+    keterukan: "teruk",
+    syarat: (s) => s.kestabilan < 30 && s.populariti < 40,
+    keterangan: "Menteri kabinet bergaduh secara terbuka. Kerajaan nampak lemah.",
+    pilihan: [
+      {
+        teks: "Rombak kabinet",
+        kesan: (s) => {
+          s.kestabilan = hadkan(s.kestabilan + 8);
+          s.populariti = hadkan(s.populariti - 2);
+        },
+        maklumBalas: "Kabinet dirombak. Kestabilan naik, populariti turun."
+      },
+      {
+        teks: "Mediasi",
+        kesan: (s) => {
+          s.kestabilan = hadkan(s.kestabilan + 4);
+        },
+        maklumBalas: "Mediasi dijalankan. Kestabilan naik."
+      },
+      {
+        teks: "Biar selesai sendiri",
+        kesan: (s) => {
+          s.kestabilan = hadkan(s.kestabilan - 3);
+          s.populariti = hadkan(s.populariti - 2);
+        },
+        maklumBalas: "Krisis berterusan. Kestabilan & populariti turun."
+      }
+    ]
+  },
+  {
+    id: "krisis_antarabangsa",
+    nama: "Krisis Antarabangsa",
+    keterukan: "sederhana",
+    syarat: (s) => s.ekonomi > 50 && s.hutang > 1.3,
+    keterangan: "Ketegangan antarabangsa menjejaskan perdagangan Malaysia.",
+    pilihan: [
+      {
+        teks: "Diplomasi",
+        kesan: (s) => {
+          s.ekonomi = hadkan(s.ekonomi + 3);
+          s.populariti = hadkan(s.populariti + 2);
+        },
+        maklumBalas: "Diplomasi berjaya. Ekonomi & populariti naik."
+      },
+      {
+        teks: "Kukuhkan pertahanan",
+        kesan: (s) => {
+          s.hutang += 0.05;
+          s.kestabilan = hadkan(s.kestabilan + 3);
+        },
+        maklumBalas: "Pertahanan dikukuhkan. Hutang naik, kestabilan naik."
+      }
+    ]
+  },
+
+  // === KATEGORI: PILIHAN RAYA ===
+  {
+    id: "tekanan_pilihan_raya",
+    nama: "Tekanan Pilihan Raya",
+    keterukan: "sederhana",
+    syarat: (s) => s.populariti < 35 && s.kestabilan < 45,
+    keterangan: "Pembangkang mendesak pilihan raya awal diadakan.",
+    pilihan: [
+      {
+        teks: "Tolak pilihan raya awal",
+        kesan: (s) => {
+          s.kestabilan = hadkan(s.kestabilan + 4);
+          s.populariti = hadkan(s.populariti - 3);
+        },
+        maklumBalas: "Pilihan raya awal ditolak. Kestabilan naik, populariti turun."
+      },
+      {
+        teks: "Pertimbang",
+        kesan: (s) => {
+          s.populariti = hadkan(s.populariti + 3);
+          s.kestabilan = hadkan(s.kestabilan - 2);
+        },
+        maklumBalas: "PM pertimbang. Populariti naik, kestabilan turun."
+      }
+    ]
+  }
 
 // Semak peristiwa yang layak dicetuskan
 function semakPeristiwaBaru() {
