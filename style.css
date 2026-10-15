@@ -580,3 +580,60 @@ footer {
     margin-left: 0;
   }
 }
+/* Laporan akhir penggal */
+.stat.laporan {
+  background: #f8fafc;
+  text-align: left;
+  padding: 20px;
+  margin: 15px 0;
+  border-left: 5px solid #1769aa;
+  border-radius: 10px;
+}
+
+.stat.laporan h3 {
+  font-size: 18px;
+  margin: 0 0 10px;
+  color: #123b63;
+  border-bottom: 2px solid #e8f1fb;
+  padding-bottom: 6px;
+}
+
+.stat.laporan h4 {
+  font-size: 15px;
+  margin: 15px 0 6px;
+  color: #475569;
+}
+
+.stat.laporan p {
+  font-size: 14px;
+  margin: 4px 0;
+  font-weight: normal;
+  color: #1f2937;
+}
+
+.stat.laporan ul {
+  margin: 6px 0;
+  padding-left: 22px;
+  font-size: 14px;
+}
+
+.stat.laporan li {
+  margin: 3px 0;
+}
+
+.laporan-markah {
+  font-size: 32px;
+  font-weight: bold;
+  color: #123b63;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.butang-salin {
+  margin-top: 15px;
+  background: #047857;
+}
+
+.butang-salin:hover {
+  background: #065f46;
+}
