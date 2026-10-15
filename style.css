@@ -233,6 +233,7 @@ button.sekunder:hover {
   margin: 4px 0;
 }
 
+/* Label status AP bebas */
 .status-sokong {
   color: #047857;
   font-weight: bold;
@@ -288,18 +289,4 @@ footer {
   .stat p {
     font-size: 24px;
   }
-}
-/* Kad AP bebas — label status */
-.status-sokong {
-  color: #047857;
-  font-weight: bold;
-}
-
-.status-tolak {
-  color: #b91c1c;
-  font-weight: bold;
-}
-
-.status-neutral {
-  color: #64748b;
 }
