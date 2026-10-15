@@ -56,7 +56,10 @@ main {
   padding-bottom: 6px;
 }
 
-/* Kad statistik */
+/* =====================================
+   Kad statistik
+   ===================================== */
+
 .stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -83,7 +86,10 @@ main {
   margin: 10px 0;
 }
 
-/* Butang */
+/* =====================================
+   Butang
+   ===================================== */
+
 button {
   background: #1769aa;
   color: white;
@@ -116,7 +122,10 @@ button.sekunder:hover {
   background: #475569;
 }
 
-/* Borang undian */
+/* =====================================
+   Borang undian
+   ===================================== */
+
 .form-undian {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
@@ -150,7 +159,10 @@ button.sekunder:hover {
   box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.15);
 }
 
-/* Hasil undian */
+/* =====================================
+   Hasil undian
+   ===================================== */
+
 #hasilUndian {
   margin: 20px 0;
 }
@@ -184,7 +196,10 @@ button.sekunder:hover {
   font-weight: bold;
 }
 
-/* Sejarah undian */
+/* =====================================
+   Sejarah undian
+   ===================================== */
+
 #sejarahUndian {
   margin: 15px 0 25px;
 }
@@ -213,7 +228,10 @@ button.sekunder:hover {
   color: #64748b;
 }
 
-/* Kad ahli bebas */
+/* =====================================
+   Kad AP Bebas
+   ===================================== */
+
 .stat.ahli {
   background: #f8fafc;
   text-align: left;
@@ -233,27 +251,19 @@ button.sekunder:hover {
   margin: 4px 0;
 }
 
-/* Label status AP bebas */
-.status-sokong {
-  color: #047857;
-  font-weight: bold;
-}
-
-.status-tolak {
-  color: #b91c1c;
-  font-weight: bold;
-}
-
-.status-neutral {
-  color: #64748b;
-}
+.status-sokong { color: #047857; font-weight: bold; }
+.status-tolak { color: #b91c1c; font-weight: bold; }
+.status-neutral { color: #64748b; }
 
 .nota {
   color: #64748b;
   font-size: 13px;
 }
 
-/* Mesej tindakan */
+/* =====================================
+   Mesej tindakan
+   ===================================== */
+
 #mesej {
   background: #f3f4f6;
   padding: 15px;
@@ -261,35 +271,10 @@ button.sekunder:hover {
   margin-top: 20px;
 }
 
-footer {
-  text-align: center;
-  padding: 20px;
-  color: #64748b;
-}
+/* =====================================
+   Kalendar & giliran mingguan
+   ===================================== */
 
-/* Responsif */
-@media (max-width: 600px) {
-  .stats {
-    grid-template-columns: 1fr;
-  }
-
-  .panel {
-    padding: 18px;
-  }
-
-  header h1 {
-    font-size: 26px;
-  }
-
-  button {
-    width: 100%;
-    margin: 5px 0;
-  }
-
-  .stat p {
-    font-size: 24px;
-
-     /* Kalendar & giliran mingguan */
 .aksi-minggu {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
@@ -331,9 +316,11 @@ footer {
   font-size: 14px;
   color: #78350f;
 }
-  }
-}
-/* Peristiwa */
+
+/* =====================================
+   Peristiwa bersyarat
+   ===================================== */
+
 .peristiwa {
   background: #fef2f2;
   border-left: 5px solid #dc2626;
@@ -392,7 +379,11 @@ footer {
   background: #f8fafc;
   border-left: 4px solid #cbd5e1;
 }
-/* Parti politik */
+
+/* =====================================
+   Parti politik
+   ===================================== */
+
 .stat.parti {
   background: #f8fafc;
   text-align: left;
@@ -419,7 +410,11 @@ footer {
   border-radius: 6px;
   font-size: 13px;
 }
-/* Media & pendapat awam */
+
+/* =====================================
+   Media & pendapat awam
+   ===================================== */
+
 #hasilKomunikasi {
   margin: 15px 0 25px;
 }
@@ -430,7 +425,11 @@ footer {
   padding: 15px 18px;
   border-left: 5px solid #2563eb;
 }
-/* Dasar & projek */
+
+/* =====================================
+   Dasar & projek
+   ===================================== */
+
 .stat.dasar {
   background: #f8fafc;
   text-align: left;
@@ -473,3 +472,40 @@ footer {
 
 .bar-kemajuan-dalam.selesai { background: #047857; }
 .bar-kemajuan-dalam.gagal { background: #b91c1c; }
+
+/* =====================================
+   Footer
+   ===================================== */
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #64748b;
+}
+
+/* =====================================
+   Responsif (telefon)
+   ===================================== */
+
+@media (max-width: 600px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+
+  header h1 {
+    font-size: 26px;
+  }
+
+  button {
+    width: 100%;
+    margin: 5px 0;
+  }
+
+  .stat p {
+    font-size: 24px;
+  }
+}
