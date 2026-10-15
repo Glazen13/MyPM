@@ -2,7 +2,7 @@
 
 // =====================================
 // MyPM SIMULASI - SISTEM NEGARA
-// Fasa 2.1: Integrasi kecenderungan
+// Fasa 2.3: Model MP Individu & Undian
 // =====================================
 
 // 1. STATISTIK NEGARA
@@ -46,14 +46,35 @@ const paramMP = {
   disiplinPembangkang: 0.95,
   maksKecenderungan: 3
 };
+
+// Jana satu MP individu
+function janaMP(afiliasi, id) {
+  return {
+    id: id,
+    afiliasi: afiliasi,
+    kecenderungan: 0,
+    hadir: true,
+    undi: "belum"
+  };
+}
+
+// Jana senarai MP kerajaan (120)
+const mpKerajaan = [];
+for (let i = 1; i <= 120; i++) {
+  mpKerajaan.push(janaMP("kerajaan", i));
+}
+
+// Jana senarai MP pembangkang (92)
+const mpPembangkang = [];
+for (let i = 1; i <= 92; i++) {
+  mpPembangkang.push(janaMP("pembangkang", i));
+}
+
 // =====================================
 // 2c. FUNGSI UNDI MP INDIVIDU
 // =====================================
 
-// Tentukan undi satu MP kerajaan atau pembangkang
-// berdasarkan afiliasi, disiplin parti, dan kecenderungan peribadi
 function undiMPParti(mp) {
-  // Tentukan hadir atau tidak
   const peluangHadir = mp.afiliasi === "kerajaan"
     ? paramMP.hadirKerajaan
     : paramMP.hadirPembangkang;
@@ -65,25 +86,16 @@ function undiMPParti(mp) {
     return mp;
   }
 
-  // Tentukan undi ikut afiliasi
-  // Kerajaan: sokong melainkan kecenderungan peribadi menolak
-  // Pembangkang: tolak melainkan kecenderungan peribadi menyokong
   const disiplin = mp.afiliasi === "kerajaan"
     ? paramMP.disiplinKerajaan
     : paramMP.disiplinPembangkang;
 
-  // Kesan kecenderungan peribadi
-  // kecenderungan positif → lebih cenderung sokong
-  // kecenderungan negatif → lebih cenderung tolak
   let peluangSokong;
 
   if (mp.afiliasi === "kerajaan") {
-    peluangSokong = disiplin
-      + (mp.kecenderungan * 0.05);
+    peluangSokong = disiplin + (mp.kecenderungan * 0.05);
   } else {
-    // Pembangkang: asas 1 - disiplin
-    peluangSokong = (1 - disiplin)
-      + (mp.kecenderungan * 0.05);
+    peluangSokong = (1 - disiplin) + (mp.kecenderungan * 0.05);
   }
 
   peluangSokong = Math.max(0, Math.min(1, peluangSokong));
@@ -99,33 +111,9 @@ function undiMPParti(mp) {
   return mp;
 }
 
-// Undi semua MP kerajaan & pembangkang
 function undiSemuaMPParti() {
   mpKerajaan.forEach(mp => undiMPParti(mp));
   mpPembangkang.forEach(mp => undiMPParti(mp));
-}
-
-// Jana satu MP individu
-function janaMP(afiliasi, id) {
-  return {
-    id: id,
-    afiliasi: afiliasi,          // "kerajaan" atau "pembangkang"
-    kecenderungan: 0,            // -3 … +3 (0 = ikut parti)
-    hadir: true,                 // dikira semasa undian
-    undi: "belum"                // "menyokong" | "menentang" | "berkecuali"
-  };
-}
-
-// Jana senarai MP kerajaan (120)
-const mpKerajaan = [];
-for (let i = 1; i <= 120; i++) {
-  mpKerajaan.push(janaMP("kerajaan", i));
-}
-
-// Jana senarai MP pembangkang (92)
-const mpPembangkang = [];
-for (let i = 1; i <= 92; i++) {
-  mpPembangkang.push(janaMP("pembangkang", i));
 }
 
 const tawaran = {
@@ -161,14 +149,12 @@ const hadSejarahUndian = 20;
 
 // Label status (paparan sahaja)
 function labelStatus(ahli) {
-  // Berdasarkan kecenderungan
   if (ahli.kecenderungan >= 2) {
     return { teks: "Menyokong kerajaan", kelas: "status-sokong" };
   }
   if (ahli.kecenderungan <= -2) {
     return { teks: "Menentang kerajaan", kelas: "status-tolak" };
   }
-  // Kecenderungan neutral
   if (ahli.dirunding) {
     return { teks: "Sudah dirunding", kelas: "status-neutral" };
   }
@@ -296,6 +282,8 @@ function jalankanUndian() {
     sokong: jumlahSokong,
     tolak: jumlahTolak,
     berkecuali: jumlahBerkecuali,
+    absen: jumlahAbsen,
+    majoritiHadir: majoritiHadir,
     lulus: lulus,
     masa: new Date().toLocaleString("ms-MY")
   };
@@ -346,9 +334,9 @@ function jalankanUndian() {
       <p>Undi menyokong: ${jumlahSokong}</p>
       <p>Undi menentang: ${jumlahTolak}</p>
       <p>Undi berkecuali: ${jumlahBerkecuali}</p>
-      <p>Majoriti diperlukan: ${majoritiHadir}</p>
       <p>Jumlah hadir: ${jumlahHadir}</p>
       <p>Jumlah absen: ${jumlahAbsen}</p>
+      <p>Majoriti diperlukan: ${majoritiHadir}</p>
       <p>${lulus
         ? "Kerajaan berjaya meluluskan usul."
         : "Kerajaan gagal mendapatkan sokongan mencukupi."}</p>
@@ -393,7 +381,7 @@ function kemasKiniSejarahUndian() {
       <p class="keputusan-${item.lulus ? "lulus" : "tolak"}">
         ${item.lulus ? "Diluluskan" : "Ditolak"}
       </p>
-      <p>Sokong: ${item.sokong} | Tolak: ${item.tolak} | Berkecuali: ${item.berkecuali}</p>
+      <p>Sokong: ${item.sokong} | Tolak: ${item.tolak} | Berkecuali: ${item.berkecuali} | Absen: ${item.absen}</p>
       <small>${escapeHTML(item.masa)}</small>
     </div>
   `).join("");
@@ -451,7 +439,6 @@ function buatKeputusan(jenis) {
     ekonomi = hadkan(ekonomi + 2);
     pengangguran = Math.max(0, pengangguran - 0.1);
 
-    // Reformasi menaikkan kecenderungan AP keutamaan "dasar"
     ahliBebas.forEach(ahli => {
       if (ahli.keutamaan === "dasar") {
         ahli.kecenderungan = Math.min(
@@ -488,7 +475,7 @@ function dialogRespons(ahli, jenisTawaran, berjaya) {
   return "“" + dialogGagal[jenisTawaran] + "”";
 }
 
-// 7. RUNDING AHLI BEBAS (kecenderungan sebagai penentu tunggal)
+// 7. RUNDING AHLI BEBAS
 function rundingAhli(id, jenisTawaran) {
   const ahli = ahliBebas.find(item => item.id === id);
 
@@ -536,7 +523,7 @@ function rundingAhli(id, jenisTawaran) {
   kemasKiniParlimen();
 }
 
-// 8. PUSINGAN RUNDINGAN BAHARU (reset dirunding sahaja)
+// 8. PUSINGAN RUNDINGAN BAHARU
 function pusinganRundinganBaharu() {
   ahliBebas.forEach(ahli => {
     ahli.dirunding = false;
@@ -553,7 +540,6 @@ function pusinganRundinganBaharu() {
 
 // 9. PAPARAN PARLIMEN DAN RUNDINGAN
 function kemasKiniParlimen() {
-  // Sokongan dikira dari kecenderungan ≥ 2
   const menyokong = ahliBebas.filter(a => a.kecenderungan >= 2).length;
   const sokongan = kerusiKerajaan + menyokong;
 
