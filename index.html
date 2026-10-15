@@ -1,0 +1,62 @@
+```html
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyPM Simulasi</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>MyPM Simulasi</h1>
+    <p>Simulasi Pengurusan Negara Malaysia</p>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>Dashboard Perdana Menteri</h2>
+      <p>Selamat datang ke MyPM Simulasi!</p>
+
+      <div class="stats">
+        <div class="stat">
+          <h3>Populariti</h3>
+          <p id="populariti">50%</p>
+        </div>
+
+        <div class="stat">
+          <h3>Ekonomi</h3>
+          <p id="ekonomi">50</p>
+        </div>
+
+        <div class="stat">
+          <h3>Kestabilan</h3>
+          <p id="kestabilan">50</p>
+        </div>
+      </div>
+
+      <h3>Tindakan Kerajaan</h3>
+      <button onclick="buatKeputusan('ekonomi')">
+        Umumkan Pelan Ekonomi
+      </button>
+
+      <button onclick="buatKeputusan('rakyat')">
+        Umumkan Bantuan Rakyat
+      </button>
+
+      <button onclick="buatKeputusan('reformasi')">
+        Laksanakan Reformasi
+      </button>
+
+      <p id="mesej">Pilih tindakan pertama anda.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>MyPM Simulasi | Versi Pembangunan 1.0</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
+```
