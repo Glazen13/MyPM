@@ -1625,6 +1625,165 @@ function mulaPenggalBaharu() {
     elStatus.textContent = "Penggal ke-2 bermula. Minggu 1, Hari 1.";
   }
 }
+// =====================================
+// 8b. LAPORAN AKHIR PENGGAL (Fasa 4.2)
+// =====================================
+
+// Nilai awal untuk perbandingan
+const nilaiAwal = {
+  populariti: 50,
+  ekonomi: 50,
+  kestabilan: 50,
+  kdnk: 1.8,
+  inflasi: 2.5,
+  pengangguran: 3.5,
+  hutang: 1.2
+};
+
+function paparLaporanAkhir() {
+  const panel = document.getElementById("panelLaporan");
+  if (!panel) return;
+
+  const markah = kiraMarkahPilihanRaya();
+  const kerusi = kiraKerusiPilihanRaya(markah.markah);
+  const keputusan = tentukanKeputusanKerusi(kerusi);
+
+  // Statistik undian
+  const undianLulus = sejarahUndian.filter(u => u.lulus).length;
+  const undianTolak = sejarahUndian.filter(u => !u.lulus).length;
+
+  // Statistik dasar
+  const dasarSelesai = senaraiDasar.filter(d => d.status === "selesai").length;
+  const dasarGagal = senaraiDasar.filter(d => d.status === "gagal").length;
+  const dasarAktif = senaraiDasar.filter(d => d.status === "aktif").length;
+
+  // Statistik peristiwa
+  const jumlahPeristiwa = sejarahPeristiwa.length;
+
+  // Statistik parti
+  const hubunganAkhir = kiraHubunganParti();
+
+  // Kira perubahan
+  const perubahanPopulariti = populariti - nilaiAwal.populariti;
+  const perubahanEkonomi = ekonomi - nilaiAwal.ekonomi;
+  const perubahanKestabilan = kestabilan - nilaiAwal.kestabilan;
+
+  const kelas = keputusan.status.startsWith("menang") ? "menang" : "kalah";
+
+  panel.innerHTML = `
+    <div class="stat laporan">
+      <h3>Laporan Akhir Penggal</h3>
+      <div class="laporan-markah">${kerusi} / 222 kerusi</div>
+      <p><strong>Keputusan:</strong> ${keputusan.teks}</p>
+
+      <h4>Prestasi Negara</h4>
+      <ul>
+        <li>Populariti: ${populariti}% (${perubahanPopulariti >= 0 ? "+" : ""}${perubahanPopulariti})</li>
+        <li>Ekonomi: ${ekonomi} (${perubahanEkonomi >= 0 ? "+" : ""}${perubahanEkonomi})</li>
+        <li>Kestabilan: ${kestabilan} (${perubahanKestabilan >= 0 ? "+" : ""}${perubahanKestabilan})</li>
+      </ul>
+
+      <h4>Ekonomi</h4>
+      <ul>
+        <li>KDNK: RM ${kdnk.toFixed(2)}T (dari RM ${nilaiAwal.kdnk}T)</li>
+        <li>Inflasi: ${inflasi.toFixed(1)}% (dari ${nilaiAwal.inflasi}%)</li>
+        <li>Pengangguran: ${pengangguran.toFixed(1)}% (dari ${nilaiAwal.pengangguran}%)</li>
+        <li>Hutang: RM ${hutang.toFixed(2)}T (dari RM ${nilaiAwal.hutang}T)</li>
+      </ul>
+
+      <h4>Parlimen</h4>
+      <ul>
+        <li>Undian lulus: ${undianLulus}</li>
+        <li>Undian tolak: ${undianTolak}</li>
+        <li>Jumlah undian: ${sejarahUndian.length}</li>
+      </ul>
+
+      <h4>Dasar & Projek</h4>
+      <ul>
+        <li>Selesai: ${dasarSelesai}</li>
+        <li>Gagal: ${dasarGagal}</li>
+        <li>Sedang berjalan: ${dasarAktif}</li>
+      </ul>
+
+      <h4>Peristiwa</h4>
+      <ul>
+        <li>Jumlah peristiwa berlaku: ${jumlahPeristiwa}</li>
+      </ul>
+
+      <h4>Parti Politik</h4>
+      <ul>
+        <li>Hubungan purata gabungan: ${hubunganAkhir} / 100</li>
+      </ul>
+
+      <h4>Pilihan Raya</h4>
+      <ul>
+        <li>Kerusi kerajaan: ${kerusi}</li>
+        <li>Kerusi pembangkang: ${222 - kerusi}</li>
+        <li>Majoriti mudah: 112</li>
+        <li>Keputusan: ${keputusan.teks}</li>
+      </ul>
+
+      <button class="butang-salin" onclick="salinLaporan()">
+        📋 Salin Laporan
+      </button>
+    </div>
+  `;
+}
+
+function salinLaporan() {
+  const markah = kiraMarkahPilihanRaya();
+  const kerusi = kiraKerusiPilihanRaya(markah.markah);
+  const keputusan = tentukanKeputusanKerusi(kerusi);
+
+  const teks = `
+LAPORAN AKHIR PENGGAL — MyPM SIMULASI
+==========================================
+
+KEPUTUSAN PILIHAN RAYA
+- Kerusi: ${kerusi} / 222
+- Keputusan: ${keputusan.teks}
+
+PRESTASI NEGARA
+- Populariti: ${populariti}%
+- Ekonomi: ${ekonomi}
+- Kestabilan: ${kestabilan}
+
+EKONOMI
+- KDNK: RM ${kdnk.toFixed(2)}T
+- Inflasi: ${inflasi.toFixed(1)}%
+- Pengangguran: ${pengangguran.toFixed(1)}%
+- Hutang: RM ${hutang.toFixed(2)}T
+
+PARLIMEN
+- Undian lulus: ${sejarahUndian.filter(u => u.lulus).length}
+- Undian tolak: ${sejarahUndian.filter(u => !u.lulus).length}
+
+DASAR
+- Selesai: ${senaraiDasar.filter(d => d.status === "selesai").length}
+- Gagal: ${senaraiDasar.filter(d => d.status === "gagal").length}
+
+PERISTIWA
+- Jumlah: ${sejarahPeristiwa.length}
+
+PARTI
+- Hubungan gabungan: ${kiraHubunganParti()} / 100
+
+==========================================
+Dijana: ${new Date().toLocaleString("ms-MY")}
+  `.trim();
+
+  // Cuba guna clipboard API
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(teks).then(() => {
+      alert("Laporan disalin ke clipboard!");
+    }).catch(() => {
+      // Fallback
+      alert("Salin manual:\n\n" + teks);
+    });
+  } else {
+    alert("Salin manual:\n\n" + teks);
+  }
+}
 
 // =====================================
 // 9. MULAKAN APLIKASI
