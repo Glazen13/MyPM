@@ -34,6 +34,42 @@ const ahliBebas = [
   { id: 10, nama: "Ahli Parlimen Bebas 10", personaliti: "Suka berunding", keutamaan: "pembangunan", kecenderungan: 0, dirunding: false }
 ];
 
+// =====================================
+// 2b. MODEL MP INDIVIDU (Kerajaan & Pembangkang)
+// =====================================
+
+// Parameter individu MP
+const paramMP = {
+  hadirKerajaan: 0.95,
+  hadirPembangkang: 0.90,
+  disiplinKerajaan: 0.95,
+  disiplinPembangkang: 0.95,
+  maksKecenderungan: 3
+};
+
+// Jana satu MP individu
+function janaMP(afiliasi, id) {
+  return {
+    id: id,
+    afiliasi: afiliasi,          // "kerajaan" atau "pembangkang"
+    kecenderungan: 0,            // -3 … +3 (0 = ikut parti)
+    hadir: true,                 // dikira semasa undian
+    undi: "belum"                // "menyokong" | "menentang" | "berkecuali"
+  };
+}
+
+// Jana senarai MP kerajaan (120)
+const mpKerajaan = [];
+for (let i = 1; i <= 120; i++) {
+  mpKerajaan.push(janaMP("kerajaan", i));
+}
+
+// Jana senarai MP pembangkang (92)
+const mpPembangkang = [];
+for (let i = 1; i <= 92; i++) {
+  mpPembangkang.push(janaMP("pembangkang", i));
+}
+
 const tawaran = {
   pembangunan: {
     nama: "Pembangunan kawasan",
