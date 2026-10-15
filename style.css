@@ -419,3 +419,14 @@ footer {
   border-radius: 6px;
   font-size: 13px;
 }
+/* Media & pendapat awam */
+#hasilKomunikasi {
+  margin: 15px 0 25px;
+}
+
+#hasilKomunikasi .stat.hasil {
+  background: #eff6ff;
+  text-align: left;
+  padding: 15px 18px;
+  border-left: 5px solid #2563eb;
+}
