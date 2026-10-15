@@ -171,6 +171,12 @@ function kemasKiniParlimen() {
 
   const senarai = document.getElementById("senaraiBebas");
 
+const butangPusingan = document.createElement("button");
+butangPusingan.textContent = "Mulakan Pusingan Rundingan Baharu";
+butangPusingan.onclick = pusinganRundinganBaharu;
+
+senarai.appendChild(butangPusingan);
+
   senarai.innerHTML = ahliBebas.map(ahli => {
     let status = "Belum dirunding";
 
@@ -209,6 +215,11 @@ function kemasKiniParlimen() {
     document.getElementById("statusRundingan").textContent =
       "Pilih tawaran untuk memulakan rundingan dengan seorang Ahli Parlimen bebas.";
   }
+  const butangPusingan = document.createElement("button");
+butangPusingan.textContent = "Mulakan Pusingan Rundingan Baharu";
+butangPusingan.onclick = pusinganRundinganBaharu;
+
+senarai.appendChild(butangPusingan);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
