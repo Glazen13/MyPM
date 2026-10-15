@@ -1577,4 +1577,5 @@ document.addEventListener("DOMContentLoaded", () => {
   paparPeristiwa();
   kemasKiniSejarahPeristiwa();
   paparParti();
+  paparPendapat();
 });
