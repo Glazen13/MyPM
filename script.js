@@ -2,7 +2,7 @@
 
 // =====================================
 // MyPM SIMULASI - SISTEM NEGARA
-// Fasa 4.1: Pilihan Raya
+// Fasa 4.1: Pilihan Raya Berdasarkan Kerusi
 // =====================================
 
 // =====================================
@@ -1404,11 +1404,16 @@ function kiraMarkahPilihanRaya() {
   };
 }
 
-function tentukanKeputusan(markah) {
-  if (markah >= 55) return { status: "menang-selesa", teks: "MENANG SELESA" };
-  if (markah >= 45) return { status: "menang-tipis", teks: "MENANG TIPIS" };
-  if (markah >= 35) return { status: "kalah-tipis", teks: "KALAH TIPIS" };
-  return { status: "kalah-teruk", teks: "KALAH TERUK" };
+function kiraKerusiPilihanRaya(markah) {
+  const kerusi = Math.round(222 * (markah / 100));
+  return Math.max(0, Math.min(222, kerusi));
+}
+
+function tentukanKeputusanKerusi(kerusi) {
+  if (kerusi >= 148) return { status: "menang-besar", teks: "MENANG BESAR (2/3)" };
+  if (kerusi >= 112) return { status: "menang", teks: "MENANG MAJORITI" };
+  if (kerusi >= 100) return { status: "menang-tipis", teks: "MENANG TIPIS (perlu gabungan)" };
+  return { status: "kalah", teks: "KALAH" };
 }
 
 function paparPanelPilihanRaya() {
@@ -1428,24 +1433,31 @@ function paparPanelPilihanRaya() {
   }
 
   const markah = kiraMarkahPilihanRaya();
-  const keputusan = tentukanKeputusan(markah.markah);
+  const kerusi = kiraKerusiPilihanRaya(markah.markah);
+  const keputusan = tentukanKeputusanKerusi(kerusi);
   const kelas = keputusan.status.startsWith("menang") ? "menang" : "kalah";
+  const kerusiPembangkang = 222 - kerusi;
 
   panel.innerHTML = `
     <div class="stat pilihanraya ${kelas}">
       <h3>Keputusan Pilihan Raya</h3>
-      <div class="markah-besar">${markah.markah}</div>
+      <div class="markah-besar">${kerusi} / 222</div>
       <p><strong>Keputusan:</strong> ${keputusan.teks}</p>
+      <p>Kerusi kerajaan: <strong>${kerusi}</strong></p>
+      <p>Kerusi pembangkang: <strong>${kerusiPembangkang}</strong></p>
+      <p>Majoriti mudah: 112 kerusi</p>
+      <hr>
+      <p class="nota">Pecahan markah (${markah.markah} / 100):</p>
       <p>Populariti: ${markah.populariti} (× 0.30)</p>
       <p>Ekonomi: ${markah.ekonomi} (× 0.25)</p>
       <p>Kestabilan: ${markah.kestabilan} (× 0.20)</p>
       <p>Hubungan parti: ${markah.hubungan} (× 0.15)</p>
-      <p>Bonus dasar selesai: +${markah.bonusDasar} (${markah.dasarSelesai} dasar)</p>
-      <p>Penalti dasar gagal: −${markah.penaltiDasar} (${markah.dasarGagal} dasar)</p>
+      <p>Bonus dasar: +${markah.bonusDasar}</p>
+      <p>Penalti dasar: −${markah.penaltiDasar}</p>
       <p>Bonus undian: ${markah.bonusUndian > 0 ? "+" : ""}${markah.bonusUndian}</p>
       <p><strong>${keputusan.status.startsWith("menang")
-        ? "Kerajaan berjaya membentuk kerajaan baharu."
-        : "Kerajaan gagal. PM kehilangan jawatan."}</strong></p>
+        ? "Kerajaan berjaya membentuk kerajaan baharu dengan " + kerusi + " kerusi."
+        : "Kerajaan gagal. Pembangkang membentuk kerajaan dengan " + kerusiPembangkang + " kerusi."}</strong></p>
     </div>
     <button class="utama" onclick="jalankanPilihanRaya()">
       Sahkan Pilihan Raya
@@ -1455,18 +1467,19 @@ function paparPanelPilihanRaya() {
 
 function jalankanPilihanRaya() {
   const markah = kiraMarkahPilihanRaya();
-  const keputusan = tentukanKeputusan(markah.markah);
+  const kerusi = kiraKerusiPilihanRaya(markah.markah);
+  const keputusan = tentukanKeputusanKerusi(kerusi);
 
   paparPanelPilihanRaya();
 
   if (keputusan.status.startsWith("menang")) {
     setTimeout(() => {
-      if (confirm("Anda menang! Mahu teruskan penggal ke-2?\n\nTekan OK untuk penggal baharu, Cancel untuk tamat.")) {
+      if (confirm("Anda menang dengan " + kerusi + " kerusi!\n\nMahu teruskan penggal ke-2?")) {
         mulaPenggalBaharu();
       }
     }, 100);
   } else {
-    alert("Anda kalah dalam pilihan raya.\n\nMarkah: " + markah.markah + "\n\nPermainan tamat.");
+    alert("Anda kalah.\n\nKerusi: " + kerusi + " / 222\n\nPembangkang membentuk kerajaan.\n\nPermainan tamat.");
   }
 }
 
