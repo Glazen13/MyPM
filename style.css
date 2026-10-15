@@ -1,4 +1,8 @@
-{
+/* =====================================
+   MyPM Simulasi - Gaya
+   ===================================== */
+
+* {
   box-sizing: border-box;
 }
 
@@ -7,6 +11,7 @@ body {
   font-family: Arial, sans-serif;
   background: #eef2f7;
   color: #1f2937;
+  line-height: 1.5;
 }
 
 header {
@@ -39,6 +44,19 @@ main {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
+.panel h2 {
+  margin-top: 0;
+  color: #123b63;
+}
+
+.panel h3 {
+  margin-top: 30px;
+  color: #123b63;
+  border-bottom: 2px solid #e8f1fb;
+  padding-bottom: 6px;
+}
+
+/* Kad statistik */
 .stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -55,6 +73,7 @@ main {
 
 .stat h3 {
   font-size: 15px;
+  margin: 0 0 6px;
 }
 
 .stat p {
@@ -64,6 +83,7 @@ main {
   margin: 10px 0;
 }
 
+/* Butang */
 button {
   background: #1769aa;
   color: white;
@@ -79,6 +99,160 @@ button:hover {
   background: #0d4778;
 }
 
+button.utama {
+  background: #0d4778;
+  font-weight: bold;
+}
+
+button.utama:hover {
+  background: #093259;
+}
+
+button.sekunder {
+  background: #64748b;
+}
+
+button.sekunder:hover {
+  background: #475569;
+}
+
+/* Borang undian */
+.form-undian {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 18px;
+  margin: 15px 0 25px;
+}
+
+.form-undian label {
+  display: block;
+  font-weight: bold;
+  font-size: 14px;
+  margin: 12px 0 6px;
+}
+
+.form-undian input[type="text"],
+.form-undian select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  font-size: 14px;
+  background: white;
+  margin-bottom: 6px;
+}
+
+.form-undian input[type="text"]:focus,
+.form-undian select:focus {
+  outline: none;
+  border-color: #1769aa;
+  box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.15);
+}
+
+/* Hasil undian */
+#hasilUndian {
+  margin: 20px 0;
+}
+
+#hasilUndian .stat.hasil {
+  background: #eef6ff;
+  text-align: left;
+  padding: 20px;
+  border-left: 5px solid #1769aa;
+}
+
+#hasilUndian .stat.hasil h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+#hasilUndian .stat.hasil p {
+  font-size: 15px;
+  font-weight: normal;
+  color: #1f2937;
+  margin: 6px 0;
+}
+
+.keputusan-lulus {
+  color: #047857;
+  font-weight: bold;
+}
+
+.keputusan-tolak {
+  color: #b91c1c;
+  font-weight: bold;
+}
+
+/* Sejarah undian */
+#sejarahUndian {
+  margin: 15px 0 25px;
+}
+
+#sejarahUndian .stat.sejarah {
+  background: #f8fafc;
+  text-align: left;
+  padding: 14px 18px;
+  margin: 10px 0;
+  border-left: 4px solid #cbd5e1;
+}
+
+#sejarahUndian .stat.sejarah h3 {
+  font-size: 16px;
+  margin: 0 0 6px;
+}
+
+#sejarahUndian .stat.sejarah p {
+  font-size: 14px;
+  font-weight: normal;
+  color: #334155;
+  margin: 4px 0;
+}
+
+#sejarahUndian small {
+  color: #64748b;
+}
+
+/* Kad ahli bebas */
+.stat.ahli {
+  background: #f8fafc;
+  text-align: left;
+  padding: 15px 18px;
+  margin: 10px 0;
+  border-left: 4px solid #cbd5e1;
+}
+
+.stat.ahli h3 {
+  font-size: 16px;
+  margin: 0 0 6px;
+}
+
+.stat.ahli p {
+  font-size: 14px;
+  font-weight: normal;
+  margin: 4px 0;
+}
+
+.status-sokong {
+  color: #047857;
+  font-weight: bold;
+}
+
+.status-tolak {
+  color: #b91c1c;
+  font-weight: bold;
+}
+
+.status-neutral {
+  color: #64748b;
+}
+
+.nota {
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* Mesej tindakan */
 #mesej {
   background: #f3f4f6;
   padding: 15px;
@@ -92,6 +266,7 @@ footer {
   color: #64748b;
 }
 
+/* Responsif */
 @media (max-width: 600px) {
   .stats {
     grid-template-columns: 1fr;
@@ -101,9 +276,16 @@ footer {
     padding: 18px;
   }
 
+  header h1 {
+    font-size: 26px;
+  }
+
   button {
     width: 100%;
     margin: 5px 0;
   }
+
+  .stat p {
+    font-size: 24px;
+  }
 }
-```
