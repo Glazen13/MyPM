@@ -1,0 +1,304 @@
+
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10243e">
+  <title>MyPM Simulasi — Perdana Menteri</title>
+  <link rel="stylesheet" href="mypm.css">
+  <script src="mypm.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="mypm.html">
+      <span class="brand-mark">PM</span>
+      <span>
+        <strong>MyPM Simulasi</strong>
+        <small>Simulator pentadbiran negara</small>
+      </span>
+    </a>
+    <div class="top-actions">
+      <span class="fiction-tag">SIMULASI FIKSYEN</span>
+      <a class="legacy-link" href="index.html">Simulator Rakyat</a>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section id="setupScreen" class="setup-layout">
+      <div class="intro-panel">
+        <p class="eyebrow">PEJABAT PERDANA MENTERI</p>
+        <h1>Negara menanti keputusan anda.</h1>
+        <p>
+          Urus kerajaan minggu demi minggu. Seimbangkan sokongan rakyat,
+          ekonomi, belanjawan dan kestabilan Parlimen.
+        </p>
+        <div class="intro-stats">
+          <div><strong>222</strong><span>kerusi Parlimen</span></div>
+          <div><strong>260</strong><span>minggu maksimum</span></div>
+          <div><strong>3</strong><span>senario permulaan</span></div>
+        </div>
+      </div>
+
+      <form id="newGameForm" class="setup-card">
+        <p class="eyebrow">PERMULAAN BAHARU</p>
+        <h2>Bentuk kerajaan anda</h2>
+
+        <label for="pmName">Nama Perdana Menteri</label>
+        <input id="pmName" maxlength="48" value="Perdana Menteri" required>
+
+        <label for="partyName">Nama parti utama</label>
+        <input id="partyName" maxlength="48"
+          value="Parti Rakyat Bersatu" required>
+
+        <label for="scenario">Senario kerajaan</label>
+        <select id="scenario">
+          <option value="stable">Kerajaan stabil — 145 kerusi</option>
+          <option value="thin">Majoriti tipis — 113 kerusi</option>
+          <option value="minority">Kerajaan minoriti — 105 kerusi</option>
+        </select>
+
+        <div id="scenarioInfo" class="scenario-info">
+          Kerajaan mempunyai majoriti selesa, tetapi masih perlu
+          menjaga hubungan gabungan.
+        </div>
+
+        <button class="button primary full" type="submit">
+          Mulakan pentadbiran <span aria-hidden="true">→</span>
+        </button>
+
+        <p class="fine-print">
+          Fasa 1: sistem teras. Nilai ekonomi dan politik ialah
+          andaian permainan, bukan data rasmi semasa.
+        </p>
+      </form>
+    </section>
+
+    <section id="gameScreen" class="hidden">
+      <div class="dashboard-heading">
+        <div>
+          <p class="eyebrow">DASHBOARD KERAJAAN</p>
+          <h1 id="welcomeTitle">Selamat bertugas</h1>
+          <p id="dateLine" class="muted"></p>
+        </div>
+        <div class="heading-actions">
+          <button id="newGameBtn" class="button secondary">
+            Permainan baharu
+          </button>
+        </div>
+      </div>
+
+      <div class="status-strip">
+        <div>
+          <span class="status-label">MINGGU</span>
+          <strong id="weekValue">1 / 260</strong>
+        </div>
+        <div>
+          <span class="status-label">STATUS KERAJAAN</span>
+          <strong id="governmentStatus">Majoriti</strong>
+        </div>
+        <div>
+          <span class="status-label">SOKONGAN RAKYAT</span>
+          <strong id="approvalValue">55%</strong>
+        </div>
+        <div>
+          <span class="status-label">KERUSI KERAJAAN</span>
+          <strong id="seatsValue">145 / 222</strong>
+        </div>
+      </div>
+
+      <div class="metric-grid">
+        <article class="metric-card">
+          <span class="metric-icon">💰</span>
+          <span class="metric-label">Baki fiskal</span>
+          <strong id="budgetValue">RM 8.00b</strong>
+          <small>Anggaran simulasi</small>
+        </article>
+        <article class="metric-card">
+          <span class="metric-icon">📈</span>
+          <span class="metric-label">Pertumbuhan</span>
+          <strong id="growthValue">4.2%</strong>
+          <small>Anggaran tahunan</small>
+        </article>
+        <article class="metric-card">
+          <span class="metric-icon">🛒</span>
+          <span class="metric-label">Inflasi</span>
+          <strong id="inflationValue">2.8%</strong>
+          <small>Perubahan harga</small>
+        </article>
+        <article class="metric-card">
+          <span class="metric-icon">👷</span>
+          <span class="metric-label">Pengangguran</span>
+          <strong id="unemploymentValue">3.5%</strong>
+          <small>Anggaran tenaga kerja</small>
+        </article>
+      </div>
+
+      <div class="main-grid">
+        <section class="panel actions-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">AGENDA MINGGU INI</p>
+              <h2>Pilih tindakan</h2>
+            </div>
+            <span id="actionsLeft" class="pill">4 tindakan</span>
+          </div>
+
+          <p class="muted">
+            Laksanakan sehingga empat tindakan setiap minggu.
+            Kesan tindakan ialah model permainan.
+          </p>
+
+          <div id="actionList" class="action-list">
+            <button class="action-card" data-action="cost">
+              <span class="action-emoji">🧺</span>
+              <span>
+                <strong>Ringankan kos sara hidup</strong>
+                <small>Bantuan bersasar · Kos fiskal sederhana</small>
+              </span>
+              <span class="action-arrow">→</span>
+            </button>
+
+            <button class="action-card" data-action="jobs">
+              <span class="action-emoji">🏗️</span>
+              <span>
+                <strong>Rangsang peluang pekerjaan</strong>
+                <small>Projek ekonomi · Kesan beransur-ansur</small>
+              </span>
+              <span class="action-arrow">→</span>
+            </button>
+
+            <button class="action-card" data-action="reform">
+              <span class="action-emoji">⚖️</span>
+              <span>
+                <strong>Mulakan reformasi tadbir urus</strong>
+                <small>Kepercayaan awam · Risiko politik</small>
+              </span>
+              <span class="action-arrow">→</span>
+            </button>
+
+            <button class="action-card" data-action="coalition">
+              <span class="action-emoji">🤝</span>
+              <span>
+                <strong>Runding dengan rakan gabungan</strong>
+                <small>Kukuhkan kerjasama Parlimen</small>
+              </span>
+              <span class="action-arrow">→</span>
+            </button>
+
+            <button class="action-card" data-action="health">
+              <span class="action-emoji">🏥</span>
+              <span>
+                <strong>Tambah baik perkhidmatan awam</strong>
+                <small>Kesihatan dan kemudahan asas</small>
+              </span>
+              <span class="action-arrow">→</span>
+            </button>
+          </div>
+
+          <div class="turn-footer">
+            <span id="actionFeedback" class="feedback" aria-live="polite">
+              Pilih tindakan untuk bermula.
+            </span>
+            <button id="endWeekBtn" class="button primary">
+              Tamatkan minggu →
+            </button>
+          </div>
+        </section>
+
+        <aside class="side-column">
+          <section class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">PARLIMEN</p>
+                <h2>Kedudukan kerusi</h2>
+              </div>
+              <span>222</span>
+            </div>
+
+            <div class="seat-bar">
+              <span id="governmentBar"></span>
+            </div>
+
+            <div class="legend-row">
+              <span><i class="dot gov"></i>Kerajaan <strong id="govSeatsLegend">145</strong></span>
+              <span><i class="dot opp"></i>Pembangkang <strong id="oppSeatsLegend">77</strong></span>
+            </div>
+            <p id="majorityNote" class="muted small">
+              Majoriti mudah: 112 kerusi.
+            </p>
+          </section>
+
+          <section class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">RINGKASAN</p>
+                <h2>Keadaan negara</h2>
+              </div>
+              <span>●</span>
+            </div>
+
+            <p id="countrySummary" class="summary-text">
+              Kerajaan memulakan penggal dengan kedudukan yang stabil.
+            </p>
+            <div class="summary-divider"></div>
+            <div class="mini-row">
+              <span>Kepercayaan awam</span>
+              <strong id="trustValue">58 / 100</strong>
+            </div>
+            <div class="mini-row">
+              <span>Kestabilan gabungan</span>
+              <strong id="stabilityValue">72 / 100</strong>
+            </div>
+          </section>
+
+          <section class="panel save-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">SIMPANAN</p>
+                <h2>Permainan anda</h2>
+              </div>
+              <span>↻</span>
+            </div>
+
+            <label for="saveSlot">Slot simpanan</label>
+            <select id="saveSlot">
+              <option value="1">Slot 1</option>
+              <option value="2">Slot 2</option>
+              <option value="3">Slot 3</option>
+            </select>
+
+            <div class="save-buttons">
+              <button id="saveBtn" class="button secondary">Simpan</button>
+              <button id="loadBtn" class="button secondary">Muatkan</button>
+            </div>
+            <p id="saveFeedback" class="muted small" aria-live="polite">
+              Autosimpan diaktifkan pada peranti ini.
+            </p>
+          </section>
+        </aside>
+      </div>
+
+      <section class="panel log-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">CATATAN PENTADBIRAN</p>
+            <h2>Peristiwa terkini</h2>
+          </div>
+          <span id="logCount">0</span>
+        </div>
+        <ol id="eventLog" class="event-log">
+          <li>Pentadbiran baharu menunggu tindakan pertama.</li>
+        </ol>
+      </section>
+
+      <footer class="game-footer">
+        MyPM Simulasi · Semua parti, watak dan peristiwa ialah fiksyen.
+        Nilai awal ialah andaian untuk permainan.
+      </footer>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
