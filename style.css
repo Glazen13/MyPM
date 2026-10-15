@@ -288,5 +288,48 @@ footer {
 
   .stat p {
     font-size: 24px;
+
+     /* Kalendar & giliran mingguan */
+.aksi-minggu {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 18px;
+  margin: 15px 0 25px;
+  text-align: center;
+}
+
+.aksi-minggu button {
+  font-size: 16px;
+  padding: 14px 24px;
+  margin-bottom: 10px;
+}
+
+#statusMinggu {
+  color: #475569;
+  font-size: 14px;
+  margin: 10px 0 0;
+}
+
+.peristiwa-minggu {
+  background: #fef3c7;
+  border-left: 4px solid #d97706;
+  text-align: left;
+  padding: 12px 16px;
+  margin: 10px 0;
+  border-radius: 6px;
+}
+
+.peristiwa-minggu h4 {
+  margin: 0 0 6px;
+  color: #92400e;
+  font-size: 14px;
+}
+
+.peristiwa-minggu p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #78350f;
+}
   }
 }
