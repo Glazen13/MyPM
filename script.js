@@ -2,7 +2,7 @@
 
 // =====================================
 // MyPM SIMULASI - SISTEM NEGARA
-// Fasa 3.5: Kalendar, Peristiwa, Media, Dasar & Undian
+// Fasa 4.1: Pilihan Raya
 // =====================================
 
 // =====================================
@@ -218,8 +218,9 @@ function tamatkanMinggu() {
   masa.minggu++;
 
   if (masa.minggu > masa.maksMinggu) {
-    alert("Penggal 5 tahun tamat. Permainan akan berakhir dengan pilihan raya.");
+    alert("Penggal 5 tahun tamat. Hantar ke pilihan raya.");
     masa.minggu = masa.maksMinggu;
+    paparPanelPilihanRaya();
     return;
   }
 
@@ -255,6 +256,8 @@ function tamatkanMinggu() {
       `;
     }
   }
+
+  paparPanelPilihanRaya();
 }
 
 // =====================================
@@ -1358,27 +1361,24 @@ function kemasKiniParlimen() {
   butang.onclick = pusinganRundinganBaharu;
   senarai.appendChild(butang);
 }
+
 // =====================================
-// 7b. PILIHAN RAYA
+// 8. PILIHAN RAYA
 // =====================================
 
 function kiraMarkahPilihanRaya() {
   const hubungan = kiraHubunganParti();
 
-  // Bilangan dasar
   const dasarSelesai = senaraiDasar.filter(d => d.status === "selesai").length;
   const dasarGagal = senaraiDasar.filter(d => d.status === "gagal").length;
 
-  // Bilangan undian lulus/tolak
   const undianLulus = sejarahUndian.filter(u => u.lulus).length;
   const undianTolak = sejarahUndian.filter(u => !u.lulus).length;
 
-  // Bonus & penalti
   const bonusDasar = dasarSelesai * 2;
   const penaltiDasar = dasarGagal * 3;
   const bonusUndian = (undianLulus - undianTolak) * 0.5;
 
-  // Markah akhir
   const markah =
     populariti * 0.30 +
     ekonomi * 0.25 +
@@ -1415,7 +1415,6 @@ function paparPanelPilihanRaya() {
   const panel = document.getElementById("panelPilihanRaya");
   if (!panel) return;
 
-  // Butang pilihan raya hanya muncul bila minggu ≥ 250 atau selepas habis
   const bolehPilihanRaya = masa.minggu >= 250;
 
   if (!bolehPilihanRaya) {
@@ -1448,6 +1447,9 @@ function paparPanelPilihanRaya() {
         ? "Kerajaan berjaya membentuk kerajaan baharu."
         : "Kerajaan gagal. PM kehilangan jawatan."}</strong></p>
     </div>
+    <button class="utama" onclick="jalankanPilihanRaya()">
+      Sahkan Pilihan Raya
+    </button>
   `;
 }
 
@@ -1458,35 +1460,28 @@ function jalankanPilihanRaya() {
   paparPanelPilihanRaya();
 
   if (keputusan.status.startsWith("menang")) {
-    // Menang — reset separa untuk penggal baharu
     setTimeout(() => {
       if (confirm("Anda menang! Mahu teruskan penggal ke-2?\n\nTekan OK untuk penggal baharu, Cancel untuk tamat.")) {
         mulaPenggalBaharu();
       }
     }, 100);
   } else {
-    // Kalah — tamat permainan
     alert("Anda kalah dalam pilihan raya.\n\nMarkah: " + markah.markah + "\n\nPermainan tamat.");
   }
 }
 
 function mulaPenggalBaharu() {
-  // Reset masa
   masa.minggu = 1;
   masa.bulan = 1;
   masa.tahun = 1;
 
-  // Reset dasar
   senaraiDasar.forEach(d => {
     d.status = "belum";
     d.mingguBerjalan = 0;
   });
   belanjawanDasar = 50;
 
-  // Reset AP bebas dirunding
   ahliBebas.forEach(a => { a.dirunding = false; });
-
-  // Reset parti dirunding
   senaraiParti.forEach(p => { p.dirunding = false; });
 
   kemasKiniKalendar();
@@ -1501,8 +1496,9 @@ function mulaPenggalBaharu() {
     elStatus.textContent = "Penggal ke-2 bermula. Minggu 1.";
   }
 }
+
 // =====================================
-// 8. MULAKAN APLIKASI
+// 9. MULAKAN APLIKASI
 // =====================================
 
 document.addEventListener("DOMContentLoaded", () => {
