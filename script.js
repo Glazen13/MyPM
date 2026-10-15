@@ -2,7 +2,7 @@
 
 // =====================================
 // MyPM SIMULASI - SISTEM NEGARA
-// Fasa 2.3: Model MP Individu & Undian
+// Fasa 2.3: Undian individu MP & AP Bebas
 // =====================================
 
 // 1. STATISTIK NEGARA
@@ -22,32 +22,31 @@ const jumlahKerusi = 222;
 const majoritiMudah = 112;
 
 const ahliBebas = [
-  { id: 1, nama: "Ahli Parlimen Bebas 1", personaliti: "Mesra pembangunan", keutamaan: "pembangunan", kecenderungan: 0, dirunding: false },
-  { id: 2, nama: "Ahli Parlimen Bebas 2", personaliti: "Mementingkan reformasi", keutamaan: "dasar", kecenderungan: 0, dirunding: false },
-  { id: 3, nama: "Ahli Parlimen Bebas 3", personaliti: "Berhati-hati", keutamaan: "belanjawan", kecenderungan: 0, dirunding: false },
-  { id: 4, nama: "Ahli Parlimen Bebas 4", personaliti: "Mesra rakyat", keutamaan: "pembangunan", kecenderungan: 0, dirunding: false },
-  { id: 5, nama: "Ahli Parlimen Bebas 5", personaliti: "Pencinta reformasi", keutamaan: "dasar", kecenderungan: 0, dirunding: false },
-  { id: 6, nama: "Ahli Parlimen Bebas 6", personaliti: "Mementingkan kewangan", keutamaan: "belanjawan", kecenderungan: 0, dirunding: false },
-  { id: 7, nama: "Ahli Parlimen Bebas 7", personaliti: "Pragmatik", keutamaan: "pembangunan", kecenderungan: 0, dirunding: false },
-  { id: 8, nama: "Ahli Parlimen Bebas 8", personaliti: "Tegas tentang dasar", keutamaan: "dasar", kecenderungan: 0, dirunding: false },
-  { id: 9, nama: "Ahli Parlimen Bebas 9", personaliti: "Sangat berhati-hati", keutamaan: "belanjawan", kecenderungan: 0, dirunding: false },
-  { id: 10, nama: "Ahli Parlimen Bebas 10", personaliti: "Suka berunding", keutamaan: "pembangunan", kecenderungan: 0, dirunding: false }
+  { id: 1, nama: "Ahli Parlimen Bebas 1", personaliti: "Mesra pembangunan", keutamaan: "pembangunan", kecenderungan: 0, dirunding: false, hadir: true, undi: "belum" },
+  { id: 2, nama: "Ahli Parlimen Bebas 2", personaliti: "Mementingkan reformasi", keutamaan: "dasar", kecenderungan: 0, dirunding: false, hadir: true, undi: "belum" },
+  { id: 3, nama: "Ahli Parlimen Bebas 3", personaliti: "Berhati-hati", keutamaan: "belanjawan", kecenderungan: 0, dirunding: false, hadir: true, undi: "belum" },
+  { id: 4, nama: "Ahli Parlimen Bebas 4", personaliti: "Mesra rakyat", keutamaan: "pembangunan", kecenderungan: 0, dirunding: false, hadir: true, undi: "belum" },
+  { id: 5, nama: "Ahli Parlimen Bebas 5", personaliti: "Pencinta reformasi", keutamaan: "dasar", kecenderungan: 0, dirunding: false, hadir: true, undi: "belum" },
+  { id: 6, nama: "Ahli Parlimen Bebas 6", personaliti: "Mementingkan kewangan", keutamaan: "belanjawan", kecenderungan: 0, dirunding: false, hadir: true, undi: "belum" },
+  { id: 7, nama: "Ahli Parlimen Bebas 7", personaliti: "Pragmatik", keutamaan: "pembangunan", kecenderungan: 0, dirunding: false, hadir: true, undi: "belum" },
+  { id: 8, nama: "Ahli Parlimen Bebas 8", personaliti: "Tegas tentang dasar", keutamaan: "dasar", kecenderungan: 0, dirunding: false, hadir: true, undi: "belum" },
+  { id: 9, nama: "Ahli Parlimen Bebas 9", personaliti: "Sangat berhati-hati", keutamaan: "belanjawan", kecenderungan: 0, dirunding: false, hadir: true, undi: "belum" },
+  { id: 10, nama: "Ahli Parlimen Bebas 10", personaliti: "Suka berunding", keutamaan: "pembangunan", kecenderungan: 0, dirunding: false, hadir: true, undi: "belum" }
 ];
 
 // =====================================
 // 2b. MODEL MP INDIVIDU (Kerajaan & Pembangkang)
 // =====================================
 
-// Parameter individu MP
 const paramMP = {
   hadirKerajaan: 0.95,
   hadirPembangkang: 0.90,
   disiplinKerajaan: 0.95,
   disiplinPembangkang: 0.95,
+  kesanKecenderungan: 0.10,   // dikuatkan dari 0.05
   maksKecenderungan: 3
 };
 
-// Jana satu MP individu
 function janaMP(afiliasi, id) {
   return {
     id: id,
@@ -58,13 +57,11 @@ function janaMP(afiliasi, id) {
   };
 }
 
-// Jana senarai MP kerajaan (120)
 const mpKerajaan = [];
 for (let i = 1; i <= 120; i++) {
   mpKerajaan.push(janaMP("kerajaan", i));
 }
 
-// Jana senarai MP pembangkang (92)
 const mpPembangkang = [];
 for (let i = 1; i <= 92; i++) {
   mpPembangkang.push(janaMP("pembangkang", i));
@@ -93,9 +90,9 @@ function undiMPParti(mp) {
   let peluangSokong;
 
   if (mp.afiliasi === "kerajaan") {
-    peluangSokong = disiplin + (mp.kecenderungan * 0.05);
+    peluangSokong = disiplin + (mp.kecenderungan * paramMP.kesanKecenderungan);
   } else {
-    peluangSokong = (1 - disiplin) + (mp.kecenderungan * 0.05);
+    peluangSokong = (1 - disiplin) + (mp.kecenderungan * paramMP.kesanKecenderungan);
   }
 
   peluangSokong = Math.max(0, Math.min(1, peluangSokong));
@@ -131,7 +128,7 @@ const tawaran = {
   }
 };
 
-// Parameter undian (boleh dilaras)
+// Parameter undian AP Bebas
 const paramUndian = {
   peluangSokongSepadan: 0.70,
   peluangSokongTakSepadan: 0.30,
@@ -139,7 +136,8 @@ const paramUndian = {
   kesanKecenderungan: 0.10,
   maksKecenderungan: 3,
   kesanRundingBerjaya: 2,
-  kesanRundingGagal: -1
+  kesanRundingGagal: -1,
+  hadirBebas: 0.95
 };
 
 // 3. SISTEM UNDIAN
@@ -162,6 +160,12 @@ function labelStatus(ahli) {
 }
 
 function undiAhliBebas(ahli, jenisUsul) {
+  // Semak kehadiran
+  const hadir = Math.random() < paramUndian.hadirBebas;
+  if (!hadir) {
+    return { undi: "absen", sebab: "Tidak hadir" };
+  }
+
   const sepadan = ahli.keutamaan === jenisUsul;
 
   let peluangSokong = sepadan
@@ -219,7 +223,7 @@ function jalankanUndian() {
   }
 
   // Undi AP Bebas
-  const undiBebas = { menyokong: 0, menentang: 0, berkecuali: 0 };
+  const undiBebas = { menyokong: 0, menentang: 0, berkecuali: 0, absen: 0 };
   const sebabBebas = [];
 
   ahliBebas.forEach(ahli => {
@@ -262,15 +266,15 @@ function jalankanUndian() {
   const jumlahTolak =
     tolakKerajaan + tolakPembangkang + undiBebas.menentang;
   const jumlahBerkecuali = undiBebas.berkecuali;
+  const jumlahAbsen =
+    absenKerajaan + absenPembangkang + undiBebas.absen;
   const jumlahHadir =
     jumlahSokong + jumlahTolak + jumlahBerkecuali;
-  const jumlahAbsen =
-    absenKerajaan + absenPembangkang;
 
-  // Majoriti dikira daripada yang hadir
-  const majoritiHadir = Math.floor(jumlahHadir / 2) + 1;
+  // Majoriti dari sokong + tolak sahaja (tidak kira berkecuali)
+  const majoritiHadir = Math.floor((jumlahSokong + jumlahTolak) / 2) + 1;
 
-  // Lulus jika sokong > tolak DAN sokong >= majoriti hadir
+  // Lulus jika sokong > tolak DAN sokong >= majoriti
   const lulus = jumlahSokong > jumlahTolak && jumlahSokong >= majoritiHadir;
 
   nomborUndian++;
@@ -293,7 +297,6 @@ function jalankanUndian() {
     sejarahUndian = sejarahUndian.slice(0, hadSejarahUndian);
   }
 
-  // Kesan kepada kestabilan & populariti
   if (lulus) {
     kestabilan = hadkan(kestabilan + 2);
     populariti = hadkan(populariti + 1);
@@ -302,7 +305,7 @@ function jalankanUndian() {
     populariti = hadkan(populariti - 2);
   }
 
-  // Kesan kepada AP bebas: guna id, bukan indeks
+  // Kesan kepada AP bebas
   sebabBebas.forEach(item => {
     const ahli = ahliBebas.find(a => a.id === item.id);
     if (!ahli) return;
@@ -540,16 +543,17 @@ function pusinganRundinganBaharu() {
 
 // 9. PAPARAN PARLIMEN DAN RUNDINGAN
 function kemasKiniParlimen() {
+  // Anggaran sokongan politik (bukan keputusan undian semasa)
   const menyokong = ahliBebas.filter(a => a.kecenderungan >= 2).length;
-  const sokongan = kerusiKerajaan + menyokong;
+  const sokonganAnggaran = kerusiKerajaan + menyokong;
 
   const nilai = {
     kerusiKerajaan: kerusiKerajaan,
     kerusiPembangkang: kerusiPembangkang,
     kerusiBebas: ahliBebas.length,
-    sokonganKerajaan: sokongan + " / " + jumlahKerusi,
-    majoritiParlimen: sokongan + " / " + jumlahKerusi,
-    statusMajoriti: sokongan >= majoritiMudah ? "Majoriti" : "Tiada majoriti"
+    sokonganKerajaan: sokonganAnggaran + " / " + jumlahKerusi,
+    majoritiParlimen: sokonganAnggaran + " / " + jumlahKerusi,
+    statusMajoriti: sokonganAnggaran >= majoritiMudah ? "Majoriti" : "Tiada majoriti"
   };
 
   Object.entries(nilai).forEach(([id, teks]) => {
