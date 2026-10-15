@@ -1481,4 +1481,5 @@ document.addEventListener("DOMContentLoaded", () => {
   kemasKiniKalendar();
   paparPeristiwa();
   kemasKiniSejarahPeristiwa();
+  paparParti();
 });
