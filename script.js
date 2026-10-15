@@ -2,11 +2,11 @@
 
 // =====================================
 // MyPM SIMULASI - SISTEM NEGARA
-// Fasa 3.4: Kalendar, Peristiwa, Media & Undian
+// Fasa 3.5: Kalendar, Peristiwa, Media, Dasar & Undian
 // =====================================
 
 // =====================================
-// 0. FUNGSI ASAS (dahulukan)
+// 0. FUNGSI ASAS
 // =====================================
 
 function hadkan(nilai, minimum = 0, maksimum = 100) {
@@ -58,10 +58,6 @@ const ahliBebas = [
   { id: 10, nama: "Ahli Parlimen Bebas 10", personaliti: "Suka berunding", keutamaan: "pembangunan", kecenderungan: 0, dirunding: false, hadir: true, undi: "belum" }
 ];
 
-// =====================================
-// 2b. MODEL MP INDIVIDU
-// =====================================
-
 const paramMP = {
   hadirKerajaan: 0.95,
   hadirPembangkang: 0.90,
@@ -80,10 +76,6 @@ for (let i = 1; i <= 120; i++) mpKerajaan.push(janaMP("kerajaan", i));
 
 const mpPembangkang = [];
 for (let i = 1; i <= 92; i++) mpPembangkang.push(janaMP("pembangkang", i));
-
-// =====================================
-// 2c. FUNGSI UNDI MP
-// =====================================
 
 function undiMPParti(mp) {
   const peluangHadir = mp.afiliasi === "kerajaan"
@@ -221,7 +213,7 @@ function tamatkanMinggu() {
     cetusPeristiwa();
   }
 
-  kemajuanDasar();   // <-- TAMBAH INI
+  kemajuanDasar();
 
   masa.minggu++;
 
@@ -264,220 +256,9 @@ function tamatkanMinggu() {
     }
   }
 }
+
 // =====================================
-// 3j. DASAR & PROJEK KERAJAAN
-// =====================================
-
-let belanjawanDasar = 50;   // RM bilion
-
-const senaraiDasar = [
-  {
-    id: "lebuhraya",
-    nama: "Projek Lebuh Raya",
-    kategori: "infrastruktur",
-    kos: 15,
-    tempoh: 52,
-    mingguBerjalan: 0,
-    risiko: 0.15,
-    status: "belum",
-    kesanPendek: { populariti: 3 },
-    kesanPanjang: { ekonomi: 8 }
-  },
-  {
-    id: "lrt",
-    nama: "LRT Baharu",
-    kategori: "infrastruktur",
-    kos: 20,
-    tempoh: 52,
-    mingguBerjalan: 0,
-    risiko: 0.20,
-    status: "belum",
-    kesanPendek: { populariti: 5 },
-    kesanPanjang: { ekonomi: 10 }
-  },
-  {
-    id: "sekolah",
-    nama: "Sekolah Baharu",
-    kategori: "pendidikan",
-    kos: 8,
-    tempoh: 26,
-    mingguBerjalan: 0,
-    risiko: 0.10,
-    status: "belum",
-    kesanPendek: { populariti: 4 },
-    kesanPanjang: { ekonomi: 5 }
-  },
-  {
-    id: "biasiswa",
-    nama: "Program Biasiswa",
-    kategori: "pendidikan",
-    kos: 5,
-    tempoh: 12,
-    mingguBerjalan: 0,
-    risiko: 0.05,
-    status: "belum",
-    kesanPendek: { populariti: 6 },
-    kesanPanjang: { ekonomi: 3 }
-  },
-  {
-    id: "hospital",
-    nama: "Hospital Baharu",
-    kategori: "kesihatan",
-    kos: 12,
-    tempoh: 39,
-    mingguBerjalan: 0,
-    risiko: 0.12,
-    status: "belum",
-    kesanPendek: { populariti: 5 },
-    kesanPanjang: { ekonomi: 4 }
-  },
-  {
-    id: "subsidiUbat",
-    nama: "Subsidi Ubat",
-    kategori: "kesihatan",
-    kos: 3,
-    tempoh: 8,
-    mingguBerjalan: 0,
-    risiko: 0.05,
-    status: "belum",
-    kesanPendek: { populariti: 7 },
-    kesanPanjang: { ekonomi: 2 }
-  },
-  {
-    id: "subsidiPetani",
-    nama: "Subsidi Petani",
-    kategori: "ekonomi",
-    kos: 6,
-    tempoh: 16,
-    mingguBerjalan: 0,
-    risiko: 0.08,
-    status: "belum",
-    kesanPendek: { populariti: 4 },
-    kesanPanjang: { ekonomi: 6 }
-  },
-  {
-    id: "digital",
-    nama: "Transformasi Digital",
-    kategori: "ekonomi",
-    kos: 10,
-    tempoh: 30,
-    mingguBerjalan: 0,
-    risiko: 0.18,
-    status: "belum",
-    kesanPendek: { populariti: 2 },
-    kesanPanjang: { ekonomi: 12 }
-  }
-];
-
-function paparDasar() {
-  const panel = document.getElementById("senaraiDasar");
-  if (!panel) return;
-
-  // Kira statistik
-  const aktif = senaraiDasar.filter(d => d.status === "aktif").length;
-  const selesai = senaraiDasar.filter(d => d.status === "selesai").length;
-
-  const elBelanjawan = document.getElementById("belanjawanDasar");
-  const elAktif = document.getElementById("dasarAktif");
-  const elSelesai = document.getElementById("dasarSelesai");
-
-  if (elBelanjawan) elBelanjawan.textContent = "RM " + belanjawanDasar + "B";
-  if (elAktif) elAktif.textContent = aktif;
-  if (elSelesai) elSelesai.textContent = selesai;
-
-  panel.innerHTML = senaraiDasar.map(d => {
-    const kelasStatus = d.status === "aktif" ? "aktif" :
-                        d.status === "selesai" ? "selesai" :
-                        d.status === "gagal" ? "gagal" : "";
-
-    const peratus = d.tempoh > 0
-      ? Math.round((d.mingguBerjalan / d.tempoh) * 100)
-      : 0;
-
-    const bar = d.status === "aktif" || d.status === "selesai" || d.status === "gagal"
-      ? `<div class="bar-kemajuan"><div class="bar-kemajuan-dalam ${d.status}" style="width:${peratus}%"></div></div>`
-      : "";
-
-    const kawalan = d.status === "belum" ? `
-      <button onclick="laksanaDasar('${d.id}')" ${belanjawanDasar < d.kos ? "disabled" : ""}>
-        Laksana (RM ${d.kos}B)
-      </button>
-    ` : d.status === "aktif" ? `
-      <p class="nota">Sedang berjalan: ${d.mingguBerjalan} / ${d.tempoh} minggu</p>
-    ` : d.status === "selesai" ? `
-      <p class="nota">✅ Selesai sepenuhnya</p>
-    ` : `
-      <p class="nota">❌ Gagal dilaksanakan</p>
-    `;
-
-    return `
-      <div class="stat dasar ${kelasStatus}">
-        <h3>${escapeHTML(d.nama)}</h3>
-        <p>Kategori: ${escapeHTML(d.kategori)} | Kos: RM ${d.kos}B | Tempoh: ${d.tempoh} minggu</p>
-        <p>Risiko: ${Math.round(d.risiko * 100)}% | Status: ${d.status}</p>
-        ${bar}
-        ${kawalan}
-      </div>
-    `;
-  }).join("");
-}
-
-function laksanaDasar(idDasar) {
-  const dasar = senaraiDasar.find(d => d.id === idDasar);
-  if (!dasar || dasar.status !== "belum") return;
-
-  if (belanjawanDasar < dasar.kos) {
-    alert("Belanjawan tidak mencukupi.");
-    return;
-  }
-
-  belanjawanDasar -= dasar.kos;
-  dasar.status = "aktif";
-  dasar.mingguBerjalan = 0;
-
-  paparDasar();
-  kemasKiniPaparan();
-}
-
-function kemajuanDasar() {
-  senaraiDasar.forEach(d => {
-    if (d.status !== "aktif") return;
-
-    d.mingguBerjalan++;
-
-    // Risiko: kelewatan
-    if (Math.random() < d.risiko / 10) {
-      d.mingguBerjalan--;
-    }
-
-    // Selesai?
-    if (d.mingguBerjalan >= d.tempoh) {
-      // Risiko gagal pada akhir
-      if (Math.random() < d.risiko) {
-        d.status = "gagal";
-        kestabilan = hadkan(kestabilan - 3);
-        populariti = hadkan(populariti - 3);
-      } else {
-        d.status = "selesai";
-        // Kesan pendek
-        if (d.kesanPendek.populariti) {
-          populariti = hadkan(populariti + d.kesanPendek.populariti);
-        }
-        // Kesan panjang
-        if (d.kesanPanjang.ekonomi) {
-          ekonomi = hadkan(ekonomi + d.kesanPanjang.ekonomi);
-        }
-        if (d.kesanPanjang.populariti) {
-          populariti = hadkan(populariti + d.kesanPanjang.populariti);
-        }
-      }
-    }
-  });
-
-  paparDasar();
-}
-// =====================================
-// 3i. MEDIA & PENDAPAT AWAM
+// 3c. MEDIA & PENDAPAT AWAM
 // =====================================
 
 const pendapatKumpulan = {
@@ -567,7 +348,7 @@ function komunikasiPM(jenis) {
 }
 
 // =====================================
-// 3g. PARTI POLITIK & GABUNGAN
+// 3d. PARTI POLITIK & GABUNGAN
 // =====================================
 
 const senaraiParti = [
@@ -714,7 +495,124 @@ function pusinganPartiBaharu() {
 }
 
 // =====================================
-// 3c. PERISTIWA BERSYARAT
+// 3e. DASAR & PROJEK KERAJAAN
+// =====================================
+
+let belanjawanDasar = 50;
+
+const senaraiDasar = [
+  { id: "lebuhraya", nama: "Projek Lebuh Raya", kategori: "infrastruktur", kos: 15, tempoh: 52, mingguBerjalan: 0, risiko: 0.15, status: "belum", kesanPendek: { populariti: 3 }, kesanPanjang: { ekonomi: 8 } },
+  { id: "lrt", nama: "LRT Baharu", kategori: "infrastruktur", kos: 20, tempoh: 52, mingguBerjalan: 0, risiko: 0.20, status: "belum", kesanPendek: { populariti: 5 }, kesanPanjang: { ekonomi: 10 } },
+  { id: "sekolah", nama: "Sekolah Baharu", kategori: "pendidikan", kos: 8, tempoh: 26, mingguBerjalan: 0, risiko: 0.10, status: "belum", kesanPendek: { populariti: 4 }, kesanPanjang: { ekonomi: 5 } },
+  { id: "biasiswa", nama: "Program Biasiswa", kategori: "pendidikan", kos: 5, tempoh: 12, mingguBerjalan: 0, risiko: 0.05, status: "belum", kesanPendek: { populariti: 6 }, kesanPanjang: { ekonomi: 3 } },
+  { id: "hospital", nama: "Hospital Baharu", kategori: "kesihatan", kos: 12, tempoh: 39, mingguBerjalan: 0, risiko: 0.12, status: "belum", kesanPendek: { populariti: 5 }, kesanPanjang: { ekonomi: 4 } },
+  { id: "subsidiUbat", nama: "Subsidi Ubat", kategori: "kesihatan", kos: 3, tempoh: 8, mingguBerjalan: 0, risiko: 0.05, status: "belum", kesanPendek: { populariti: 7 }, kesanPanjang: { ekonomi: 2 } },
+  { id: "subsidiPetani", nama: "Subsidi Petani", kategori: "ekonomi", kos: 6, tempoh: 16, mingguBerjalan: 0, risiko: 0.08, status: "belum", kesanPendek: { populariti: 4 }, kesanPanjang: { ekonomi: 6 } },
+  { id: "digital", nama: "Transformasi Digital", kategori: "ekonomi", kos: 10, tempoh: 30, mingguBerjalan: 0, risiko: 0.18, status: "belum", kesanPendek: { populariti: 2 }, kesanPanjang: { ekonomi: 12 } }
+];
+
+function paparDasar() {
+  const panel = document.getElementById("senaraiDasar");
+  if (!panel) return;
+
+  const aktif = senaraiDasar.filter(d => d.status === "aktif").length;
+  const selesai = senaraiDasar.filter(d => d.status === "selesai").length;
+
+  const elBelanjawan = document.getElementById("belanjawanDasar");
+  const elAktif = document.getElementById("dasarAktif");
+  const elSelesai = document.getElementById("dasarSelesai");
+
+  if (elBelanjawan) elBelanjawan.textContent = "RM " + belanjawanDasar + "B";
+  if (elAktif) elAktif.textContent = aktif;
+  if (elSelesai) elSelesai.textContent = selesai;
+
+  panel.innerHTML = senaraiDasar.map(d => {
+    const kelasStatus = d.status === "aktif" ? "aktif" :
+                        d.status === "selesai" ? "selesai" :
+                        d.status === "gagal" ? "gagal" : "";
+
+    const peratus = d.tempoh > 0 ? Math.round((d.mingguBerjalan / d.tempoh) * 100) : 0;
+
+    const bar = d.status === "aktif" || d.status === "selesai" || d.status === "gagal"
+      ? `<div class="bar-kemajuan"><div class="bar-kemajuan-dalam ${d.status}" style="width:${peratus}%"></div></div>`
+      : "";
+
+    const kawalan = d.status === "belum" ? `
+      <button onclick="laksanaDasar('${d.id}')" ${belanjawanDasar < d.kos ? "disabled" : ""}>
+        Laksana (RM ${d.kos}B)
+      </button>
+    ` : d.status === "aktif" ? `
+      <p class="nota">Sedang berjalan: ${d.mingguBerjalan} / ${d.tempoh} minggu</p>
+    ` : d.status === "selesai" ? `
+      <p class="nota">✅ Selesai sepenuhnya</p>
+    ` : `
+      <p class="nota">❌ Gagal dilaksanakan</p>
+    `;
+
+    return `
+      <div class="stat dasar ${kelasStatus}">
+        <h3>${escapeHTML(d.nama)}</h3>
+        <p>Kategori: ${escapeHTML(d.kategori)} | Kos: RM ${d.kos}B | Tempoh: ${d.tempoh} minggu</p>
+        <p>Risiko: ${Math.round(d.risiko * 100)}% | Status: ${d.status}</p>
+        ${bar}
+        ${kawalan}
+      </div>
+    `;
+  }).join("");
+}
+
+function laksanaDasar(idDasar) {
+  const dasar = senaraiDasar.find(d => d.id === idDasar);
+  if (!dasar || dasar.status !== "belum") return;
+
+  if (belanjawanDasar < dasar.kos) {
+    alert("Belanjawan tidak mencukupi.");
+    return;
+  }
+
+  belanjawanDasar -= dasar.kos;
+  dasar.status = "aktif";
+  dasar.mingguBerjalan = 0;
+
+  paparDasar();
+  kemasKiniPaparan();
+}
+
+function kemajuanDasar() {
+  senaraiDasar.forEach(d => {
+    if (d.status !== "aktif") return;
+
+    d.mingguBerjalan++;
+
+    if (Math.random() < d.risiko / 10) {
+      d.mingguBerjalan--;
+    }
+
+    if (d.mingguBerjalan >= d.tempoh) {
+      if (Math.random() < d.risiko) {
+        d.status = "gagal";
+        kestabilan = hadkan(kestabilan - 3);
+        populariti = hadkan(populariti - 3);
+      } else {
+        d.status = "selesai";
+        if (d.kesanPendek.populariti) {
+          populariti = hadkan(populariti + d.kesanPendek.populariti);
+        }
+        if (d.kesanPanjang.ekonomi) {
+          ekonomi = hadkan(ekonomi + d.kesanPanjang.ekonomi);
+        }
+        if (d.kesanPanjang.populariti) {
+          populariti = hadkan(populariti + d.kesanPanjang.populariti);
+        }
+      }
+    }
+  });
+
+  paparDasar();
+}
+
+// =====================================
+// 3f. PERISTIWA BERSYARAT
 // =====================================
 
 let peristiwaAktif = [];
@@ -723,267 +621,110 @@ let nomborPeristiwa = 0;
 const hadSejarahPeristiwa = 30;
 
 const katalogPeristiwa = [
-  {
-    id: "demo_populariti",
-    nama: "Demonstrasi Jalanan",
-    keterukan: "teruk",
-    syarat: (s) => s.populariti < 30,
+  { id: "demo_populariti", nama: "Demonstrasi Jalanan", keterukan: "teruk", syarat: (s) => s.populariti < 30,
     keterangan: "Rakyat tidak puas hati dengan kerajaan. Demonstrasi besar berlaku di Kuala Lumpur.",
     pilihan: [
-      { teks: "Bertemu wakil rakyat",
-        kesan: (s) => { s.populariti = hadkan(s.populariti + 5); s.kestabilan = hadkan(s.kestabilan - 2); },
-        maklumBalas: "PM bertemu wakil rakyat. Populariti naik sedikit, kestabilan turun." },
-      { teks: "Guna kekuatan polis",
-        kesan: (s) => { s.populariti = hadkan(s.populariti - 3); s.kestabilan = hadkan(s.kestabilan + 3); },
-        maklumBalas: "Polis bertindak. Kestabilan naik, populariti turun." }
-    ]
-  },
-  {
-    id: "sokongan_merosot",
-    nama: "Sokongan Menurun",
-    keterukan: "sederhana",
-    syarat: (s) => s.populariti < 40 && s.populariti >= 30,
+      { teks: "Bertemu wakil rakyat", kesan: (s) => { s.populariti = hadkan(s.populariti + 5); s.kestabilan = hadkan(s.kestabilan - 2); }, maklumBalas: "PM bertemu wakil rakyat. Populariti naik sedikit, kestabilan turun." },
+      { teks: "Guna kekuatan polis", kesan: (s) => { s.populariti = hadkan(s.populariti - 3); s.kestabilan = hadkan(s.kestabilan + 3); }, maklumBalas: "Polis bertindak. Kestabilan naik, populariti turun." }
+    ] },
+  { id: "sokongan_merosot", nama: "Sokongan Menurun", keterukan: "sederhana", syarat: (s) => s.populariti < 40 && s.populariti >= 30,
     keterangan: "Tinjauan terkini menunjukkan sokongan kepada kerajaan semakin menurun.",
     pilihan: [
-      { teks: "Umum bantuan rakyat",
-        kesan: (s) => { s.populariti = hadkan(s.populariti + 6); s.hutang += 0.03; },
-        maklumBalas: "Bantuan diumumkan. Populariti naik, hutang bertambah." },
-      { teks: "Kempen media",
-        kesan: (s) => { s.populariti = hadkan(s.populariti + 3); },
-        maklumBalas: "Kempen media dilancarkan. Populariti naik sedikit." }
-    ]
-  },
-  {
-    id: "undi_tidak_percaya",
-    nama: "Ancaman Undi Tidak Percaya",
-    keterukan: "teruk",
-    syarat: (s) => s.kestabilan < 25,
+      { teks: "Umum bantuan rakyat", kesan: (s) => { s.populariti = hadkan(s.populariti + 6); s.hutang += 0.03; }, maklumBalas: "Bantuan diumumkan. Populariti naik, hutang bertambah." },
+      { teks: "Kempen media", kesan: (s) => { s.populariti = hadkan(s.populariti + 3); }, maklumBalas: "Kempen media dilancarkan. Populariti naik sedikit." }
+    ] },
+  { id: "undi_tidak_percaya", nama: "Ancaman Undi Tidak Percaya", keterukan: "teruk", syarat: (s) => s.kestabilan < 25,
     keterangan: "Pembangkang mengancam untuk membawa undi tidak percaya terhadap PM.",
     pilihan: [
-      { teks: "Runding dengan parti",
-        kesan: (s) => { s.kestabilan = hadkan(s.kestabilan + 6); },
-        maklumBalas: "Rundingan berjaya. Kestabilan naik." },
-      { teks: "Cabaran terbuka",
-        kesan: (s) => { s.kestabilan = hadkan(s.kestabilan - 3); s.populariti = hadkan(s.populariti + 2); },
-        maklumBalas: "PM cabar pembangkang. Kestabilan turun, populariti naik." }
-    ]
-  },
-  {
-    id: "gabungan_renggang",
-    nama: "Gabungan Renggang",
-    keterukan: "sederhana",
-    syarat: (s) => s.kestabilan < 40 && s.kestabilan >= 25,
+      { teks: "Runding dengan parti", kesan: (s) => { s.kestabilan = hadkan(s.kestabilan + 6); }, maklumBalas: "Rundingan berjaya. Kestabilan naik." },
+      { teks: "Cabaran terbuka", kesan: (s) => { s.kestabilan = hadkan(s.kestabilan - 3); s.populariti = hadkan(s.populariti + 2); }, maklumBalas: "PM cabar pembangkang. Kestabilan turun, populariti naik." }
+    ] },
+  { id: "gabungan_renggang", nama: "Gabungan Renggang", keterukan: "sederhana", syarat: (s) => s.kestabilan < 40 && s.kestabilan >= 25,
     keterangan: "Rakan gabungan mula tidak puas hati dengan kepimpinan PM.",
     pilihan: [
-      { teks: "Beri jawatan menteri",
-        kesan: (s) => { s.kestabilan = hadkan(s.kestabilan + 5); s.populariti = hadkan(s.populariti - 2); },
-        maklumBalas: "Jawatan diberi. Kestabilan naik, populariti turun." },
-      { teks: "Tegakkan pendirian",
-        kesan: (s) => { s.kestabilan = hadkan(s.kestabilan - 2); s.populariti = hadkan(s.populariti + 3); },
-        maklumBalas: "PM tegaskan pendirian. Kestabilan turun, populariti naik." }
-    ]
-  },
-  {
-    id: "krisis_ekonomi",
-    nama: "Krisis Ekonomi",
-    keterukan: "teruk",
-    syarat: (s) => s.ekonomi < 30,
+      { teks: "Beri jawatan menteri", kesan: (s) => { s.kestabilan = hadkan(s.kestabilan + 5); s.populariti = hadkan(s.populariti - 2); }, maklumBalas: "Jawatan diberi. Kestabilan naik, populariti turun." },
+      { teks: "Tegakkan pendirian", kesan: (s) => { s.kestabilan = hadkan(s.kestabilan - 2); s.populariti = hadkan(s.populariti + 3); }, maklumBalas: "PM tegaskan pendirian. Kestabilan turun, populariti naik." }
+    ] },
+  { id: "krisis_ekonomi", nama: "Krisis Ekonomi", keterukan: "teruk", syarat: (s) => s.ekonomi < 30,
     keterangan: "Ekonomi negara merudum. Pelabur mula menarik diri.",
     pilihan: [
-      { teks: "Rangsangan ekonomi",
-        kesan: (s) => { s.ekonomi = hadkan(s.ekonomi + 10); s.hutang += 0.05; },
-        maklumBalas: "Rangsangan diumumkan. Ekonomi naik, hutang bertambah." },
-      { teks: "Jimat belanja",
-        kesan: (s) => { s.ekonomi = hadkan(s.ekonomi + 3); s.populariti = hadkan(s.populariti - 3); },
-        maklumBalas: "Langkah berjimat. Ekonomi naik sedikit, populariti turun." }
-    ]
-  },
-  {
-    id: "harga_naik",
-    nama: "Harga Barang Naik",
-    keterukan: "sederhana",
-    syarat: (s) => s.inflasi > 4,
+      { teks: "Rangsangan ekonomi", kesan: (s) => { s.ekonomi = hadkan(s.ekonomi + 10); s.hutang += 0.05; }, maklumBalas: "Rangsangan diumumkan. Ekonomi naik, hutang bertambah." },
+      { teks: "Jimat belanja", kesan: (s) => { s.ekonomi = hadkan(s.ekonomi + 3); s.populariti = hadkan(s.populariti - 3); }, maklumBalas: "Langkah berjimat. Ekonomi naik sedikit, populariti turun." }
+    ] },
+  { id: "harga_naik", nama: "Harga Barang Naik", keterukan: "sederhana", syarat: (s) => s.inflasi > 4,
     keterangan: "Inflasi meningkat. Harga barang keperluan naik mendadak.",
     pilihan: [
-      { teks: "Kawalan harga",
-        kesan: (s) => { s.inflasi = Math.max(0, s.inflasi - 0.8); s.populariti = hadkan(s.populariti + 4); },
-        maklumBalas: "Kawalan harga dilaksana. Inflasi turun, populariti naik." },
-      { teks: "Bantuan tunai",
-        kesan: (s) => { s.populariti = hadkan(s.populariti + 6); s.hutang += 0.04; },
-        maklumBalas: "Bantuan tunai diberi. Populariti naik, hutang bertambah." }
-    ]
-  },
-  {
-    id: "pengangguran_tinggi",
-    nama: "Pengangguran Meningkat",
-    keterukan: "sederhana",
-    syarat: (s) => s.pengangguran > 5,
+      { teks: "Kawalan harga", kesan: (s) => { s.inflasi = Math.max(0, s.inflasi - 0.8); s.populariti = hadkan(s.populariti + 4); }, maklumBalas: "Kawalan harga dilaksana. Inflasi turun, populariti naik." },
+      { teks: "Bantuan tunai", kesan: (s) => { s.populariti = hadkan(s.populariti + 6); s.hutang += 0.04; }, maklumBalas: "Bantuan tunai diberi. Populariti naik, hutang bertambah." }
+    ] },
+  { id: "pengangguran_tinggi", nama: "Pengangguran Meningkat", keterukan: "sederhana", syarat: (s) => s.pengangguran > 5,
     keterangan: "Kadar pengangguran meningkat. Graduan sukar dapat kerja.",
     pilihan: [
-      { teks: "Program latihan",
-        kesan: (s) => { s.pengangguran = Math.max(0, s.pengangguran - 0.5); s.hutang += 0.02; },
-        maklumBalas: "Program latihan dilancarkan. Pengangguran turun." },
-      { teks: "Galak pelaburan",
-        kesan: (s) => { s.pengangguran = Math.max(0, s.pengangguran - 0.3); s.ekonomi = hadkan(s.ekonomi + 3); },
-        maklumBalas: "Pelaburan digalakkan. Ekonomi naik." }
-    ]
-  },
-  {
-    id: "hutang_tinggi",
-    nama: "Amaran Hutang Negara",
-    keterukan: "teruk",
-    syarat: (s) => s.hutang > 1.6,
+      { teks: "Program latihan", kesan: (s) => { s.pengangguran = Math.max(0, s.pengangguran - 0.5); s.hutang += 0.02; }, maklumBalas: "Program latihan dilancarkan. Pengangguran turun." },
+      { teks: "Galak pelaburan", kesan: (s) => { s.pengangguran = Math.max(0, s.pengangguran - 0.3); s.ekonomi = hadkan(s.ekonomi + 3); }, maklumBalas: "Pelaburan digalakkan. Ekonomi naik." }
+    ] },
+  { id: "hutang_tinggi", nama: "Amaran Hutang Negara", keterukan: "teruk", syarat: (s) => s.hutang > 1.6,
     keterangan: "Hutang negara menghampiri paras bahaya. Agensi penarafan beri amaran.",
     pilihan: [
-      { teks: "Kurangkan perbelanjaan",
-        kesan: (s) => { s.hutang = Math.max(1.0, s.hutang - 0.05); s.populariti = hadkan(s.populariti - 4); s.ekonomi = hadkan(s.ekonomi - 3); },
-        maklumBalas: "Perbelanjaan dikurangkan. Hutang turun, populariti & ekonomi turun." },
-      { teks: "Cukai baru",
-        kesan: (s) => { s.hutang = Math.max(1.0, s.hutang - 0.08); s.populariti = hadkan(s.populariti - 6); },
-        maklumBalas: "Cukai baru diperkenal. Hutang turun, populariti turun." }
-    ]
-  },
-  {
-    id: "majoriti_tipis",
-    nama: "Majoriti Tipis",
-    keterukan: "sederhana",
-    syarat: (s) => s.majoritiTipis === true,
+      { teks: "Kurangkan perbelanjaan", kesan: (s) => { s.hutang = Math.max(1.0, s.hutang - 0.05); s.populariti = hadkan(s.populariti - 4); s.ekonomi = hadkan(s.ekonomi - 3); }, maklumBalas: "Perbelanjaan dikurangkan. Hutang turun, populariti & ekonomi turun." },
+      { teks: "Cukai baru", kesan: (s) => { s.hutang = Math.max(1.0, s.hutang - 0.08); s.populariti = hadkan(s.populariti - 6); }, maklumBalas: "Cukai baru diperkenal. Hutang turun, populariti turun." }
+    ] },
+  { id: "majoriti_tipis", nama: "Majoriti Tipis", keterukan: "sederhana", syarat: (s) => s.majoritiTipis === true,
     keterangan: "Kerajaan baru sahaja menang undian dengan margin tipis. Pembangkang mula mendesak.",
     pilihan: [
-      { teks: "Kukuhkan gabungan",
-        kesan: (s) => { s.kestabilan = hadkan(s.kestabilan + 4); },
-        maklumBalas: "Gabungan dikukuhkan. Kestabilan naik." },
-      { teks: "Abaikan tekanan",
-        kesan: (s) => { s.kestabilan = hadkan(s.kestabilan - 2); },
-        maklumBalas: "Tekanan diabaikan. Kestabilan turun." }
-    ]
-  },
-  {
-    id: "pemberontakan_mp",
-    nama: "Pemberontakan MP Kerajaan",
-    keterukan: "teruk",
-    syarat: (s) => s.pemberontakanBesar === true,
+      { teks: "Kukuhkan gabungan", kesan: (s) => { s.kestabilan = hadkan(s.kestabilan + 4); }, maklumBalas: "Gabungan dikukuhkan. Kestabilan naik." },
+      { teks: "Abaikan tekanan", kesan: (s) => { s.kestabilan = hadkan(s.kestabilan - 2); }, maklumBalas: "Tekanan diabaikan. Kestabilan turun." }
+    ] },
+  { id: "pemberontakan_mp", nama: "Pemberontakan MP Kerajaan", keterukan: "teruk", syarat: (s) => s.pemberontakanBesar === true,
     keterangan: "Ramai MP kerajaan mengundi menentang usul. Pemberontakan dalaman berlaku.",
     pilihan: [
-      { teks: "Disiplin MP",
-        kesan: (s) => { s.kestabilan = hadkan(s.kestabilan + 5); s.populariti = hadkan(s.populariti - 2); },
-        maklumBalas: "MP didisiplin. Kestabilan naik, populariti turun." },
-      { teks: "Dengar keluhan",
-        kesan: (s) => { s.kestabilan = hadkan(s.kestabilan + 3); s.populariti = hadkan(s.populariti + 2); },
-        maklumBalas: "Keluhan didengar. Kestabilan & populariti naik sedikit." }
-    ]
-  },
-  {
-    id: "skandal_media",
-    nama: "Skandal Media",
-    keterukan: "teruk",
-    syarat: (s) => s.populariti < 35 && s.kestabilan < 45,
+      { teks: "Disiplin MP", kesan: (s) => { s.kestabilan = hadkan(s.kestabilan + 5); s.populariti = hadkan(s.populariti - 2); }, maklumBalas: "MP didisiplin. Kestabilan naik, populariti turun." },
+      { teks: "Dengar keluhan", kesan: (s) => { s.kestabilan = hadkan(s.kestabilan + 3); s.populariti = hadkan(s.populariti + 2); }, maklumBalas: "Keluhan didengar. Kestabilan & populariti naik sedikit." }
+    ] },
+  { id: "skandal_media", nama: "Skandal Media", keterukan: "teruk", syarat: (s) => s.populariti < 35 && s.kestabilan < 45,
     keterangan: "Media mendedahkan skandal dalam kerajaan. Rakyat mula hilang kepercayaan.",
     pilihan: [
-      { teks: "Siasatan terbuka",
-        kesan: (s) => { s.populariti = hadkan(s.populariti + 5); s.kestabilan = hadkan(s.kestabilan - 3); },
-        maklumBalas: "Siasatan diumumkan. Populariti naik, kestabilan turun." },
-      { teks: "Nafikan tuduhan",
-        kesan: (s) => { s.populariti = hadkan(s.populariti - 4); s.kestabilan = hadkan(s.kestabilan + 2); },
-        maklumBalas: "Tuduhan dinafikan. Populariti turun, kestabilan naik sedikit." },
-      { teks: "Saman media",
-        kesan: (s) => { s.populariti = hadkan(s.populariti - 6); s.kestabilan = hadkan(s.kestabilan + 3); },
-        maklumBalas: "Media disaman. Populariti turun, kestabilan naik." }
-    ]
-  },
-  {
-    id: "kempen_media_positif",
-    nama: "Peluang Media",
-    keterukan: "biasa",
-    syarat: (s) => s.populariti > 60 && s.ekonomi > 55,
+      { teks: "Siasatan terbuka", kesan: (s) => { s.populariti = hadkan(s.populariti + 5); s.kestabilan = hadkan(s.kestabilan - 3); }, maklumBalas: "Siasatan diumumkan. Populariti naik, kestabilan turun." },
+      { teks: "Nafikan tuduhan", kesan: (s) => { s.populariti = hadkan(s.populariti - 4); s.kestabilan = hadkan(s.kestabilan + 2); }, maklumBalas: "Tuduhan dinafikan. Populariti turun, kestabilan naik sedikit." },
+      { teks: "Saman media", kesan: (s) => { s.populariti = hadkan(s.populariti - 6); s.kestabilan = hadkan(s.kestabilan + 3); }, maklumBalas: "Media disaman. Populariti turun, kestabilan naik." }
+    ] },
+  { id: "kempen_media_positif", nama: "Peluang Media", keterukan: "biasa", syarat: (s) => s.populariti > 60 && s.ekonomi > 55,
     keterangan: "Media memberi liputan positif terhadap kerajaan. Peluang untuk tingkatkan sokongan.",
     pilihan: [
-      { teks: "Kempen besar",
-        kesan: (s) => { s.populariti = hadkan(s.populariti + 5); s.hutang += 0.02; },
-        maklumBalas: "Kempen dilancarkan. Populariti naik, hutang naik." },
-      { teks: "Biar semula jadi",
-        kesan: (s) => { s.populariti = hadkan(s.populariti + 2); },
-        maklumBalas: "Liputan positif berterusan. Populariti naik sedikit." }
-    ]
-  },
-  {
-    id: "tuntutan_reformasi",
-    nama: "Tuntutan Reformasi",
-    keterukan: "sederhana",
-    syarat: (s) => s.populariti < 45 && s.kestabilan > 40,
+      { teks: "Kempen besar", kesan: (s) => { s.populariti = hadkan(s.populariti + 5); s.hutang += 0.02; }, maklumBalas: "Kempen dilancarkan. Populariti naik, hutang naik." },
+      { teks: "Biar semula jadi", kesan: (s) => { s.populariti = hadkan(s.populariti + 2); }, maklumBalas: "Liputan positif berterusan. Populariti naik sedikit." }
+    ] },
+  { id: "tuntutan_reformasi", nama: "Tuntutan Reformasi", keterukan: "sederhana", syarat: (s) => s.populariti < 45 && s.kestabilan > 40,
     keterangan: "Rakyat menuntut reformasi dasar. Kerajaan perlu respons.",
     pilihan: [
-      { teks: "Laksana reformasi",
-        kesan: (s) => { s.populariti = hadkan(s.populariti + 8); s.ekonomi = hadkan(s.ekonomi - 3); },
-        maklumBalas: "Reformasi dilaksana. Populariti naik, ekonomi turun sedikit." },
-      { teks: "Tangguh dahulu",
-        kesan: (s) => { s.populariti = hadkan(s.populariti - 4); },
-        maklumBalas: "Reformasi ditangguh. Populariti turun." }
-    ]
-  },
-  {
-    id: "tuntutan_pembangunan",
-    nama: "Tuntutan Pembangunan",
-    keterukan: "biasa",
-    syarat: (s) => s.ekonomi > 45 && s.populariti < 55,
+      { teks: "Laksana reformasi", kesan: (s) => { s.populariti = hadkan(s.populariti + 8); s.ekonomi = hadkan(s.ekonomi - 3); }, maklumBalas: "Reformasi dilaksana. Populariti naik, ekonomi turun sedikit." },
+      { teks: "Tangguh dahulu", kesan: (s) => { s.populariti = hadkan(s.populariti - 4); }, maklumBalas: "Reformasi ditangguh. Populariti turun." }
+    ] },
+  { id: "tuntutan_pembangunan", nama: "Tuntutan Pembangunan", keterukan: "biasa", syarat: (s) => s.ekonomi > 45 && s.populariti < 55,
     keterangan: "Rakyat minta projek pembangunan di kawasan mereka.",
     pilihan: [
-      { teks: "Luluskan projek",
-        kesan: (s) => { s.populariti = hadkan(s.populariti + 6); s.hutang += 0.03; },
-        maklumBalas: "Projek diluluskan. Populariti naik, hutang naik." },
-      { teks: "Kaji dahulu",
-        kesan: (s) => { s.populariti = hadkan(s.populariti - 2); s.ekonomi = hadkan(s.ekonomi + 2); },
-        maklumBalas: "Projek dikaji. Populariti turun sedikit, ekonomi naik." }
-    ]
-  },
-  {
-    id: "krisis_kabinet",
-    nama: "Krisis Kabinet",
-    keterukan: "teruk",
-    syarat: (s) => s.kestabilan < 30 && s.populariti < 40,
+      { teks: "Luluskan projek", kesan: (s) => { s.populariti = hadkan(s.populariti + 6); s.hutang += 0.03; }, maklumBalas: "Projek diluluskan. Populariti naik, hutang naik." },
+      { teks: "Kaji dahulu", kesan: (s) => { s.populariti = hadkan(s.populariti - 2); s.ekonomi = hadkan(s.ekonomi + 2); }, maklumBalas: "Projek dikaji. Populariti turun sedikit, ekonomi naik." }
+    ] },
+  { id: "krisis_kabinet", nama: "Krisis Kabinet", keterukan: "teruk", syarat: (s) => s.kestabilan < 30 && s.populariti < 40,
     keterangan: "Menteri kabinet bergaduh secara terbuka. Kerajaan nampak lemah.",
     pilihan: [
-      { teks: "Rombak kabinet",
-        kesan: (s) => { s.kestabilan = hadkan(s.kestabilan + 8); s.populariti = hadkan(s.populariti - 2); },
-        maklumBalas: "Kabinet dirombak. Kestabilan naik, populariti turun." },
-      { teks: "Mediasi",
-        kesan: (s) => { s.kestabilan = hadkan(s.kestabilan + 4); },
-        maklumBalas: "Mediasi dijalankan. Kestabilan naik." },
-      { teks: "Biar selesai sendiri",
-        kesan: (s) => { s.kestabilan = hadkan(s.kestabilan - 3); s.populariti = hadkan(s.populariti - 2); },
-        maklumBalas: "Krisis berterusan. Kestabilan & populariti turun." }
-    ]
-  },
-  {
-    id: "krisis_antarabangsa",
-    nama: "Krisis Antarabangsa",
-    keterukan: "sederhana",
-    syarat: (s) => s.ekonomi > 50 && s.hutang > 1.3,
+      { teks: "Rombak kabinet", kesan: (s) => { s.kestabilan = hadkan(s.kestabilan + 8); s.populariti = hadkan(s.populariti - 2); }, maklumBalas: "Kabinet dirombak. Kestabilan naik, populariti turun." },
+      { teks: "Mediasi", kesan: (s) => { s.kestabilan = hadkan(s.kestabilan + 4); }, maklumBalas: "Mediasi dijalankan. Kestabilan naik." },
+      { teks: "Biar selesai sendiri", kesan: (s) => { s.kestabilan = hadkan(s.kestabilan - 3); s.populariti = hadkan(s.populariti - 2); }, maklumBalas: "Krisis berterusan. Kestabilan & populariti turun." }
+    ] },
+  { id: "krisis_antarabangsa", nama: "Krisis Antarabangsa", keterukan: "sederhana", syarat: (s) => s.ekonomi > 50 && s.hutang > 1.3,
     keterangan: "Ketegangan antarabangsa menjejaskan perdagangan Malaysia.",
     pilihan: [
-      { teks: "Diplomasi",
-        kesan: (s) => { s.ekonomi = hadkan(s.ekonomi + 3); s.populariti = hadkan(s.populariti + 2); },
-        maklumBalas: "Diplomasi berjaya. Ekonomi & populariti naik." },
-      { teks: "Kukuhkan pertahanan",
-        kesan: (s) => { s.hutang += 0.05; s.kestabilan = hadkan(s.kestabilan + 3); },
-        maklumBalas: "Pertahanan dikukuhkan. Hutang naik, kestabilan naik." }
-    ]
-  },
-  {
-    id: "tekanan_pilihan_raya",
-    nama: "Tekanan Pilihan Raya",
-    keterukan: "sederhana",
-    syarat: (s) => s.populariti < 35 && s.kestabilan < 45,
+      { teks: "Diplomasi", kesan: (s) => { s.ekonomi = hadkan(s.ekonomi + 3); s.populariti = hadkan(s.populariti + 2); }, maklumBalas: "Diplomasi berjaya. Ekonomi & populariti naik." },
+      { teks: "Kukuhkan pertahanan", kesan: (s) => { s.hutang += 0.05; s.kestabilan = hadkan(s.kestabilan + 3); }, maklumBalas: "Pertahanan dikukuhkan. Hutang naik, kestabilan naik." }
+    ] },
+  { id: "tekanan_pilihan_raya", nama: "Tekanan Pilihan Raya", keterukan: "sederhana", syarat: (s) => s.populariti < 35 && s.kestabilan < 45,
     keterangan: "Pembangkang mendesak pilihan raya awal diadakan.",
     pilihan: [
-      { teks: "Tolak pilihan raya awal",
-        kesan: (s) => { s.kestabilan = hadkan(s.kestabilan + 4); s.populariti = hadkan(s.populariti - 3); },
-        maklumBalas: "Pilihan raya awal ditolak. Kestabilan naik, populariti turun." },
-      { teks: "Pertimbang",
-        kesan: (s) => { s.populariti = hadkan(s.populariti + 3); s.kestabilan = hadkan(s.kestabilan - 2); },
-        maklumBalas: "PM pertimbang. Populariti naik, kestabilan turun." }
-    ]
-  }
+      { teks: "Tolak pilihan raya awal", kesan: (s) => { s.kestabilan = hadkan(s.kestabilan + 4); s.populariti = hadkan(s.populariti - 3); }, maklumBalas: "Pilihan raya awal ditolak. Kestabilan naik, populariti turun." },
+      { teks: "Pertimbang", kesan: (s) => { s.populariti = hadkan(s.populariti + 3); s.kestabilan = hadkan(s.kestabilan - 2); }, maklumBalas: "PM pertimbang. Populariti naik, kestabilan turun." }
+    ] }
 ];
 
 function semakPeristiwaBaru() {
@@ -1039,9 +780,7 @@ function tindakBalasPeristiwa(idPeristiwa, indeksPilihan) {
   const pilihan = p.pilihan[indeksPilihan];
   if (!pilihan) return;
 
-  const state = {
-    populariti, kestabilan, ekonomi, inflasi, pengangguran, hutang
-  };
+  const state = { populariti, kestabilan, ekonomi, inflasi, pengangguran, hutang };
 
   pilihan.kesan(state);
 
@@ -1124,7 +863,7 @@ function kemasKiniSejarahPeristiwa() {
 }
 
 // =====================================
-// 3e. PENJELASAN UNDIAN
+// 3g. PENJELASAN UNDIAN
 // =====================================
 
 function jelaskanUndian(keputusan, butiran) {
@@ -1198,7 +937,7 @@ function jelaskanUndian(keputusan, butiran) {
 }
 
 // =====================================
-// 3f. LABEL & UNDI AP BEBAS
+// 3h. LABEL & UNDI AP BEBAS
 // =====================================
 
 function labelStatus(ahli) {
@@ -1493,7 +1232,7 @@ function buatKeputusan(jenis) {
 }
 
 // =====================================
-// 6. DIALOG RUNDINGAN
+// 6. DIALOG & RUNDINGAN AP BEBAS
 // =====================================
 
 function dialogRespons(ahli, jenisTawaran, berjaya) {
@@ -1563,7 +1302,7 @@ function pusinganRundinganBaharu() {
 }
 
 // =====================================
-// 9. PAPARAN PARLIMEN
+// 7. PAPARAN PARLIMEN
 // =====================================
 
 function kemasKiniParlimen() {
@@ -1621,7 +1360,7 @@ function kemasKiniParlimen() {
 }
 
 // =====================================
-// 10. MULAKAN APLIKASI
+// 8. MULAKAN APLIKASI
 // =====================================
 
 document.addEventListener("DOMContentLoaded", () => {
