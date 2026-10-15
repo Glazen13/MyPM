@@ -2,7 +2,7 @@
 
 // =====================================
 // MyPM SIMULASI - SISTEM NEGARA
-// Fasa 4.1: Pilihan Raya Berdasarkan Kerusi
+// Fasa 5.1: Sistem Masa Harian (7 hari/minggu)
 // =====================================
 
 // =====================================
@@ -140,7 +140,7 @@ let nomborUndian = 0;
 const hadSejarahUndian = 20;
 
 // =====================================
-// 3b. KALENDAR & GILIRAN
+// 3b. KALENDAR & GILIRAN HARIAN
 // =====================================
 
 const masa = {
@@ -173,7 +173,10 @@ function kemasKiniKalendar() {
 
   if (elMinggu) elMinggu.textContent = masa.minggu + " / " + masa.maksMinggu;
   if (elHari) elHari.textContent = masa.hari + " / " + masa.maksHari;
-  if (elTindakan) elTindakan.textContent = baki;
+  if (elTindakan) {
+    elTindakan.textContent = baki;
+    elTindakan.className = baki === 0 ? "habis" : "";
+  }
   if (elBulan) elBulan.textContent = masa.bulan + " / 65";
   if (elTahun) elTahun.textContent = masa.tahun + " / 5";
 
@@ -184,7 +187,6 @@ function kemasKiniKalendar() {
   }
 }
 
-// Guna satu tindakan
 function gunaTindakan() {
   if (masa.tindakanMinggu >= masa.hadTindakan) {
     alert("Tindakan minggu ini sudah habis. Tamatkan hari untuk teruskan.");
@@ -195,6 +197,7 @@ function gunaTindakan() {
   kemasKiniKalendar();
   return true;
 }
+
 function semakPeristiwaMinggu() {
   const peristiwa = [];
 
@@ -230,11 +233,14 @@ function kiraEkonomiBulanan() {
   ekonomi = hadkan(ekonomi + (kestabilanFaktor * 2));
 }
 
+// =====================================
+// TAMATKAN HARI (Fasa 5.1)
+// =====================================
+
 function tamatkanHari() {
-  // Majukan hari
   masa.hari++;
 
-  // Jika lebih dari 7, tamatkan minggu
+  // Jika lebih dari 7 hari, tamatkan minggu
   if (masa.hari > masa.maksHari) {
     masa.hari = 1;
     masa.tindakanMinggu = 0;
@@ -243,14 +249,6 @@ function tamatkanHari() {
   }
 
   kemasKiniKalendar();
-
-  const elStatus = document.getElementById("statusMinggu");
-  if (elStatus) {
-    const baki = masa.hadTindakan - masa.tindakanMinggu;
-    elStatus.textContent = "Minggu " + masa.minggu +
-      ", Hari " + masa.hari +
-      ". Tindakan baki: " + baki + ".";
-  }
 }
 
 function tamatkanMinggu() {
@@ -266,6 +264,7 @@ function tamatkanMinggu() {
   kemajuanDasar();
 
   masa.minggu++;
+  masa.tindakanMinggu = 0;
 
   if (masa.minggu > masa.maksMinggu) {
     alert("Penggal 5 tahun tamat. Hantar ke pilihan raya.");
@@ -273,8 +272,7 @@ function tamatkanMinggu() {
     paparPanelPilihanRaya();
     return;
   }
-  
- masa.tindakanMinggu = 0;
+
   kiraMasa();
   kemasKiniKalendar();
   kemasKiniPaparan();
@@ -283,6 +281,7 @@ function tamatkanMinggu() {
   const elStatus = document.getElementById("statusMinggu");
   if (elStatus) {
     let teks = "Minggu " + masa.minggu +
+      ", Hari " + masa.hari +
       " (Bulan " + masa.bulan + ", Tahun " + masa.tahun + ").";
 
     if (laporanEkonomi) teks += " " + laporanEkonomi;
@@ -350,6 +349,8 @@ function paparPendapat() {
 }
 
 function komunikasiPM(jenis) {
+  if (!gunaTindakan()) return;
+
   const hasil = document.getElementById("hasilKomunikasi");
   let teks = "";
 
@@ -502,6 +503,8 @@ function paparParti() {
 }
 
 function rundingParti(idParti) {
+  if (!gunaTindakan()) return;
+
   const parti = senaraiParti.find(p => p.id === idParti);
   if (!parti || parti.dirunding) return;
   if (parti.afiliasi !== "gabungan") return;
@@ -616,6 +619,8 @@ function paparDasar() {
 }
 
 function laksanaDasar(idDasar) {
+  if (!gunaTindakan()) return;
+
   const dasar = senaraiDasar.find(d => d.id === idDasar);
   if (!dasar || dasar.status !== "belum") return;
 
@@ -1031,6 +1036,8 @@ function undiAhliBebas(ahli, jenisUsul) {
 // =====================================
 
 function jalankanUndian() {
+  if (!gunaTindakan()) return;
+
   const namaUsul = document.getElementById("namaUsul");
   const jenisUsul = document.getElementById("jenisUsul");
   const hasilUndian = document.getElementById("hasilUndian");
@@ -1250,6 +1257,8 @@ function kemasKiniPaparan() {
 // =====================================
 
 function buatKeputusan(jenis) {
+  if (!gunaTindakan()) return;
+
   const mesej = document.getElementById("mesej");
 
   if (jenis === "ekonomi") {
@@ -1308,6 +1317,8 @@ function dialogRespons(ahli, jenisTawaran, berjaya) {
 }
 
 function rundingAhli(id, jenisTawaran) {
+  if (!gunaTindakan()) return;
+
   const ahli = ahliBebas.find(item => item.id === id);
   if (!ahli || ahli.dirunding) return;
   if (!Object.prototype.hasOwnProperty.call(tawaran, jenisTawaran)) return;
@@ -1536,8 +1547,10 @@ function jalankanPilihanRaya() {
 
 function mulaPenggalBaharu() {
   masa.minggu = 1;
+  masa.hari = 1;
   masa.bulan = 1;
   masa.tahun = 1;
+  masa.tindakanMinggu = 0;
 
   senaraiDasar.forEach(d => {
     d.status = "belum";
@@ -1557,7 +1570,7 @@ function mulaPenggalBaharu() {
 
   const elStatus = document.getElementById("statusMinggu");
   if (elStatus) {
-    elStatus.textContent = "Penggal ke-2 bermula. Minggu 1.";
+    elStatus.textContent = "Penggal ke-2 bermula. Minggu 1, Hari 1.";
   }
 }
 
