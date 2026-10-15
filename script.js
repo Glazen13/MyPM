@@ -1,10 +1,12 @@
 
-"use strict";
-
 // =====================================
 // MyPM Simulasi - Sistem Negara
+// Sistem Parlimen dan Rundingan
 // =====================================
 
+"use strict";
+
+// Statistik negara
 let populariti = 50;
 let ekonomi = 50;
 let kestabilan = 50;
@@ -14,15 +16,38 @@ let inflasi = 2.5;
 let pengangguran = 3.5;
 let hutang = 1.2;
 
-// Sistem Parlimen
+// Komposisi Parlimen
 const kerusiKerajaan = 120;
 const kerusiPembangkang = 92;
 
-const ahliBebas = Array.from({ length: 10 }, (_, i) => ({
-  id: i + 1,
-  nama: "Ahli Parlimen Bebas " + (i + 1),
-  status: "neutral"
-}));
+// 10 Ahli Parlimen bebas dengan personaliti berbeza
+const ahliBebas = [
+  { id: 1, nama: "Ahli Parlimen Bebas 1", personaliti: "Mesra pembangunan", keutamaan: "pembangunan", status: "neutral" },
+  { id: 2, nama: "Ahli Parlimen Bebas 2", personaliti: "Mementingkan reformasi", keutamaan: "dasar", status: "neutral" },
+  { id: 3, nama: "Ahli Parlimen Bebas 3", personaliti: "Berhati-hati", keutamaan: "belanjawan", status: "neutral" },
+  { id: 4, nama: "Ahli Parlimen Bebas 4", personaliti: "Mesra rakyat", keutamaan: "pembangunan", status: "neutral" },
+  { id: 5, nama: "Ahli Parlimen Bebas 5", personaliti: "Pencinta reformasi", keutamaan: "dasar", status: "neutral" },
+  { id: 6, nama: "Ahli Parlimen Bebas 6", personaliti: "Mementingkan kewangan", keutamaan: "belanjawan", status: "neutral" },
+  { id: 7, nama: "Ahli Parlimen Bebas 7", personaliti: "Pragmatik", keutamaan: "pembangunan", status: "neutral" },
+  { id: 8, nama: "Ahli Parlimen Bebas 8", personaliti: "Tegas tentang dasar", keutamaan: "dasar", status: "neutral" },
+  { id: 9, nama: "Ahli Parlimen Bebas 9", personaliti: "Sangat berhati-hati", keutamaan: "belanjawan", status: "neutral" },
+  { id: 10, nama: "Ahli Parlimen Bebas 10", personaliti: "Suka berunding", keutamaan: "pembangunan", status: "neutral" }
+];
+
+const tawaran = {
+  pembangunan: {
+    nama: "Pembangunan kawasan",
+    penerangan: "Komitmen projek infrastruktur untuk kawasan beliau."
+  },
+  dasar: {
+    nama: "Komitmen dasar",
+    penerangan: "Komitmen untuk meneliti cadangan dasar beliau."
+  },
+  belanjawan: {
+    nama: "Sokongan belanjawan",
+    penerangan: "Komitmen mempertimbangkan keperluan kawasan melalui proses belanjawan."
+  }
+};
 
 function hadkan(nilai, minimum = 0, maksimum = 100) {
   return Math.max(minimum, Math.min(maksimum, nilai));
@@ -68,42 +93,60 @@ function buatKeputusan(jenis) {
   kemasKiniPaparan();
 }
 
-function rundingAhli(id) {
+function dialogRespons(ahli, jenisTawaran, berjaya) {
+  if (berjaya) {
+    const dialogBerjaya = {
+      pembangunan: "Saya menghargai komitmen terhadap pembangunan kawasan. Saya bersedia menyokong kerajaan buat masa ini.",
+      dasar: "Komitmen terhadap cadangan dasar saya meyakinkan. Saya bersedia memberikan sokongan.",
+      belanjawan: "Saya berpuas hati dengan kesediaan kerajaan mempertimbangkan keperluan kawasan melalui proses belanjawan."
+    };
+
+    return "“" + dialogBerjaya[jenisTawaran] + "”";
+  }
+
+  const dialogGagal = {
+    pembangunan: "Saya masih belum yakin bahawa keperluan kawasan saya akan diberi perhatian.",
+    dasar: "Saya perlukan komitmen dasar yang lebih jelas sebelum mempertimbangkan sokongan.",
+    belanjawan: "Saya belum berpuas hati dengan penjelasan mengenai keperluan belanjawan."
+  };
+
+  return "“" + dialogGagal[ahli.keutamaan] + "”";
+}
+
+function rundingAhli(id, jenisTawaran) {
   const ahli = ahliBebas.find(a => a.id === id);
 
   if (!ahli || ahli.status !== "neutral") return;
 
-  const setuju = confirm(
-    "Runding dengan " + ahli.nama +
-    "?\n\nOK: Tawarkan komitmen pembangunan kawasan.\nCancel: Batalkan rundingan."
-  );
+  // Tawaran yang sepadan mempunyai peluang lebih tinggi.
+  const sepadan = ahli.keutamaan === jenisTawaran;
+  const peluang = sepadan ? 0.8 : 0.3;
+  const berjaya = Math.random() < peluang;
 
-  if (!setuju) return;
+  ahli.status = berjaya ? "menyokong" : "menolak";
 
-  // Peluang menerima tawaran: 60%
-  if (Math.random() < 0.6) {
-    ahli.status = "menyokong";
-    document.getElementById("statusRundingan").textContent =
-      ahli.nama + " menerima tawaran dan menyokong kerajaan.";
-  } else {
-    ahli.status = "menolak";
-    document.getElementById("statusRundingan").textContent =
-      ahli.nama + " menolak tawaran. Rundingan telah selesai.";
-  }
+  const hasil = document.getElementById("statusRundingan");
+
+  hasil.textContent =
+    ahli.nama + " (" + ahli.personaliti + "). " +
+    "Tawaran: " + tawaran[jenisTawaran].nama + ". " +
+    dialogRespons(ahli, jenisTawaran, berjaya) +
+    (berjaya
+      ? " Rundingan berjaya."
+      : " Rundingan gagal. Wakil ini tidak boleh dirunding semula dalam pusingan ini.");
 
   kemasKiniParlimen();
 }
 
 function kemasKiniParlimen() {
   const menyokong = ahliBebas.filter(a => a.status === "menyokong").length;
-  const dirunding = ahliBebas.filter(a => a.status !== "neutral").length;
+  const selesai = ahliBebas.filter(a => a.status !== "neutral").length;
   const sokongan = kerusiKerajaan + menyokong;
 
   document.getElementById("kerusiKerajaan").textContent = kerusiKerajaan;
   document.getElementById("kerusiPembangkang").textContent = kerusiPembangkang;
-  document.getElementById("kerusiBebas").textContent = 10;
-  document.getElementById("sokonganKerajaan").textContent =
-    sokongan + " / 222";
+  document.getElementById("kerusiBebas").textContent = ahliBebas.length;
+  document.getElementById("sokonganKerajaan").textContent = sokongan + " / 222";
 
   document.getElementById("statusMajoriti").textContent =
     sokongan >= 112 ? "Majoriti" : "Tiada majoriti";
@@ -111,36 +154,42 @@ function kemasKiniParlimen() {
   const senarai = document.getElementById("senaraiBebas");
 
   senarai.innerHTML = ahliBebas.map(ahli => {
-    let labelStatus = "Belum dirunding";
+    let status = "Belum dirunding";
 
-    if (ahli.status === "menyokong") {
-      labelStatus = "Menyokong kerajaan";
-    } else if (ahli.status === "menolak") {
-      labelStatus = "Menolak tawaran";
+    if (ahli.status === "menyokong") status = "Menyokong kerajaan";
+    if (ahli.status === "menolak") status = "Menolak tawaran";
+
+    let kawalan = "";
+
+    if (ahli.status === "neutral") {
+      kawalan = `
+        <label for="tawaran-${ahli.id}">Pilih tawaran:</label>
+        <select id="tawaran-${ahli.id}">
+          <option value="pembangunan">Pembangunan kawasan</option>
+          <option value="dasar">Komitmen dasar</option>
+          <option value="belanjawan">Sokongan belanjawan</option>
+        </select>
+        <p>${ahli.personaliti}. Keutamaan: ${tawaran[ahli.keutamaan].nama}.</p>
+        <button onclick="rundingAhli(${ahli.id}, document.getElementById('tawaran-${ahli.id}').value)">
+          Hantar tawaran
+        </button>
+      `;
+    } else {
+      kawalan = "<p>Rundingan selesai untuk pusingan ini.</p>";
     }
-
-    const butang = ahli.status === "neutral"
-      ? `<button onclick="rundingAhli(${ahli.id})">Runding</button>`
-      : `<button disabled>Selesai</button>`;
 
     return `
       <div class="stat" style="margin:10px 0">
-        <strong>${ahli.nama}</strong>
-        <p style="font-size:16px">${labelStatus}</p>
-        ${butang}
+        <h3>${ahli.nama}</h3>
+        <p style="font-size:16px">${status}</p>
+        ${kawalan}
       </div>
     `;
   }).join("");
 
-  const ringkasan = document.getElementById("statusRundingan");
-
-  if (dirunding === 0) {
-    ringkasan.textContent =
-      "10 Ahli Parlimen bebas tersedia untuk rundingan.";
-  } else {
-    ringkasan.textContent =
-      dirunding + " daripada 10 telah dirunding. " +
-      menyokong + " menyokong kerajaan.";
+  if (selesai === 0) {
+    document.getElementById("statusRundingan").textContent =
+      "Pilih tawaran untuk memulakan rundingan dengan seorang Ahli Parlimen bebas.";
   }
 }
 
