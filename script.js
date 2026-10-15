@@ -221,6 +221,8 @@ function tamatkanMinggu() {
     cetusPeristiwa();
   }
 
+  kemajuanDasar();   // <-- TAMBAH INI
+
   masa.minggu++;
 
   if (masa.minggu > masa.maksMinggu) {
@@ -262,7 +264,218 @@ function tamatkanMinggu() {
     }
   }
 }
+// =====================================
+// 3j. DASAR & PROJEK KERAJAAN
+// =====================================
 
+let belanjawanDasar = 50;   // RM bilion
+
+const senaraiDasar = [
+  {
+    id: "lebuhraya",
+    nama: "Projek Lebuh Raya",
+    kategori: "infrastruktur",
+    kos: 15,
+    tempoh: 52,
+    mingguBerjalan: 0,
+    risiko: 0.15,
+    status: "belum",
+    kesanPendek: { populariti: 3 },
+    kesanPanjang: { ekonomi: 8 }
+  },
+  {
+    id: "lrt",
+    nama: "LRT Baharu",
+    kategori: "infrastruktur",
+    kos: 20,
+    tempoh: 52,
+    mingguBerjalan: 0,
+    risiko: 0.20,
+    status: "belum",
+    kesanPendek: { populariti: 5 },
+    kesanPanjang: { ekonomi: 10 }
+  },
+  {
+    id: "sekolah",
+    nama: "Sekolah Baharu",
+    kategori: "pendidikan",
+    kos: 8,
+    tempoh: 26,
+    mingguBerjalan: 0,
+    risiko: 0.10,
+    status: "belum",
+    kesanPendek: { populariti: 4 },
+    kesanPanjang: { ekonomi: 5 }
+  },
+  {
+    id: "biasiswa",
+    nama: "Program Biasiswa",
+    kategori: "pendidikan",
+    kos: 5,
+    tempoh: 12,
+    mingguBerjalan: 0,
+    risiko: 0.05,
+    status: "belum",
+    kesanPendek: { populariti: 6 },
+    kesanPanjang: { ekonomi: 3 }
+  },
+  {
+    id: "hospital",
+    nama: "Hospital Baharu",
+    kategori: "kesihatan",
+    kos: 12,
+    tempoh: 39,
+    mingguBerjalan: 0,
+    risiko: 0.12,
+    status: "belum",
+    kesanPendek: { populariti: 5 },
+    kesanPanjang: { ekonomi: 4 }
+  },
+  {
+    id: "subsidiUbat",
+    nama: "Subsidi Ubat",
+    kategori: "kesihatan",
+    kos: 3,
+    tempoh: 8,
+    mingguBerjalan: 0,
+    risiko: 0.05,
+    status: "belum",
+    kesanPendek: { populariti: 7 },
+    kesanPanjang: { ekonomi: 2 }
+  },
+  {
+    id: "subsidiPetani",
+    nama: "Subsidi Petani",
+    kategori: "ekonomi",
+    kos: 6,
+    tempoh: 16,
+    mingguBerjalan: 0,
+    risiko: 0.08,
+    status: "belum",
+    kesanPendek: { populariti: 4 },
+    kesanPanjang: { ekonomi: 6 }
+  },
+  {
+    id: "digital",
+    nama: "Transformasi Digital",
+    kategori: "ekonomi",
+    kos: 10,
+    tempoh: 30,
+    mingguBerjalan: 0,
+    risiko: 0.18,
+    status: "belum",
+    kesanPendek: { populariti: 2 },
+    kesanPanjang: { ekonomi: 12 }
+  }
+];
+
+function paparDasar() {
+  const panel = document.getElementById("senaraiDasar");
+  if (!panel) return;
+
+  // Kira statistik
+  const aktif = senaraiDasar.filter(d => d.status === "aktif").length;
+  const selesai = senaraiDasar.filter(d => d.status === "selesai").length;
+
+  const elBelanjawan = document.getElementById("belanjawanDasar");
+  const elAktif = document.getElementById("dasarAktif");
+  const elSelesai = document.getElementById("dasarSelesai");
+
+  if (elBelanjawan) elBelanjawan.textContent = "RM " + belanjawanDasar + "B";
+  if (elAktif) elAktif.textContent = aktif;
+  if (elSelesai) elSelesai.textContent = selesai;
+
+  panel.innerHTML = senaraiDasar.map(d => {
+    const kelasStatus = d.status === "aktif" ? "aktif" :
+                        d.status === "selesai" ? "selesai" :
+                        d.status === "gagal" ? "gagal" : "";
+
+    const peratus = d.tempoh > 0
+      ? Math.round((d.mingguBerjalan / d.tempoh) * 100)
+      : 0;
+
+    const bar = d.status === "aktif" || d.status === "selesai" || d.status === "gagal"
+      ? `<div class="bar-kemajuan"><div class="bar-kemajuan-dalam ${d.status}" style="width:${peratus}%"></div></div>`
+      : "";
+
+    const kawalan = d.status === "belum" ? `
+      <button onclick="laksanaDasar('${d.id}')" ${belanjawanDasar < d.kos ? "disabled" : ""}>
+        Laksana (RM ${d.kos}B)
+      </button>
+    ` : d.status === "aktif" ? `
+      <p class="nota">Sedang berjalan: ${d.mingguBerjalan} / ${d.tempoh} minggu</p>
+    ` : d.status === "selesai" ? `
+      <p class="nota">✅ Selesai sepenuhnya</p>
+    ` : `
+      <p class="nota">❌ Gagal dilaksanakan</p>
+    `;
+
+    return `
+      <div class="stat dasar ${kelasStatus}">
+        <h3>${escapeHTML(d.nama)}</h3>
+        <p>Kategori: ${escapeHTML(d.kategori)} | Kos: RM ${d.kos}B | Tempoh: ${d.tempoh} minggu</p>
+        <p>Risiko: ${Math.round(d.risiko * 100)}% | Status: ${d.status}</p>
+        ${bar}
+        ${kawalan}
+      </div>
+    `;
+  }).join("");
+}
+
+function laksanaDasar(idDasar) {
+  const dasar = senaraiDasar.find(d => d.id === idDasar);
+  if (!dasar || dasar.status !== "belum") return;
+
+  if (belanjawanDasar < dasar.kos) {
+    alert("Belanjawan tidak mencukupi.");
+    return;
+  }
+
+  belanjawanDasar -= dasar.kos;
+  dasar.status = "aktif";
+  dasar.mingguBerjalan = 0;
+
+  paparDasar();
+  kemasKiniPaparan();
+}
+
+function kemajuanDasar() {
+  senaraiDasar.forEach(d => {
+    if (d.status !== "aktif") return;
+
+    d.mingguBerjalan++;
+
+    // Risiko: kelewatan
+    if (Math.random() < d.risiko / 10) {
+      d.mingguBerjalan--;
+    }
+
+    // Selesai?
+    if (d.mingguBerjalan >= d.tempoh) {
+      // Risiko gagal pada akhir
+      if (Math.random() < d.risiko) {
+        d.status = "gagal";
+        kestabilan = hadkan(kestabilan - 3);
+        populariti = hadkan(populariti - 3);
+      } else {
+        d.status = "selesai";
+        // Kesan pendek
+        if (d.kesanPendek.populariti) {
+          populariti = hadkan(populariti + d.kesanPendek.populariti);
+        }
+        // Kesan panjang
+        if (d.kesanPanjang.ekonomi) {
+          ekonomi = hadkan(ekonomi + d.kesanPanjang.ekonomi);
+        }
+        if (d.kesanPanjang.populariti) {
+          populariti = hadkan(populariti + d.kesanPanjang.populariti);
+        }
+      }
+    }
+  });
+
+  paparDasar();
+}
 // =====================================
 // 3i. MEDIA & PENDAPAT AWAM
 // =====================================
@@ -1420,4 +1633,5 @@ document.addEventListener("DOMContentLoaded", () => {
   kemasKiniSejarahPeristiwa();
   paparParti();
   paparPendapat();
+  paparDasar();
 });
