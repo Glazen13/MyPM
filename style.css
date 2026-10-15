@@ -296,6 +296,22 @@ button.sekunder:hover {
   margin: 10px 0 0;
 }
 
+#hariSemasa {
+  color: #1769aa;
+}
+
+#tindakanBaki {
+  color: #047857;
+}
+
+#tindakanBaki.habis {
+  color: #b91c1c;
+}
+
+/* =====================================
+   Peristiwa mingguan (dalam hasil)
+   ===================================== */
+
 .peristiwa-minggu {
   background: #fef3c7;
   border-left: 4px solid #d97706;
@@ -474,6 +490,48 @@ button.sekunder:hover {
 .bar-kemajuan-dalam.gagal { background: #b91c1c; }
 
 /* =====================================
+   Pilihan raya
+   ===================================== */
+
+.stat.pilihanraya {
+  background: #eff6ff;
+  text-align: left;
+  padding: 20px;
+  margin: 15px 0;
+  border-left: 5px solid #2563eb;
+}
+
+.stat.pilihanraya.menang {
+  background: #d1fae5;
+  border-left-color: #047857;
+}
+
+.stat.pilihanraya.kalah {
+  background: #fee2e2;
+  border-left-color: #b91c1c;
+}
+
+.stat.pilihanraya h3 {
+  font-size: 18px;
+  margin: 0 0 10px;
+}
+
+.stat.pilihanraya p {
+  font-size: 14px;
+  margin: 6px 0;
+  font-weight: normal;
+  color: #1f2937;
+}
+
+.markah-besar {
+  font-size: 36px;
+  font-weight: bold;
+  color: #123b63;
+  margin: 10px 0;
+  text-align: center;
+}
+
+/* =====================================
    Footer
    ===================================== */
 
@@ -508,92 +566,4 @@ footer {
   .stat p {
     font-size: 24px;
   }
-}
-/* Pilihan raya */
-.stat.pilihanraya {
-  background: #eff6ff;
-  text-align: left;
-  padding: 20px;
-  margin: 15px 0;
-  border-left: 5px solid #2563eb;
-}
-
-.stat.pilihanraya.menang {
-  background: #d1fae5;
-  border-left-color: #047857;
-}
-
-.stat.pilihanraya.kalah {
-  background: #fee2e2;
-  border-left-color: #b91c1c;
-}
-
-.stat.pilihanraya h3 {
-  font-size: 18px;
-  margin: 0 0 10px;
-}
-
-.stat.pilihanraya p {
-  font-size: 14px;
-  margin: 6px 0;
-  font-weight: normal;
-  color: #1f2937;
-}
-
-.markah-besar {
-  font-size: 36px;
-  font-weight: bold;
-  color: #123b63;
-  margin: 10px 0;
-  text-align: center;
-}
-/* Pilihan raya */
-.stat.pilihanraya {
-  background: #eff6ff;
-  text-align: left;
-  padding: 20px;
-  margin: 15px 0;
-  border-left: 5px solid #2563eb;
-}
-
-.stat.pilihanraya.menang {
-  background: #d1fae5;
-  border-left-color: #047857;
-}
-
-.stat.pilihanraya.kalah {
-  background: #fee2e2;
-  border-left-color: #b91c1c;
-}
-
-.stat.pilihanraya h3 {
-  font-size: 18px;
-  margin: 0 0 10px;
-}
-
-.stat.pilihanraya p {
-  font-size: 14px;
-  margin: 6px 0;
-  font-weight: normal;
-  color: #1f2937;
-}
-
-.markah-besar {
-  font-size: 36px;
-  font-weight: bold;
-  color: #123b63;
-  margin: 10px 0;
-  text-align: center;
-}
-/* Hari dalam minggu */
-#hariSemasa {
-  color: #1769aa;
-}
-
-#tindakanBaki {
-  color: #047857;
-}
-
-#tindakanBaki.habis {
-  color: #b91c1c;
 }
