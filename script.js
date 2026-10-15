@@ -148,6 +148,13 @@ kemasKiniPaparan();
 
   kemasKiniParlimen();
 }
+function pusinganRundinganBaharu() {
+  ahliBebas.forEach(ahli => {
+    ahli.status = "neutral";
+  });
+
+  document.getElementById("statusRundingan").textContent =
+    "Pusingan rundingan baharu bermula. Semua Ahli Parlimen Bebas boleh dirunding semula.";
 
 function kemasKiniParlimen() {
   const menyokong = ahliBebas.filter(a => a.status === "menyokong").length;
