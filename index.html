@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MyPM Simulasi — Perjalanan Menjadi Perdana Menteri">
+  <meta name="theme-color" content="#0a1526">
+  <title>MyPM Simulasi</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,900&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Crimson+Text:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- =====================================
+       LOADING SCREEN
+       ===================================== -->
+  <div id="loadingScreen" class="loading-screen">
+    <div class="loading-page">
+      <div class="loading-paper">
+
+        <div class="loading-header">
+          <span class="edisi">EDISI PERTAMA</span>
+          <div class="logo-pm"><span>PM</span></div>
+        </div>
+
+        <div class="tajuk-blok">
+          <h1 class="tajuk">MyPM SIMULASI</h1>
+          <p class="sub-tajuk">Perjalanan Menjadi Perdana Menteri</p>
+        </div>
+
+        <div class="ilustrasi">
+          <img src="images/parlimen.jpg" alt="Parlimen Malaysia">
+        </div>
+
+        <p class="status" id="loadingStatus">Menyusun Landskap Politik...</p>
+
+        <div class="bar-loading">
+          <div class="fill" id="loadingBar"></div>
+        </div>
+
+        <div class="loading-footer">
+          <span>MALAYSIA</span>
+          <span class="bintang">★ ★ ★ ★ ★</span>
+          <span>PARLIMEN</span>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="loadingError" class="loading-error hidden">
+      <p>Ralat semasa memuatkan permainan.</p>
+      <button onclick="location.reload()">Cuba Semula</button>
+    </div>
+  </div>
+
+  <!-- =====================================
+       MENU UTAMA — VINTAGE NEWSPAPER
+       ===================================== -->
+  <div id="mainMenu" class="main-menu hidden">
+    <div class="menu-paper">
+
+      <div class="menu-header">
+        <div class="edisi-khas edisi-kiri">EDISI KHAS</div>
+        <div class="menu-tajuk-blok">
+          <img src="images/jata-negara.png" alt="MyPM" class="menu-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+          <h1 class="menu-tajuk" style="display:none;">MYPM: SIMULASI POLITIK MALAYSIA</h1>
+          <p class="menu-sub-tajuk">Perjalanan Menjadi Perdana Menteri</p>
+        </div>
+        <div class="edisi-khas edisi-kanan">EDISI KHAS</div>
+      </div>
+
+      <div class="menu-info-baris">
+        <span>EDISI PERTAMA</span>
+        <span>★</span>
+        <span>ISU No. 1</span>
+      </div>
+
+      <div class="menu-tengah-sahaja">
+        <h2 class="kolum-tajuk">MENU UTAMA</h2>
+
+        <button class="btn-menu-vintage btn-primary" onclick="menuMula()">
+          <span class="btn-ikon">🗳️</span>
+          <span class="btn-teks">
+            <strong>MULAKAN PERJALANAN POLITIK</strong>
+            <small>Mula permainan baharu sebagai Perdana Menteri</small>
+          </span>
+        </button>
+
+        <button class="btn-menu-vintage" id="btnSambung" onclick="menuSambung()">
+          <span class="btn-ikon">🏛️</span>
+          <span class="btn-teks">
+            <strong>KEMBALI KE PEJABAT PERDANA MENTERI</strong>
+            <small id="txtSambung">Sambung: Penggal 1, Hari 1</small>
+          </span>
+        </button>
+
+        <button class="btn-menu-vintage" id="btnMuat" onclick="menuMuat()">
+          <span class="btn-ikon">📧</span>
+          <span class="btn-teks">
+            <strong>MUAT TURUN REKOD PEMERINTAHAN</strong>
+            <small id="txtMuat">Muat dan teliti sejarah pemerintahan</small>
+          </span>
+        </button>
+
+        <button class="btn-menu-vintage" onclick="menuPanduan()">
+          <span class="btn-ikon">📖</span>
+          <span class="btn-teks">
+            <strong>PANDUAN</strong>
+            <small>Pelajari mekanik dan cara bermain</small>
+          </span>
+        </button>
+
+        <button class="btn-menu-vintage" onclick="menuTetapan()">
+          <span class="btn-ikon">⚙️</span>
+          <span class="btn-teks">
+            <strong>TETAPAN</strong>
+            <small>Pilihan, audio, dan konfigurasi</small>
+          </span>
+        </button>
+
+        <button class="btn-menu-vintage" onclick="menuKredit()">
+          <span class="btn-ikon">✒️</span>
+          <span class="btn-teks">
+            <strong>KREDIT</strong>
+            <small>Maklumat pembangun dan sumber</small>
+          </span>
+        </button>
+      </div>
+
+      <div class="menu-footer">
+        <span>MALAYSIA</span>
+        <span class="bintang">★ ★ ★ ★ ★</span>
+        <span>PARLIMEN</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =====================================
+       SKRIN PILIH KESUKARAN
+       ===================================== -->
+  <div id="skrinKesukaran" class="skrin hidden">
+    <div class="skrin-box">
+      <div class="skrin-header">
+        <h1>Pilih Tahap Kesukaran</h1>
+        <p>Setiap tahap mengubah tekanan ekonomi, krisis dan sokongan politik</p>
+      </div>
+
+      <div class="kesukaran-grid">
+        <button class="kesukaran-card" onclick="pilihKesukaran('mudah')">
+          <div class="kesukaran-icon">🌱</div>
+          <h3>Mudah</h3>
+          <p class="kesukaran-tag">Langkah Pertama</p>
+          <ul class="kesukaran-senarai">
+            <li>Tekanan ekonomi lebih terkawal</li>
+            <li>Krisis kurang berat</li>
+            <li>Sokongan lebih mudah diurus</li>
+            <li>Sesuai untuk pemain baharu</li>
+          </ul>
+        </button>
+
+        <button class="kesukaran-card kesukaran-default" onclick="pilihKesukaran('normal')">
+          <div class="kesukaran-badge">Disyorkan</div>
+          <div class="kesukaran-icon">⚖</div>
+          <h3>Normal</h3>
+          <p class="kesukaran-tag">Realistik</p>
+          <ul class="kesukaran-senarai">
+            <li>Ekonomi seimbang</li>
+            <li>Sokongan politik mencabar</li>
+            <li>Krisis mempunyai kesan bermakna</li>
+            <li>Pilihan pemain penting</li>
+          </ul>
+        </button>
+
+        <button class="kesukaran-card" onclick="pilihKesukaran('sukar')">
+          <div class="kesukaran-icon">🔥</div>
+          <h3>Sukar</h3>
+          <p class="kesukaran-tag">Mandat Terancam</p>
+          <ul class="kesukaran-senarai">
+            <li>Sokongan sukar dikekalkan</li>
+            <li>Krisis memberi kesan besar</li>
+            <li>Kesilapan kewangan sukar dipulihkan</li>
+            <li>Untuk pemain berpengalaman</li>
+          </ul>
+        </button>
+      </div>
+
+      <div class="skrin-aksi">
+        <button class="btn-kembali" onclick="kembaliKeMenu()">← Kembali</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================
+       SKRIN PILIH PARTI
+       ===================================== -->
+  <div id="skrinParti" class="skrin hidden">
+    <div class="skrin-box skrin-box-lebar">
+      <div class="skrin-header">
+        <h1>Pilih Parti Politik</h1>
+        <p>Pilih satu daripada 24 parti fiksyen untuk menerajui kerajaan</p>
+      </div>
+
+      <div class="parti-kategori">
+        <button class="parti-tab active" data-kategori="semua" onclick="tapisParti('semua')">Semua</button>
+        <button class="parti-tab" data-kategori="nasional" onclick="tapisParti('nasional')">Nasional</button>
+        <button class="parti-tab" data-kategori="agama" onclick="tapisParti('agama')">Agama & Masyarakat</button>
+        <button class="parti-tab" data-kategori="wilayah" onclick="tapisParti('wilayah')">Wilayah</button>
+        <button class="parti-tab" data-kategori="khusus" onclick="tapisParti('khusus')">Khusus</button>
+      </div>
+
+      <div class="parti-grid" id="senaraiPartiPilih"></div>
+
+      <div class="skrin-aksi">
+        <button class="btn-kembali" onclick="kembaliKesukaran()">← Kembali</button>
+        <button class="btn-sahkan" onclick="sahkanParti()">Sahkan Parti →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================
+       SKRIN PROFIL PM
+       ===================================== -->
+  <div id="skrinProfil" class="skrin hidden">
+    <div class="skrin-box">
+      <div class="skrin-header">
+        <h1>Profil Perdana Menteri</h1>
+        <p>Lengkapkan identiti Perdana Menteri Malaysia</p>
+      </div>
+
+      <div class="profil-layout">
+        <div class="profil-gambar-wrap">
+          <div class="profil-gambar" id="profilGambarPratonton">
+            <span class="profil-gambar-placeholder">👤</span>
+          </div>
+          <label for="inputGambar" class="btn-muat-gambar">📷 Muat Naik Gambar</label>
+          <input type="file" id="inputGambar" accept="image/png,image/jpeg,image/webp" hidden>
+          <button class="btn-buang-gambar" id="btnBuangGambar" style="display:none;">✕ Buang Gambar</button>
+          <p class="nota">JPG, PNG atau WebP. Maks 2MB.</p>
+        </div>
+
+        <div class="profil-borang">
+          <div class="borang-group">
+            <label>Gelaran</label>
+            <select id="inputGelaran">
+              <option value="">Tiada gelaran</option>
+              <option value="Yang Amat Berhormat">Yang Amat Berhormat</option>
+              <option value="Tan Sri">Tan Sri</option>
+              <option value="Dato' Seri">Dato' Seri</option>
+              <option value="Datuk">Datuk</option>
+              <option value="Tun">Tun</option>
+            </select>
+          </div>
+
+          <div class="borang-group">
+            <label>Nama Penuh *</label>
+            <input type="text" id="inputNama" placeholder="Contoh: Ahmad bin Abdullah" maxlength="60">
+          </div>
+
+          <div class="borang-group">
+            <label>Umur</label>
+            <input type="number" id="inputUmur" min="30" max="80" placeholder="45">
+          </div>
+
+          <div class="borang-group">
+            <label>Bio Ringkas</label>
+            <textarea id="inputBio" maxlength="300" placeholder="Ceritakan latar belakang anda..."></textarea>
+            <p class="nota"><span id="bioCount">0</span> / 300 aksara</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="skrin-aksi">
+        <button class="btn-kembali" onclick="kembaliParti()">← Kembali</button>
+        <button class="btn-sahkan" onclick="sahkanProfil()">Sahkan Profil →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================
+       SKRIN PILIH KAWASAN
+       ===================================== -->
+  <div id="skrinKawasan" class="skrin hidden">
+    <div class="skrin-box skrin-box-lebar">
+      <div class="skrin-header">
+        <h1>Pilih Kawasan Parlimen</h1>
+        <p>Pilih satu kawasan sebagai kerusi peribadi Perdana Menteri</p>
+      </div>
+
+      <div class="kawasan-toolbar">
+        <input type="text" id="carianKawasan" placeholder="🔍 Cari nama kawasan..." oninput="cariKawasan()">
+        <select id="tapisNegeri" onchange="tapisKawasanNegeri()">
+          <option value="semua">Semua Negeri</option>
+        </select>
+      </div>
+
+      <p class="kawasan-info">
+        <span id="kawasanBilangan">222</span> Kawasan Parlimen |
+        Pilihan: <strong id="kawasanPilihan">Belum dipilih</strong>
+      </p>
+
+      <div class="kawasan-grid" id="senaraiKawasanPilih"></div>
+
+      <div class="skrin-aksi">
+        <button class="btn-kembali" onclick="kembaliProfil()">← Kembali</button>
+        <button class="btn-sahkan" onclick="sahkanKawasan()">Sahkan Kawasan →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================
+       SKRIN PILIH MANIFESTO
+       ===================================== -->
+  <div id="skrinManifesto" class="skrin hidden">
+    <div class="skrin-box skrin-box-lebar">
+      <div class="skrin-header">
+        <h1>Manifesto 100 Hari</h1>
+        <p>Pilih <strong>tepat 5 manifesto</strong> sebagai sasaran utama 100 hari pertama</p>
+      </div>
+
+      <p class="manifesto-info">Dipilih: <strong id="manifestoBilangan">0</strong> / 5</p>
+
+      <div class="manifesto-grid" id="senaraiManifestoPilih"></div>
+
+      <div class="skrin-aksi">
+        <button class="btn-kembali" onclick="kembaliKawasan()">← Kembali</button>
+        <button class="btn-sahkan" id="btnSahkanManifesto" onclick="sahkanManifesto()" disabled>Sahkan Manifesto →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================
+       SKRIN MENGIRA UNDI PR (FULL PAGE)
+       ===================================== -->
+  <div id="skrinMengiraUndi" class="skrin hidden">
+    <div class="skrin-box skrin-box-lebar" style="text-align: center;">
+      
+      <div class="skrin-header">
+        <h1>PILIHAN RAYA UMUM</h1>
+        <p>Suruhanjaya Pilihan Raya Malaysia (SPR)</p>
+      </div>
+
+      <div class="kertas-kiraan" style="padding: 40px 20px;">
+        
+        <h2 class="tajuk-mengira" id="tajukMengira" style="font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 30px; color: var(--ink);">
+          Menerima Keputusan...
+        </h2>
+
+        <div class="gambar-mengira-wrap" style="max-width: 500px; margin: 0 auto 30px;">
+          <div class="gambar-mengira-kotak">
+            <img src="images/logo-spr.png" alt="SPR" id="meteraiIkon">
+          </div>
+        </div>
+
+        <div class="bar-mengira-wrap" style="max-width: 600px; margin: 0 auto 20px;">
+          <div class="bar-mengira" style="height: 24px; border: 2px solid var(--ink); background: var(--paper-dark); padding: 3px; box-shadow: 3px 3px 0 var(--ink);">
+            <div class="bar-mengira-fill" id="barMengira" style="height: 100%; width: 0%; background: var(--maroon); transition: width 0.3s;"></div>
+          </div>
+        </div>
+
+        <p class="status-mengira" id="statusMengira" style="font-family: 'Old Standard TT', serif; font-size: 18px; font-style: italic;">
+          Menyemak kertas undi...
+        </p>
+
+        <div class="info-kiraan" style="display: flex; justify-content: center; gap: 40px; margin-top: 40px; font-family: 'Playfair Display', serif;">
+          <div>
+            <p style="font-size: 12px; text-transform: uppercase; color: var(--ink-faded);">Kawasan Selesai</p>
+            <strong id="kiraKawasan" style="font-size: 32px; color: var(--ink);">0 / 222</strong>
+          </div>
+          <div>
+            <p style="font-size: 12px; text-transform: uppercase; color: var(--ink-faded);">Kerusi Dimenangi</p>
+            <strong id="kiraKerusi" style="font-size: 32px; color: var(--maroon);">0</strong>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =====================================
+       SKRIN KEPUTUSAN PILIHAN RAYA (AKHBAR)
+       ===================================== -->
+  <div id="skrinKeputusanPR" class="skrin hidden">
+    <div class="skrin-box skrin-box-lebar" style="padding: 30px; background: #e8dfc8; border: 3px solid #1a1a1a; box-shadow: 6px 6px 0 #1a1a1a;">
+      
+      <!-- HEADER AKHBAR -->
+      <div style="border-bottom: 4px solid #1a1a1a; padding-bottom: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-end;">
+        <h1 style="font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 900; text-transform: uppercase; margin: 0; line-height: 1; color: #1a1a1a;">Keputusan Pilihan Raya</h1>
+        <div style="text-align: right; font-family: 'Old Standard TT', serif; font-size: 12px; font-weight: 700; border-left: 2px solid #1a1a1a; padding-left: 10px;">
+          <div>TAHUN 2025</div>
+          <div>EDISI KHAS</div>
+          <div>PILIHAN RAYA UMUM</div>
+        </div>
+      </div>
+      <p style="text-align: center; font-family: 'Old Standard TT', serif; font-size: 16px; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; color: #1a1a1a;">
+        Keputusan Penuh Parlimen Persekutuan
+      </p>
+
+      <!-- 3 KOLUM UTAMA -->
+      <div style="display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 20px; border-bottom: 2px solid #1a1a1a; padding-bottom: 20px; margin-bottom: 15px;">
+        
+        <!-- KOLUM 1: RINGKASAN PARTI -->
+        <div>
+          <h2 style="font-family: 'Old Standard TT', serif; font-size: 18px; text-transform: uppercase; border-bottom: 2px solid #1a1a1a; padding-bottom: 5px; margin-bottom: 10px; color: #1a1a1a;">Ringkasan Keputusan Parti</h2>
+          <table style="width: 100%; border-collapse: collapse; font-family: 'Crimson Text', serif; font-size: 14px; color: #1a1a1a;">
+            <thead>
+              <tr style="border-bottom: 1px solid #1a1a1a; font-family: 'Old Standard TT', serif; font-size: 12px;">
+                <th style="text-align: left; padding: 5px;">NAMA PARTI</th>
+                <th style="text-align: right; padding: 5px;">KERUSI</th>
+              </tr>
+            </thead>
+            <tbody id="tabelKeputusanParti">
+              <!-- Diisi oleh JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- KOLUM 2: KAWASAN PEMAIN -->
+        <div>
+          <h2 style="font-family: 'Old Standard TT', serif; font-size: 18px; text-transform: uppercase; border-bottom: 2px solid #1a1a1a; padding-bottom: 5px; margin-bottom: 10px; color: #1a1a1a;">Keputusan Mengikut Kawasan</h2>
+          
+          <div style="border: 1px solid #1a1a1a; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+             <div style="font-family: 'Old Standard TT', serif; font-size: 14px; font-weight: 700;">
+               KAWASAN:<br>
+               <span id="akhbarKawasanNama" style="font-family: 'Playfair Display', serif; font-size: 16px;">KUALA LUMPUR</span>
+             </div>
+             <!-- Gambar Pemain (Jika ada) -->
+             <div id="akhbarGambarPemain" style="width: 60px; height: 80px; background: #ccc; border: 1px solid #1a1a1a; background-size: cover; background-position: center;"></div>
+          </div>
+
+          <table style="width: 100%; border-collapse: collapse; font-family: 'Crimson Text', serif; font-size: 13px; color: #1a1a1a;">
+            <thead>
+              <tr style="border-bottom: 1px solid #1a1a1a; border-top: 1px solid #1a1a1a; font-family: 'Old Standard TT', serif; font-size: 11px;">
+                <th style="text-align: left; padding: 5px;">NAMA CALON</th>
+                <th style="text-align: left; padding: 5px;">PARTI</th>
+                <th style="text-align: right; padding: 5px;">UNDI</th>
+                <th style="text-align: right; padding: 5px;">STATUS</th>
+              </tr>
+            </thead>
+            <tbody id="tabelKeputusanKawasan">
+              <!-- Diisi oleh JS -->
+            </tbody>
+          </table>
+
+          <!-- GAMBAR DOKUMEN SULIT DI RUANG KOSONG -->
+          <div style="margin-top: 20px; text-align: center;">
+            <img src="images/dokumen-sulit.jpg" alt="Dokumen Sulit" style="width: 100%; max-height: 250px; object-fit: contain; border: 1px solid #1a1a1a; box-shadow: 3px 3px 0 #1a1a1a; filter: sepia(0.2) contrast(1.1);">
+            <p style="font-family: 'Old Standard TT', serif; font-size: 11px; font-style: italic; color: #6b1f1f; margin-top: 5px; text-align: left;">*Dokumen rujukan sulit SPR.</p>
+          </div>
+        </div>
+
+        <!-- KOLUM 3: GRAF KERUSI -->
+        <div>
+          <h2 style="font-family: 'Old Standard TT', serif; font-size: 18px; text-transform: uppercase; border-bottom: 2px solid #1a1a1a; padding-bottom: 5px; margin-bottom: 10px; color: #1a1a1a;">Graf Kerusi</h2>
+          <p style="text-align: center; font-family: 'Old Standard TT', serif; font-size: 11px; font-weight: 700; margin-bottom: 5px;">MAJORITI MUDAH (112 KERUSI)</p>
+          
+          <!-- Graf Bar (Menggunakan senarai) -->
+          <div id="grafKerusiAkhbar" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Diisi oleh JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <button onclick="location.reload()" style="background: none; border: none; font-family: 'Old Standard TT', serif; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; color: #1a1a1a;">
+          ◀ KEMBALI KE MENU
+        </button>
+        
+        <button class="btn-undi" onclick="tutupKeputusanPRBaru()" style="background: #1a1a1a; color: #e8dfc8; font-family: 'Old Standard TT', serif; font-size: 20px; font-weight: 900; padding: 10px 30px; border: 3px solid #e8dfc8; box-shadow: 4px 4px 0 #1a1a1a; display: flex; align-items: center; gap: 10px; text-transform: uppercase;">
+          TERUSKAN ➔
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =====================================
+       SKRIN BENTUK GABUNGAN (VINTAGE)
+       ===================================== -->
+  <div id="skrinGabungan" class="skrin hidden">
+    <div class="skrin-box skrin-box-lebar" style="background: var(--paper); border: 2px solid var(--ink); box-shadow: 6px 6px 0 var(--ink);">
+      
+      <div class="skrin-header" style="border-bottom: 3px double var(--ink); padding-bottom: 15px; margin-bottom: 20px;">
+        <h1 style="font-size: 32px; letter-spacing: 2px;">BENTUK GABUNGAN</h1>
+        <p style="font-size: 14px; color: var(--maroon); font-style: italic;">Pilih parti untuk mencapai majoriti 112 kerusi</p>
+      </div>
+
+      <!-- PAPAN STATISTIK -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px;">
+        <div style="border: 2px solid var(--ink); padding: 10px; text-align: center; background: var(--paper-dark);">
+          <p style="font-family: 'Old Standard TT', serif; font-size: 12px; text-transform: uppercase; color: var(--ink-faded);">Parti Anda</p>
+          <strong id="gabunganPartiSaya" style="font-family: 'Playfair Display', serif; font-size: 24px; color: var(--ink);">—</strong>
+        </div>
+        <div style="border: 2px solid var(--ink); padding: 10px; text-align: center; background: var(--paper-dark);">
+          <p style="font-family: 'Old Standard TT', serif; font-size: 12px; text-transform: uppercase; color: var(--ink-faded);">Kerusi Anda</p>
+          <strong id="gabunganKerusiSaya" style="font-family: 'Playfair Display', serif; font-size: 24px; color: var(--maroon);">0</strong>
+        </div>
+        <div style="border: 2px solid var(--ink); padding: 10px; text-align: center; background: var(--paper-dark);">
+          <p style="font-family: 'Old Standard TT', serif; font-size: 12px; text-transform: uppercase; color: var(--ink-faded);">Sasaran Majoriti</p>
+          <strong style="font-family: 'Playfair Display', serif; font-size: 24px; color: var(--ink);">112</strong>
+        </div>
+        <div style="border: 2px solid var(--ink); padding: 10px; text-align: center; background: var(--paper-dark);">
+          <p style="font-family: 'Old Standard TT', serif; font-size: 12px; text-transform: uppercase; color: var(--ink-faded);">Jumlah Gabungan</p>
+          <strong id="gabunganJumlah" style="font-family: 'Playfair Display', serif; font-size: 24px; color: var(--maroon);">0</strong>
+        </div>
+      </div>
+
+      <!-- STATUS BAR -->
+      <div id="gabunganStatus" class="gabungan-status tak-cukup" style="margin-bottom: 20px; font-family: 'Old Standard TT', serif; font-size: 16px; text-align: center; padding: 10px; border: 2px solid var(--maroon); color: var(--maroon); background: rgba(107, 31, 31, 0.05);">
+        Pilih parti untuk mencapai 112 kerusi.
+      </div>
+
+      <!-- SENARAI PARTI -->
+      <div class="gabungan-grid" id="senaraiPartiGabungan" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; max-height: 40vh; overflow-y: auto; padding: 5px;"></div>
+
+      <!-- BUTANG AKSI -->
+      <div class="skrin-aksi" style="margin-top: 20px; padding-top: 15px; border-top: 3px double var(--ink);">
+        <button class="btn-kembali" onclick="kembaliKeMenuGabungan()" style="font-size: 14px;">← Kembali</button>
+        <button class="btn-sahkan" id="btnSahkanGabungan" onclick="sahkanGabungan()" disabled style="font-size: 14px;">Sahkan Gabungan →</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =====================================
+       SKRIN PROLOG — SUMPAH (DOKUMEN VINTAGE)
+       ===================================== -->
+  <div id="skrinProlog" class="skrin hidden">
+    <div class="skrin-box skrin-box-lebar prolog-box" style="background: #e8dfc8; border: 3px solid #1a1a1a; box-shadow: inset 0 0 0 5px #e8dfc8, inset 0 0 0 6px #1a1a1a, 8px 8px 0 #1a1a1a; padding: 40px; position: relative;">
+
+      <!-- STEP 1: BERITA PRU -->
+      <div class="prolog-step" data-step="1">
+        <div style="text-align: center; border-bottom: 2px solid #1a1a1a; padding-bottom: 10px; margin-bottom: 20px;">
+          <p class="prolog-jatah" style="font-family: 'Old Standard TT', serif; font-size: 14px; letter-spacing: 4px; font-weight: 700; color: #1a1a1a; margin: 0;">SURAT KHABAR RASMI</p>
+          <p style="font-family: 'Crimson Text', serif; font-style: italic; font-size: 13px; margin: 2px 0 0 0; color: #6b1f1f;">Pilihan Raya Umum Ke-15</p>
+        </div>
+
+        <!-- Gambar Prolog 1 -->
+        <div class="prolog-gambar prolog-gambar-1" style="border: 2px solid #1a1a1a; padding: 6px; background: #f4efe1; margin-bottom: 20px; box-shadow: 4px 4px 0 #1a1a1a;">
+          <img src="images/prolog-1.jpg" alt="Berita PRU" style="width: 100%; height: auto; display: block; border: 1px solid #1a1a1a; filter: sepia(0.3) contrast(1.1);" onerror="this.style.display='none'">
+        </div>
+
+        <h1 class="prolog-tajuk" style="font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 900; text-transform: uppercase; text-align: center; color: #1a1a1a; margin-bottom: 15px; line-height: 1.1;">
+          Keputusan Mencecetkan
+        </h1>
+        
+        <div style="border: 1px solid #1a1a1a; padding: 15px; background: #f4efe1; margin-bottom: 20px; box-shadow: 2px 2px 0 #1a1a1a;">
+          <p class="prolog-isi" id="prologBeritaIsi" style="font-family: 'Crimson Text', serif; font-size: 18px; line-height: 1.6; text-align: justify; color: #1a1a1a; margin: 0;">
+            Parti ... menang ... kerusi.
+          </p>
+        </div>
+        
+        <p class="prolog-nota" style="font-family: 'Old Standard TT', serif; font-size: 14px; font-style: italic; text-align: center; color: #6b1f1f; margin-bottom: 30px;">
+          YDP Agong bersetuju melantik anda sebagai Perdana Menteri.
+        </p>
+
+        <div class="prolog-aksi" style="text-align: center;">
+          <button class="btn-sahkan" onclick="prologSeterusnya()" style="background: #1a1a1a; color: #e8dfc8; font-family: 'Old Standard TT', serif; font-size: 18px; padding: 12px 40px; border: 2px solid #1a1a1a; box-shadow: 4px 4px 0 #1a1a1a; text-transform: uppercase;">Seterusnya →</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: ANGKAT SUMPAH -->
+      <div class="prolog-step hidden" data-step="2">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <p class="prolog-jatah" style="font-family: 'Old Standard TT', serif; font-size: 12px; letter-spacing: 5px; font-weight: 700; color: #1a1a1a; margin: 0;">ISTANA NEGARA</p>
+          <h1 class="prolog-tajuk" style="font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 900; text-transform: uppercase; color: #1a1a1a; margin-top: 10px; margin-bottom: 0;">Angkat Sumpah</h1>
+          <div style="width: 100%; height: 2px; background: #1a1a1a; margin: 10px 0;"></div>
+        </div>
+
+        <!-- Gambar Prolog 2 -->
+        <div class="prolog-gambar prolog-gambar-2" style="border: 2px solid #1a1a1a; padding: 6px; background: #f4efe1; margin-bottom: 20px; box-shadow: 4px 4px 0 #1a1a1a;">
+          <img src="images/prolog-2.jpg" alt="Angkat Sumpah" style="width: 100%; height: auto; display: block; border: 1px solid #1a1a1a; filter: sepia(0.3) contrast(1.1);" onerror="this.style.display='none'">
+        </div>
+
+        <div style="position: relative; padding: 20px;">
+          <!-- Cop Mohor (Seal) -->
+          <div style="position: absolute; top: 10px; right: 20px; width: 80px; height: 80px; border-radius: 50%; border: 3px dashed #6b1f1f; display: flex; align-items: center; justify-content: center; opacity: 0.7; transform: rotate(-15deg);">
+            <div style="width: 65px; height: 65px; border-radius: 50%; border: 2px solid #6b1f1f; display: flex; align-items: center; justify-content: center; font-family: 'Old Standard TT', serif; font-size: 10px; font-weight: bold; text-align: center; color: #6b1f1f; text-transform: uppercase;">MOHOR<br>BESAR</div>
+          </div>
+
+          <p class="prolog-sumpah" id="prologSumpahTeks" style="font-family: 'Playfair Display', serif; font-size: 20px; font-style: italic; line-height: 2; text-align: justify; color: #1a1a1a; margin: 0; padding: 0 20px;">
+            Saya, ... dengan ini mengangkat sumpah...
+          </p>
+        </div>
+
+        <div class="prolog-aksi" style="text-align: center; margin-top: 40px; border-top: 1px solid #1a1a1a; padding-top: 20px;">
+          <button class="btn-sahkan" onclick="prologSeterusnya()" style="background: #1a1a1a; color: #e8dfc8; font-family: 'Old Standard TT', serif; font-size: 18px; padding: 12px 40px; border: 2px solid #1a1a1a; box-shadow: 4px 4px 0 #1a1a1a; text-transform: uppercase;">Terima →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: HARI PERTAMA -->
+      <div class="prolog-step hidden" data-step="3">
+        <div style="text-align: center; border-bottom: 2px solid #1a1a1a; padding-bottom: 10px; margin-bottom: 30px;">
+          <p class="prolog-jatah" style="font-family: 'Old Standard TT', serif; font-size: 12px; letter-spacing: 4px; font-weight: 700; color: #1a1a1a; margin: 0;">PEJABAT PERDANA MENTERI</p>
+          <p style="font-family: 'Crimson Text', serif; font-style: italic; font-size: 13px; margin: 2px 0 0 0; color: #6b1f1f;">Wilayah Persekutuan Putrajaya</p>
+        </div>
+
+        <!-- Gambar Prolog 3 -->
+        <div class="prolog-gambar prolog-gambar-3" style="border: 2px solid #1a1a1a; padding: 6px; background: #f4efe1; margin-bottom: 20px; box-shadow: 4px 4px 0 #1a1a1a;">
+          <img src="images/prolog-3.jpg" alt="Pejabat PM" style="width: 100%; height: auto; display: block; border: 1px solid #1a1a1a; filter: sepia(0.3) contrast(1.1);" onerror="this.style.display='none'">
+        </div>
+
+        <h1 class="prolog-tajuk" style="font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 900; text-transform: uppercase; text-align: center; color: #1a1a1a; margin-bottom: 20px;">
+          Hari Pertama
+        </h1>
+        
+        <div style="text-align: center; margin-bottom: 20px;">
+          <p class="prolog-isi" style="font-family: 'Crimson Text', serif; font-size: 18px; color: #1a1a1a; margin-bottom: 10px;">
+            Kabinet belum dibentuk. Manifesto belum berjalan.
+          </p>
+          <p class="prolog-isi" style="font-family: 'Crimson Text', serif; font-size: 18px; color: #1a1a1a;">
+            Pembangkang sudah mengintai. Rakyat menanti.
+          </p>
+        </div>
+
+        <div style="border: 2px solid #6b1f1f; padding: 15px; background: rgba(107, 31, 31, 0.05); text-align: center; margin: 30px auto; max-width: 400px;">
+          <p class="prolog-nota-tekanan" style="font-family: 'Old Standard TT', serif; font-size: 16px; font-weight: 700; text-transform: uppercase; color: #6b1f1f; margin: 0; letter-spacing: 1px;">
+            Penggal 5 tahun bermula sekarang.
+          </p>
+        </div>
+
+        <div class="prolog-aksi" style="text-align: center;">
+          <button class="btn-sahkan" onclick="prologSelesai()" style="background: #1a1a1a; color: #e8dfc8; font-family: 'Old Standard TT', serif; font-size: 18px; padding: 12px 40px; border: 2px solid #1a1a1a; box-shadow: 4px 4px 0 #1a1a1a; text-transform: uppercase;">🏛 Masuk Pejabat →</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  
+  <!-- =====================================
+       SKRIN BENTUK KABINET
+       ===================================== -->
+  <div id="skrinKabinet" class="skrin hidden">
+    <div class="skrin-box skrin-box-lebar">
+      <div class="skrin-header">
+        <h1>Bentuk Kabinet</h1>
+        <p>Lantik <strong>30 Menteri</strong> dari 221 Ahli Parlimen AI</p>
+      </div>
+
+      <div class="kabinet-layout">
+        <div class="kabinet-mp">
+          <div class="kabinet-toolbar">
+            <input type="text" id="carianMP" placeholder="🔍 Cari nama MP..." oninput="cariMPKabinet()">
+            <select id="tapisMPParti" onchange="tapisMPKabinet()">
+              <option value="semua">Semua Parti</option>
+            </select>
+          </div>
+
+          <div class="kabinet-info">
+            <p><span id="kabinetBilanganMP">221</span> MP tersedia</p>
+            <p class="kabinet-info-bilangan" id="kabinetBilanganParti">
+              Parti anda: <strong>0</strong> • Gabungan: <strong>0</strong> • Lawan: <strong>0</strong>
+            </p>
+            <p class="kabinet-info-bilangan" style="margin-top: 6px; color: var(--ink-soft);">
+              Kerajaan: <strong id="kabinetBilKerajaan" style="color: #10b981;">0</strong> • 
+              Pembangkang: <strong id="kabinetBilPembangkang" style="color: var(--maroon);">0</strong>
+            </p>
+          </div>
+
+          <div class="kabinet-senarai-mp" id="senaraiMPKabinet"></div>
+        </div>
+
+        <div class="kabinet-slot">
+          <div class="kabinet-slot-header">
+            <h3>30 Kementerian</h3>
+            <span class="kabinet-bilangan" id="kabinetBilangan">0 / 30</span>
+          </div>
+
+          <div class="kabinet-aksi">
+            <button class="btn-auto-kabinet" onclick="autoPilihKabinet()">✨ Auto-Pilih Kabinet</button>
+            <button class="btn-kosong-kabinet" onclick="kosongkanKabinet()">🗑 Kosongkan</button>
+          </div>
+
+          <div class="kabinet-senarai-slot" id="senaraiSlotKabinet"></div>
+        </div>
+      </div>
+
+      <div class="skrin-aksi">
+        <button class="btn-kembali" onclick="kembaliManifesto()">← Kembali</button>
+        <button class="btn-sahkan" id="btnSahkanKabinet" onclick="sahkanKabinet()" disabled>Sahkan Kabinet →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================
+       SKRIN PILIH TPM
+       ===================================== -->
+  <div id="skrinTPM" class="skrin hidden">
+    <div class="skrin-box skrin-box-lebar">
+      <div class="skrin-header">
+        <h1>Tetapkan Timbalan Perdana Menteri</h1>
+        <p>Pilih <strong>1 TPM</strong> dari 30 menteri kabinet</p>
+      </div>
+
+      <p class="tpm-info">Pilihan: <strong id="tpmPilihan">Belum dipilih</strong></p>
+
+      <div class="tpm-grid" id="senaraiTPMPilih"></div>
+
+      <div class="skrin-aksi">
+        <button class="btn-kembali" onclick="kembaliKabinet()">← Kembali</button>
+        <button class="btn-sahkan" id="btnSahkanTPM" onclick="sahkanTPM()" disabled>Sahkan TPM →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================
+       SKRIN UPACARA PELANTIKAN
+       ===================================== -->
+  <div id="skrinPelantikan" class="skrin hidden">
+    <div class="skrin-box skrin-box-lebar">
+      <div class="skrin-header pelantikan-header">
+        <div class="pelantikan-jatah">MALAYSIA</div>
+        <h1>Upacara Pelantikan</h1>
+        <p>Perdana Menteri Malaysia</p>
+      </div>
+
+      <div class="pelantikan-profil" id="pelantikanProfil"></div>
+      <div class="pelantikan-grid" id="pelantikanGrid"></div>
+      <div class="pelantikan-manifesto" id="pelantikanManifesto"></div>
+
+      <div class="skrin-aksi">
+        <button class="btn-sahkan btn-masuk-pejabat" onclick="masukPejabatPM()">🏛 Masuk ke Pejabat Perdana Menteri</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================
+       APLIKASI UTAMA (DASHBOARD)
+       ===================================== -->
+  <div id="app" class="app hidden">
+
+    <header class="topbar">
+      <button class="topbar-toggle" onclick="togleMenuSisi()" aria-label="Menu">☰</button>
+
+      <div class="topbar-title">
+        <h2 id="topbarTajuk">Pejabat Perdana Menteri</h2>
+        <p id="topbarSub">Selamat datang, Perdana Menteri</p>
+      </div>
+
+      <div class="topbar-info">
+        <div class="topbar-item">
+          <span class="topbar-label">Tarikh</span>
+          <span class="topbar-value" id="topbarTarikh">1 Januari 2025</span>
+        </div>
+        <div class="topbar-item">
+          <span class="topbar-label">Hari</span>
+          <span class="topbar-value" id="topbarHari">1 / 1825</span>
+        </div>
+        <div class="topbar-item">
+          <span class="topbar-label">Penggal</span>
+          <span class="topbar-value" id="topbarPenggal">Tahun 1</span>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="topbar-btn" onclick="menuNotifikasi()" title="Notifikasi">
+          🔔
+          <span class="topbar-badge hidden" id="badgeNotifikasi">0</span>
+        </button>
+        <button class="topbar-btn" onclick="menuSimpan()" title="Simpan">💾</button>
+        <button class="topbar-btn topbar-btn-profil" onclick="menuProfil()" title="Profil">
+          <span id="topbarProfilGambar">👤</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="app-body">
+
+      <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+          <button class="nav-item active" data-halaman="ringkasan" onclick="tukarHalaman('ringkasan')">
+            <span class="nav-icon">🏛</span><span class="nav-text">Ringkasan Negara</span>
+          </button>
+          <button class="nav-item" data-halaman="parlimen" onclick="tukarHalaman('parlimen')">
+            <span class="nav-icon">⚖</span><span class="nav-text">Parlimen</span>
+          </button>
+          <button class="nav-item" data-halaman="kabinet" onclick="tukarHalaman('kabinet')">
+            <span class="nav-icon">👥</span><span class="nav-text">Kabinet</span>
+          </button>
+          <button class="nav-item" data-halaman="kementerian" onclick="tukarHalaman('kementerian')">
+            <span class="nav-icon">🏢</span><span class="nav-text">Kementerian</span>
+          </button>
+          <button class="nav-item" data-halaman="ekonomi" onclick="tukarHalaman('ekonomi')">
+            <span class="nav-icon">💰</span><span class="nav-text">Ekonomi & Bajet</span>
+          </button>
+          <button class="nav-item" data-halaman="manifesto" onclick="tukarHalaman('manifesto')">
+            <span class="nav-icon">📋</span><span class="nav-text">Manifesto 100 Hari</span>
+          </button>
+          <button class="nav-item" data-halaman="peristiwa" onclick="tukarHalaman('peristiwa')">
+            <span class="nav-icon">⚡</span><span class="nav-text">Peristiwa</span>
+          </button>
+          <button class="nav-item" data-halaman="media" onclick="tukarHalaman('media')">
+            <span class="nav-icon">📰</span><span class="nav-text">Media & Rakyat</span>
+          </button>
+          <button class="nav-item" data-halaman="pilihanraya" onclick="tukarHalaman('pilihanraya')">
+            <span class="nav-icon">🗳</span><span class="nav-text">Pilihan Raya</span>
+          </button>
+          <button class="nav-item" data-halaman="rekod" onclick="tukarHalaman('rekod')">
+            <span class="nav-icon">📜</span><span class="nav-text">Rekod Pemerintahan</span>
+          </button>
+          <button class="nav-item" data-halaman="tetapan" onclick="tukarHalaman('tetapan')">
+            <span class="nav-icon">⚙</span><span class="nav-text">Tetapan</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <p>MyPM Simulasi</p>
+          <p class="sidebar-versi">v1.1.0 &mdash; Fasa 11.0</p>
+        </div>
+      </aside>
+
+      <main class="content" id="content">
+
+        <!-- HALAMAN: RINGKASAN NEGARA -->
+        <section class="halaman active" id="halaman-ringkasan">
+          <div class="halaman-header">
+            <div>
+              <h1>Ringkasan Negara</h1>
+              <p>Keadaan semasa kerajaan dan negara</p>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-card stat-blue">
+              <div class="stat-icon">⚖</div>
+              <div class="stat-info">
+                <p class="stat-label">Sokongan Parlimen</p>
+                <p class="stat-value" id="statSokongan">0 / 222</p>
+                <p class="stat-sub" id="statMajoriti">Majoriti mudah: 112</p>
+              </div>
+            </div>
+            <div class="stat-card stat-teal">
+              <div class="stat-icon">👥</div>
+              <div class="stat-info">
+                <p class="stat-label">Kepuasan Rakyat</p>
+                <p class="stat-value" id="statKepuasan">50%</p>
+                <p class="stat-sub" id="statKepuasanTrend">Stabil</p>
+              </div>
+            </div>
+            <div class="stat-card stat-gold">
+              <div class="stat-icon">⭐</div>
+              <div class="stat-info">
+                <p class="stat-label">Populariti PM</p>
+                <p class="stat-value" id="statPopulariti">50%</p>
+                <p class="stat-sub" id="statPopularitiTrend">Stabil</p>
+              </div>
+            </div>
+            <div class="stat-card stat-purple">
+              <div class="stat-icon">📊</div>
+              <div class="stat-info">
+                <p class="stat-label">Prestasi Kerajaan</p>
+                <p class="stat-value" id="statPrestasi">50</p>
+                <p class="stat-sub">Skala 0–100</p>
+              </div>
+            </div>
+            <div class="stat-card stat-green">
+              <div class="stat-icon">📈</div>
+              <div class="stat-info">
+                <p class="stat-label">Pertumbuhan Ekonomi</p>
+                <p class="stat-value" id="statPertumbuhan">0.0%</p>
+                <p class="stat-sub">Suku tahun</p>
+              </div>
+            </div>
+            <div class="stat-card stat-red">
+              <div class="stat-icon">🔥</div>
+              <div class="stat-info">
+                <p class="stat-label">Inflasi</p>
+                <p class="stat-value" id="statInflasi">0.0%</p>
+                <p class="stat-sub">Kadar tahunan</p>
+              </div>
+            </div>
+            <div class="stat-card stat-orange">
+              <div class="stat-icon">👔</div>
+              <div class="stat-info">
+                <p class="stat-label">Pengangguran</p>
+                <p class="stat-value" id="statPengangguran">0.0%</p>
+                <p class="stat-sub">Kadar semasa</p>
+              </div>
+            </div>
+            <div class="stat-card stat-blue">
+              <div class="stat-icon">💵</div>
+              <div class="stat-info">
+                <p class="stat-label">Hasil Kerajaan</p>
+                <p class="stat-value" id="statHasil">RM 0B</p>
+                <p class="stat-sub">Tahun semasa</p>
+              </div>
+            </div>
+            <div class="stat-card stat-red">
+              <div class="stat-icon">📉</div>
+              <div class="stat-info">
+                <p class="stat-label">Hutang Negara</p>
+                <p class="stat-value" id="statHutang">RM 0B</p>
+                <p class="stat-sub">Jumlah keseluruhan</p>
+              </div>
+            </div>
+            <div class="stat-card stat-teal">
+              <div class="stat-icon">🏦</div>
+              <div class="stat-info">
+                <p class="stat-label">Bajet Tahunan</p>
+                <p class="stat-value" id="statBajet">RM 0B</p>
+                <p class="stat-sub">Tahun semasa</p>
+              </div>
+            </div>
+            <div class="stat-card stat-gold">
+              <div class="stat-icon">🛡</div>
+              <div class="stat-info">
+                <p class="stat-label">Dana Kecemasan</p>
+                <p class="stat-value" id="statDanaKecemasan">RM 0B</p>
+                <p class="stat-sub">5% bajet tahunan</p>
+              </div>
+            </div>
+            <div class="stat-card stat-purple">
+              <div class="stat-icon">📅</div>
+              <div class="stat-info">
+                <p class="stat-label">Baki Penggal</p>
+                <p class="stat-value" id="statBakiHari">1825</p>
+                <p class="stat-sub">hari berbaki</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Taklimat Harian</h3>
+              <span class="panel-badge" id="taklimatBilangan">0 item</span>
+            </div>
+            <div class="panel-body" id="taklimatHarian">
+              <p class="nota">Taklimat akan muncul selepas permainan bermula.</p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Kawalan Masa</h3>
+            </div>
+            <div class="panel-body">
+              <div class="kawalan-masa">
+                <button class="btn-masa" onclick="majukanMasa(1)">1 Hari</button>
+                <button class="btn-masa" onclick="majukanMasa(7)">1 Minggu</button>
+                <button class="btn-masa" onclick="majukanMasa(30)">1 Bulan</button>
+                <button class="btn-masa btn-auto" id="btnAuto" onclick="togleAuto()">
+                  <span id="txtAuto">▶ Auto</span>
+                </button>
+              </div>
+              <p class="nota" id="statusMasa">Auto akan memajukan 1 hari setiap 1 saat.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- HALAMAN: PARLIMEN -->
+        <section class="halaman" id="halaman-parlimen">
+          <div class="halaman-header">
+            <div>
+              <h1>Parlimen</h1>
+              <p>Dewan Rakyat — 222 kerusi</p>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-card stat-blue">
+              <div class="stat-info">
+                <p class="stat-label">Kerusi Kerajaan</p>
+                <p class="stat-value" id="parlimenKerajaan">0</p>
+              </div>
+            </div>
+            <div class="stat-card stat-red">
+              <div class="stat-info">
+                <p class="stat-label">Kerusi Pembangkang</p>
+                <p class="stat-value" id="parlimenPembangkang">0</p>
+              </div>
+            </div>
+            <div class="stat-card stat-gold">
+              <div class="stat-info">
+                <p class="stat-label">Ahli Bebas</p>
+                <p class="stat-value" id="parlimenBebas">0</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Peta Kerusi Dewan Rakyat</h3>
+              <span class="panel-badge">222 kerusi</span>
+            </div>
+            <div class="panel-body">
+              <div class="peta-kerusi-wrap">
+                <svg class="peta-kerusi-svg" id="petaKerusi" viewBox="0 0 800 420" preserveAspectRatio="xMidYMid meet"></svg>
+              </div>
+              <div class="peta-legenda" id="petaLegenda"></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Undian Parlimen</h3>
+              <span class="panel-badge" id="undianBilangan">0 rekod</span>
+            </div>
+            <div class="panel-body">
+              <div class="undian-layout">
+                <div class="undian-senarai">
+                  <h4 class="undian-tajuk">Rang Undang-Undang Tersedia</h4>
+                  <div class="undian-senarai-ruu" id="senaraiRUU"></div>
+                </div>
+                <div class="undian-keputusan" id="undianKeputusan">
+                  <div class="undian-kosong">
+                    <p>Pilih satu RUU di kiri untuk memulakan undian.</p>
+                    <p class="nota">Sistem akan mengira sokongan kerajaan, pembangkang dan ahli bebas.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="undian-sejarah">
+                <h4 class="undian-tajuk">Sejarah Undian</h4>
+                <div class="undian-sejarah-senarai" id="undianSejarah">
+                  <p class="nota">Belum ada undian dijalankan.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Senarai Ahli Parlimen</h3>
+              <span class="panel-badge" id="bilanganMPParlimen">221 MP</span>
+            </div>
+            <div class="panel-body">
+              <div class="senarai-mp-parlimen" id="senaraiMPParlimen"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HALAMAN: KABINET -->
+        <section class="halaman" id="halaman-kabinet">
+          <div class="halaman-header">
+            <div>
+              <h1>Kabinet</h1>
+              <p>30 Menteri dari kalangan Ahli Parlimen</p>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-card stat-gold">
+              <div class="stat-icon">👥</div>
+              <div class="stat-info">
+                <p class="stat-label">Jumlah Menteri</p>
+                <p class="stat-value" id="kabinetJumlah">30</p>
+                <p class="stat-sub">portfolio diisi</p>
+              </div>
+            </div>
+            <div class="stat-card stat-purple">
+              <div class="stat-icon">📊</div>
+              <div class="stat-info">
+                <p class="stat-label">Prestasi Kabinet</p>
+                <p class="stat-value" id="kabinetPrestasi">0</p>
+                <p class="stat-sub" id="kabinetPrestasiStatus">Memuatkan...</p>
+              </div>
+            </div>
+            <div class="stat-card stat-teal">
+              <div class="stat-icon">⭐</div>
+              <div class="stat-info">
+                <p class="stat-label">Populariti Kabinet</p>
+                <p class="stat-value" id="kabinetPopulariti">0%</p>
+                <p class="stat-sub">purata</p>
+              </div>
+            </div>
+            <div class="stat-card stat-blue">
+              <div class="stat-icon">💎</div>
+              <div class="stat-info">
+                <p class="stat-label">Integriti Kabinet</p>
+                <p class="stat-value" id="kabinetIntegriti">0%</p>
+                <p class="stat-sub">purata</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Senarai Menteri</h3>
+              <span class="panel-badge" id="kabinetBilanganMenteri">30 Menteri</span>
+            </div>
+            <div class="panel-body">
+              <div class="kabinet-grid" id="senaraiMenteriKabinet">
+                <p class="nota">Kabinet belum dibentuk.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Sejarah Tindakan Kabinet</h3>
+              <span class="panel-badge" id="kabinetSejarahBilangan">0 rekod</span>
+            </div>
+            <div class="panel-body">
+              <div class="kabinet-sejarah" id="kabinetSejarah">
+                <p class="nota">Belum ada tindakan kabinet.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HALAMAN: KEMENTERIAN -->
+        <section class="halaman" id="halaman-kementerian">
+          <div class="halaman-header">
+            <div>
+              <h1>Kementerian</h1>
+              <p>Prestasi dan agihan bajet 30 kementerian</p>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-card stat-gold">
+              <div class="stat-icon">🏦</div>
+              <div class="stat-info">
+                <p class="stat-label">Bajet Tahunan</p>
+                <p class="stat-value" id="kementerianBajetTahunan">RM 350B</p>
+                <p class="stat-sub">jumlah keseluruhan</p>
+              </div>
+            </div>
+            <div class="stat-card stat-teal">
+              <div class="stat-icon">💰</div>
+              <div class="stat-info">
+                <p class="stat-label">Bajet Diagihkan</p>
+                <p class="stat-value" id="kementerianBajetDiagih">RM 0B</p>
+                <p class="stat-sub" id="kementerianBajetStatus">0%</p>
+              </div>
+            </div>
+            <div class="stat-card stat-purple">
+              <div class="stat-icon">📊</div>
+              <div class="stat-info">
+                <p class="stat-label">Prestasi Purata</p>
+                <p class="stat-value" id="kementerianPrestasiPurata">0</p>
+                <p class="stat-sub">skala 0–100</p>
+              </div>
+            </div>
+            <div class="stat-card stat-blue">
+              <div class="stat-icon">📈</div>
+              <div class="stat-info">
+                <p class="stat-label">Kesan Ekonomi</p>
+                <p class="stat-value" id="kementerianKesanEkonomi">0.0%</p>
+                <p class="stat-sub">pertumbuhan tambahan</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Senarai Kementerian</h3>
+              <span class="panel-badge" id="kementerianBilangan">30 Kementerian</span>
+            </div>
+            <div class="panel-body">
+              <div class="kementerian-grid" id="senaraiKementerian">
+                <p class="nota">Kementerian belum dimuatkan.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HALAMAN: EKONOMI -->
+        <section class="halaman" id="halaman-ekonomi">
+          <div class="halaman-header">
+            <div>
+              <h1>Ekonomi & Bajet</h1>
+              <p>Kewangan negara dan agihan tahunan</p>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-card stat-green">
+              <div class="stat-icon">📈</div>
+              <div class="stat-info">
+                <p class="stat-label">KDNK</p>
+                <p class="stat-value" id="ekoKdnk">RM 1800B</p>
+                <p class="stat-sub" id="ekoKdnkTrend">Pertumbuhan tahunan</p>
+              </div>
+            </div>
+            <div class="stat-card stat-blue">
+              <div class="stat-icon">💵</div>
+              <div class="stat-info">
+                <p class="stat-label">Hasil Kerajaan</p>
+                <p class="stat-value" id="ekoHasil">RM 0B</p>
+                <p class="stat-sub">Tahun semasa</p>
+              </div>
+            </div>
+            <div class="stat-card stat-orange">
+              <div class="stat-icon">💸</div>
+              <div class="stat-info">
+                <p class="stat-label">Perbelanjaan</p>
+                <p class="stat-value" id="ekoPerbelanjaan">RM 0B</p>
+                <p class="stat-sub">Tahun semasa</p>
+              </div>
+            </div>
+            <div class="stat-card stat-teal">
+              <div class="stat-icon">💰</div>
+              <div class="stat-info">
+                <p class="stat-label">Baki Belanjawan</p>
+                <p class="stat-value" id="ekoBaki">RM 0B</p>
+                <p class="stat-sub" id="ekoBakiStatus">Seimbang</p>
+              </div>
+            </div>
+            <div class="stat-card stat-red">
+              <div class="stat-icon">📉</div>
+              <div class="stat-info">
+                <p class="stat-label">Hutang Negara</p>
+                <p class="stat-value" id="ekoHutang">RM 0B</p>
+                <p class="stat-sub" id="ekoHutangNisbah">0% daripada KDNK</p>
+              </div>
+            </div>
+            <div class="stat-card stat-green">
+              <div class="stat-icon">📊</div>
+              <div class="stat-info">
+                <p class="stat-label">Pertumbuhan</p>
+                <p class="stat-value" id="ekoPertumbuhan">0.0%</p>
+                <p class="stat-sub">Suku tahunan</p>
+              </div>
+            </div>
+            <div class="stat-card stat-red">
+              <div class="stat-icon">🔥</div>
+              <div class="stat-info">
+                <p class="stat-label">Inflasi</p>
+                <p class="stat-value" id="ekoInflasi">0.0%</p>
+                <p class="stat-sub">Kadar tahunan</p>
+              </div>
+            </div>
+            <div class="stat-card stat-orange">
+              <div class="stat-icon">👔</div>
+              <div class="stat-info">
+                <p class="stat-label">Pengangguran</p>
+                <p class="stat-value" id="ekoPengangguran">0.0%</p>
+                <p class="stat-sub">Kadar semasa</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="ekoAmaran" class="hidden"></div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Agihan Bajet Tahunan</h3>
+              <span class="panel-badge" id="ekoBajetBilangan">RM 350B</span>
+            </div>
+            <div class="panel-body">
+              <div class="bajet-ringkasan">
+                <div class="bajet-item">
+                  <span class="bajet-item-label">Jumlah Bajet</span>
+                  <span class="bajet-item-nilai" id="ekoBajetJumlah">RM 350B</span>
+                </div>
+                <div class="bajet-item">
+                  <span class="bajet-item-label">Diagihkan kepada Kementerian</span>
+                  <span class="bajet-item-nilai" id="ekoBajetDiagih">RM 0B</span>
+                </div>
+                <div class="bajet-item">
+                  <span class="bajet-item-label">Baki Tidak Diagih</span>
+                  <span class="bajet-item-nilai" id="ekoBajetBaki">RM 350B</span>
+                </div>
+              </div>
+
+              <div class="bajet-bar-wrap">
+                <div class="bajet-bar">
+                  <div class="bajet-bar-fill" id="ekoBajetBar" style="width:0%"></div>
+                </div>
+                <p class="bajet-bar-status" id="ekoBajetStatus">
+                  <span id="ekoBajetPeratus">0%</span> daripada bajet tahunan telah diagihkan
+                </p>
+              </div>
+
+              <p class="nota">Urus agihan bajet dalam halaman <strong>Kementerian</strong>.</p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Trend 6 Bulan</h3>
+              <span class="panel-badge" id="ekoTrendBilangan">0 rekod</span>
+            </div>
+            <div class="panel-body">
+              <div class="trend-chart" id="ekoTrendChart">
+                <p class="nota">Belum ada data bulanan.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Laporan Bulanan</h3>
+              <span class="panel-badge" id="ekoLaporanBilangan">0 laporan</span>
+            </div>
+            <div class="panel-body">
+              <div class="laporan-ekonomi-senarai" id="ekoLaporanSenarai">
+                <p class="nota">Belum ada laporan ekonomi.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HALAMAN: MANIFESTO -->
+        <section class="halaman" id="halaman-manifesto">
+          <div class="halaman-header">
+            <div>
+              <h1>Manifesto 100 Hari</h1>
+              <p>Lima sasaran utama penggal pertama</p>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-card stat-gold">
+              <div class="stat-icon">📋</div>
+              <div class="stat-info">
+                <p class="stat-label">Jumlah Manifesto</p>
+                <p class="stat-value" id="manJumlah">5</p>
+                <p class="stat-sub">sasaran utama</p>
+              </div>
+            </div>
+            <div class="stat-card stat-green">
+              <div class="stat-icon">✅</div>
+              <div class="stat-info">
+                <p class="stat-label">Berjaya</p>
+                <p class="stat-value" id="manBerjaya">0</p>
+                <p class="stat-sub">sasaran dicapai</p>
+              </div>
+            </div>
+            <div class="stat-card stat-red">
+              <div class="stat-icon">❌</div>
+              <div class="stat-info">
+                <p class="stat-label">Gagal</p>
+                <p class="stat-value" id="manGagal">0</p>
+                <p class="stat-sub">sasaran tidak dicapai</p>
+              </div>
+            </div>
+            <div class="stat-card stat-purple">
+              <div class="stat-icon">📊</div>
+              <div class="stat-info">
+                <p class="stat-label">Kemajuan Purata</p>
+                <p class="stat-value" id="manKemajuan">0%</p>
+                <p class="stat-sub" id="manKemajuanStatus">Belum bermula</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Hari Manifesto</h3>
+              <span class="panel-badge" id="manHariBilangan">Hari 1 / 100</span>
+            </div>
+            <div class="panel-body">
+              <div class="man-tempoh-bar-wrap">
+                <div class="man-tempoh-bar">
+                  <div class="man-tempoh-bar-fill" id="manTempohBar" style="width:0%"></div>
+                </div>
+                <p class="man-tempoh-status" id="manTempohStatus">
+                  Hari <strong>1</strong> daripada 100 — <span id="manTempohBaki">99 hari berbaki</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Senarai Manifesto</h3>
+              <span class="panel-badge" id="manBilanganSenarai">0 / 5</span>
+            </div>
+            <div class="panel-body">
+              <div class="man-grid" id="senaraiManifestoAktif">
+                <p class="nota">Belum ada manifesto dipilih.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HALAMAN: PERISTIWA -->
+        <section class="halaman" id="halaman-peristiwa">
+          <div class="halaman-header">
+            <div>
+              <h1>Peristiwa</h1>
+              <p>Keputusan dan krisis yang perlu ditangani</p>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-card stat-gold">
+              <div class="stat-icon">⚡</div>
+              <div class="stat-info">
+                <p class="stat-label">Jumlah Peristiwa</p>
+                <p class="stat-value" id="perBilangan">0</p>
+                <p class="stat-sub">sepanjang penggal</p>
+              </div>
+            </div>
+            <div class="stat-card stat-green">
+              <div class="stat-icon">🟢</div>
+              <div class="stat-info">
+                <p class="stat-label">Dikendalikan Baik</p>
+                <p class="stat-value" id="perBaik">0</p>
+                <p class="stat-sub">kesan positif</p>
+              </div>
+            </div>
+            <div class="stat-card stat-red">
+              <div class="stat-icon">🔴</div>
+              <div class="stat-info">
+                <p class="stat-label">Dikendalikan Buruk</p>
+                <p class="stat-value" id="perBuruk">0</p>
+                <p class="stat-sub">kesan negatif</p>
+              </div>
+            </div>
+            <div class="stat-card stat-purple">
+              <div class="stat-icon">📊</div>
+              <div class="stat-info">
+                <p class="stat-label">Kadar Kejayaan</p>
+                <p class="stat-value" id="perKadar">0%</p>
+                <p class="stat-sub">peristiwa positif</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Peristiwa Aktif</h3>
+              <span class="panel-badge" id="perAktifBilangan">0 aktif</span>
+            </div>
+            <div class="panel-body">
+              <div class="per-aktif-senarai" id="senaraiPeristiwaAktif">
+                <p class="nota">Tiada peristiwa aktif pada masa ini.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Sejarah Peristiwa</h3>
+              <span class="panel-badge" id="perSejarahBilangan">0 rekod</span>
+            </div>
+            <div class="panel-body">
+              <div class="per-sejarah-senarai" id="sejarahPeristiwa">
+                <p class="nota">Belum ada peristiwa berlaku.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HALAMAN: MEDIA -->
+        <section class="halaman" id="halaman-media">
+          <div class="halaman-header">
+            <div>
+              <h1>Media & Rakyat</h1>
+              <p>Persepsi awam dan liputan media</p>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-card stat-teal">
+              <div class="stat-icon">👥</div>
+              <div class="stat-info">
+                <p class="stat-label">Kepuasan Nasional</p>
+                <p class="stat-value" id="mediaKepuasanNasional">50%</p>
+                <p class="stat-sub" id="mediaKepuasanTrend">Stabil</p>
+              </div>
+            </div>
+            <div class="stat-card stat-gold">
+              <div class="stat-icon">📰</div>
+              <div class="stat-info">
+                <p class="stat-label">Sentimen Media</p>
+                <p class="stat-value" id="mediaSentimen">Neutral</p>
+                <p class="stat-sub" id="mediaSentimenSub">Seimbang</p>
+              </div>
+            </div>
+            <div class="stat-card stat-blue">
+              <div class="stat-icon">💬</div>
+              <div class="stat-info">
+                <p class="stat-label">Isu Utama</p>
+                <p class="stat-value" id="mediaIsuUtama" style="font-size:16px">—</p>
+                <p class="stat-sub" id="mediaIsuSub">Tiada isu besar</p>
+              </div>
+            </div>
+            <div class="stat-card stat-purple">
+              <div class="stat-icon">📢</div>
+              <div class="stat-info">
+                <p class="stat-label">Kempen Terakhir</p>
+                <p class="stat-value" id="mediaKempenTerakhir" style="font-size:16px">—</p>
+                <p class="stat-sub" id="mediaKempenSub">Belum ada</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Sentimen Kumpulan Rakyat</h3>
+              <span class="panel-badge" id="mediaKumpulanBilangan">5 kumpulan</span>
+            </div>
+            <div class="panel-body">
+              <div class="media-kumpulan-grid" id="senaraiKumpulanRakyat"></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Sumber Media</h3>
+              <span class="panel-badge">4 sumber</span>
+            </div>
+            <div class="panel-body">
+              <div class="media-sumber-grid" id="senaraiSumberMedia"></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Alat Komunikasi PM</h3>
+            </div>
+            <div class="panel-body">
+              <p class="nota">Pilih cara untuk sampaikan mesej kepada rakyat. Setiap alat ada kesan berbeza kepada kumpulan berbeza.</p>
+              <div class="media-komunikasi-grid" id="senaraiAlatKomunikasi"></div>
+              <p class="nota" id="mediaKomunikasiStatus">Belum ada kempen dijalankan.</p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Berita Semasa</h3>
+              <span class="panel-badge" id="mediaBeritaBilangan">0 berita</span>
+            </div>
+            <div class="panel-body">
+              <div class="media-berita-senarai" id="senaraiBeritaMedia">
+                <p class="nota">Belum ada berita.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Sejarah Kempen</h3>
+              <span class="panel-badge" id="mediaSejarahBilangan">0 rekod</span>
+            </div>
+            <div class="panel-body">
+              <div class="media-sejarah-senarai" id="sejarahKempenMedia">
+                <p class="nota">Belum ada kempen.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HALAMAN: PILIHAN RAYA -->
+        <section class="halaman" id="halaman-pilihanraya">
+          <div class="halaman-header">
+            <div>
+              <h1>Pilihan Raya</h1>
+              <p>Keputusan dan pembentukan kerajaan</p>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-card stat-gold">
+              <div class="stat-icon">📅</div>
+              <div class="stat-info">
+                <p class="stat-label">Baki Penggal</p>
+                <p class="stat-value" id="prBakiHari">1825</p>
+                <p class="stat-sub">hari sehingga PR seterusnya</p>
+              </div>
+            </div>
+            <div class="stat-card stat-blue">
+              <div class="stat-icon">🗳️</div>
+              <div class="stat-info">
+                <p class="stat-label">Jumlah PR Dijalankan</p>
+                <p class="stat-value" id="prJumlah">0</p>
+                <p class="stat-sub">pilihan raya</p>
+              </div>
+            </div>
+            <div class="stat-card stat-teal">
+              <div class="stat-icon">⭐</div>
+              <div class="stat-info">
+                <p class="stat-label">Populariti PM</p>
+                <p class="stat-value" id="prPopulariti">50%</p>
+                <p class="stat-sub">sebelum PR</p>
+              </div>
+            </div>
+            <div class="stat-card stat-purple">
+              <div class="stat-icon">📊</div>
+              <div class="stat-info">
+                <p class="stat-label">Kedudukan Parti</p>
+                <p class="stat-value" id="prKedudukanParti">—</p>
+                <p class="stat-sub" id="prKedudukanSub">Belum ada data</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Tindakan Pilihan Raya</h3>
+            </div>
+            <div class="panel-body">
+              <p class="nota">Anda boleh bubar Parlimen bila-bila masa. Pilihan raya akan dijalankan dalam masa terdekat.</p>
+              <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+                <button class="btn-undi" id="btnBubarParlimen" onclick="bukaKonfirmasiBubar()">🗳️ Bubar Parlimen</button>
+              </div>
+              <p class="nota" style="margin-top:12px">
+                <strong>Nota:</strong> Pilihan raya akan berlaku automatik pada penghujung penggal (hari 1825) atau jika kerajaan tumbang.
+              </p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Keputusan Pilihan Raya Terkini</h3>
+              <span class="panel-badge" id="prKeputusanBilangan">0 rekod</span>
+            </div>
+            <div class="panel-body">
+              <div class="pr-keputusan-senarai" id="prKeputusanSenarai">
+                <p class="nota">Belum ada pilihan raya dijalankan.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Sejarah Pilihan Raya</h3>
+              <span class="panel-badge" id="prSejarahBilangan">0 rekod</span>
+            </div>
+            <div class="panel-body">
+              <div class="pr-sejarah-senarai" id="prSejarahSenarai">
+                <p class="nota">Belum ada sejarah pilihan raya.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HALAMAN: REKOD -->
+        <section class="halaman" id="halaman-rekod">
+          <div class="halaman-header">
+            <div>
+              <h1>Rekod Pemerintahan</h1>
+              <p>Sejarah keputusan dan legasi</p>
+            </div>
+            <button class="btn-sahkan" onclick="janaLaporanPenggal()" style="padding:10px 20px;font-size:13px">📄 Jana Laporan Penggal</button>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-card stat-blue">
+              <div class="stat-icon">⚖</div>
+              <div class="stat-info">
+                <p class="stat-label">Undian Parlimen</p>
+                <p class="stat-value" id="rekodUndian">0</p>
+                <p class="stat-sub">RUU diundi</p>
+              </div>
+            </div>
+            <div class="stat-card stat-gold">
+              <div class="stat-icon">👥</div>
+              <div class="stat-info">
+                <p class="stat-label">Tindakan Kabinet</p>
+                <p class="stat-value" id="rekodKabinet">0</p>
+                <p class="stat-sub">lantik/pecat</p>
+              </div>
+            </div>
+            <div class="stat-card stat-red">
+              <div class="stat-icon">⚡</div>
+              <div class="stat-info">
+                <p class="stat-label">Peristiwa</p>
+                <p class="stat-value" id="rekodPeristiwa">0</p>
+                <p class="stat-sub">ditangani</p>
+              </div>
+            </div>
+            <div class="stat-card stat-teal">
+              <div class="stat-icon">📢</div>
+              <div class="stat-info">
+                <p class="stat-label">Kempen Media</p>
+                <p class="stat-value" id="rekodKempen">0</p>
+                <p class="stat-sub">dijalankan</p>
+              </div>
+            </div>
+            <div class="stat-card stat-purple">
+              <div class="stat-icon">🗳</div>
+              <div class="stat-info">
+                <p class="stat-label">Pilihan Raya</p>
+                <p class="stat-value" id="rekodPR">0</p>
+                <p class="stat-sub">dijalankan</p>
+              </div>
+            </div>
+            <div class="stat-card stat-green">
+              <div class="stat-icon">📅</div>
+              <div class="stat-info">
+                <p class="stat-label">Hari Berkhidmat</p>
+                <p class="stat-value" id="rekodHari">0</p>
+                <p class="stat-sub">daripada 1825</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Garis Masa Keputusan</h3>
+              <span class="panel-badge" id="rekodBilangan">0 rekod</span>
+            </div>
+            <div class="panel-body">
+              <div class="rekod-timeline" id="senaraiRekodTimeline">
+                <p class="nota">Belum ada rekod. Keputusan anda akan muncul di sini.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HALAMAN: TETAPAN -->
+        <section class="halaman" id="halaman-tetapan">
+          <div class="halaman-header">
+            <div>
+              <h1>Tetapan</h1>
+              <p>Konfigurasi dan pilihan permainan</p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Tetapan Permainan</h3>
+            </div>
+            <div class="panel-body">
+              <p><strong>Versi:</strong> <span id="tetapanVersi">1.1.0</span></p>
+              <p><strong>Fasa:</strong> <span id="tetapanFasa">Fasa 11.0</span></p>
+              <p><strong>Bahasa:</strong> Bahasa Malaysia</p>
+              <p><strong>Auto-save:</strong> Aktif</p>
+              <p class="nota">Tetapan lanjutan akan dilaksanakan dalam fasa berikutnya.</p>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- =====================================
+       PANEL MODAL
+       ===================================== -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="modalTitle">Tajuk</h2>
+        <button class="modal-close" onclick="tutupModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody">Kandungan</div>
+    </div>
+  </div>
+
+  <!-- =====================================
+       SKRIP — DATA
+       ===================================== -->
+  <script src="data-parti.js"></script>
+  <script src="data-mp.js"></script>
+  <script src="data-kawasan.js"></script>
+  <script src="data-calon.js"></script>
+  <script src="data-manifesto.js"></script>
+  <script src="data-kementerian.js"></script>
+  <script src="data-ruu.js"></script>
+  <script src="data-peristiwa-ekonomi.js"></script>
+  <script src="data-peristiwa.js"></script>
+  <script src="data-feedback.js"></script>
+
+  <!-- =====================================
+       SKRIP — LOGIK (PECAH)
+       ===================================== -->
+  <script src="script-core.js"></script>
+  <script src="script-pilihanraya.js"></script>
+  <script src="script-setup.js"></script>
+  <script src="script-kabinet.js"></script>
+  <script src="script-gabungan.js"></script>
+  <script src="script-parlimen.js"></script>
+  <script src="script-ekonomi.js"></script>
+  <script src="script-manifesto.js"></script>
+  <script src="script-peristiwa.js"></script>
+  <script src="script-media.js"></script>
+  <script src="script-rekod.js"></script>
+  <script src="script-init.js"></script>
+
+</body>
+</html>
